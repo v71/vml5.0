@@ -33,14 +33,13 @@ namespace vml
 			// intersection between bounding box and infinite ray
 
 			template<typename T>
-			static uint32_t AABBOXVsRay(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
-										const vml::math::vec2<T>& r0, const vml::math::vec2<T>& dir,
-										vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-										const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t AABBOXVsRay(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
+													  const vml::math::vec2<T>& r0, const vml::math::vec2<T>& dir,
+													  vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+													  const float eps = vml::math::EPSILON)
 			{
-
-				vml::math::vec2<T> tMin = vml::math::vec2<T>((bmin.x - r0.x) / (-dir.y), (bmin.y - r0.y) / (dir.x));
-				vml::math::vec2<T> tMax = vml::math::vec2<T>((bmax.x - r0.x) / (-dir.y), (bmax.y - r0.y) / (dir.x));
+				vml::math::vec2<T> tMin = vml::math::vec2<T>((bmin.x - r0.x) / dir.x, (bmin.y - r0.y) / dir.y);
+				vml::math::vec2<T> tMax = vml::math::vec2<T>((bmax.x - r0.x) / dir.x, (bmax.y - r0.y) / dir.y);
 				vml::math::vec2<T> t1 = vml::math::vec2<T>(std::min(tMin.x, tMax.x), std::min(tMin.y, tMax.y));
 				vml::math::vec2<T> t2 = vml::math::vec2<T>(std::max(tMin.x, tMax.x), std::max(tMin.y, tMax.y));
 
@@ -49,8 +48,8 @@ namespace vml
 
 				// compute intersection points
 
-				vml::math::vec2<T> p = vml::math::vec2<T>(r0.x + tFar * (-dir.y), r0.y + tFar * (dir.x));
-				vml::math::vec2<T> q = vml::math::vec2<T>(r0.x + tNear * (-dir.y), r0.y + tNear * (dir.x));
+				vml::math::vec2<T> p = vml::math::vec2<T>(r0.x + tFar * dir.x, r0.y + tFar * dir.y);
+				vml::math::vec2<T> q = vml::math::vec2<T>(r0.x + tNear * dir.x, r0.y + tNear * dir.y);
 
 				// compute scaled box to prevent
 				// inclusion test for points to 
@@ -111,10 +110,10 @@ namespace vml
 			// intersection between bounding box and a line
 
 			template<class T>
-			static uint32_t AABBOXVsLine(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,	
-										 const vml::math::vec2<T>& r0, const vml::math::vec2<T>& r1,
-										 vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-										 const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t AABBOXVsLine(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
+													   const vml::math::vec2<T>& r0, const vml::math::vec2<T>& r1,
+													   vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+													   const float eps = vml::math::EPSILON)
 			{
 				// check if line is entirely inside bounding box
 
@@ -203,7 +202,7 @@ namespace vml
 
 				if (numpoints == 1)
 				{
-					closestp = points[0];
+					closestp = closestq=points[0];
 					return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT;
 				}
 
@@ -223,10 +222,10 @@ namespace vml
 			// intersection between bounding boxes tests
 
 			template<class T>
-			static uint32_t AABBoxVsAABBox(const vml::math::vec2<T> &bmin1,
-										   const vml::math::vec2<T> &bmax1,
-										   const vml::math::vec2<T> &bmin2,
-										   const vml::math::vec2<T> &bmax2)
+			static [[nodiscard]] uint32_t AABBoxVsAABBox(const vml::math::vec2<T> &bmin1,
+													     const vml::math::vec2<T> &bmax1,
+													     const vml::math::vec2<T> &bmin2,
+													     const vml::math::vec2<T> &bmax2)
 			{
 				// check if the first bounding box is entirely inside the second bounding box
 
@@ -255,9 +254,9 @@ namespace vml
 			// checks if a point is inside an axis aligned / axis oriented bounding box
 
 			template<class T>
-			static uint32_t IsPointInAABBox(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
-											const vml::math::vec2<T>& p,
-											const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t IsPointInAABBox(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
+														  const vml::math::vec2<T>& p,
+														  const float eps = vml::math::EPSILON)
 			{
 				if (p.x - bmin.x > eps)
 				if (p.x - bmax.x < eps)
@@ -367,13 +366,11 @@ namespace vml
 			// check if ray intersects circle
 
 			template<class T>
-			static int RayVsCircle(const vml::math::vec2<T>& c0, const float r,
-								   const vml::math::vec2<T>& p0, const vml::math::vec2<T>& dir,
-								   vml::math::vec2<T>& q0, vml::math::vec2<T>& q1,
-								   const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t RayVsCircle(const vml::math::vec2<T>& c0, const float r,
+													  const vml::math::vec2<T>& p0, const vml::math::vec2<T>& dir,
+													  vml::math::vec2<T>& q0, vml::math::vec2<T>& q1,
+													  const float eps = vml::math::EPSILON)
 			{
-				// check if ray and circle do intersect
-
 				float sx = p0.x - c0.x;
 				float sy = p0.y - c0.y;
 				float a = dir.x * dir.x + dir.y * dir.y;
@@ -412,12 +409,11 @@ namespace vml
 			// test if line and cricle intersects , point of intersection is computed
 
 			template<class T>
-			static uint32_t LineVsCircle(const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
-										 const vml::math::vec2<T>& p, const float r,
-										 vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-										 const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t LineVsCircle(const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
+													   const vml::math::vec2<T>& p, const float r,
+													   vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+													   const float eps = vml::math::EPSILON)
 			{
-
 				vml::math::vec2<T> pq = lineq - linep;
 				vml::math::vec2<T> ap = p - linep;
 				float a = pq.x * pq.x + pq.y * pq.y;
@@ -455,7 +451,7 @@ namespace vml
 					if (numa < 0 && numb < 0)
 					{
 						// border conditions for left side of the line
-						//closestp = closestp;
+						closestp = closestp;
 						return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT;
 					}
 					else if (numa > 0 && numb > 0)
@@ -495,9 +491,9 @@ namespace vml
 			// test if two lines overlap 
 
 			template<class T>
-			static bool LineVsLineOverlapTest(const vml::math::vec2<T> &p0, const vml::math::vec2<T> &p1,
-											  const vml::math::vec2<T> &q0, const vml::math::vec2<T> &q1,
-											  const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t LineVsLineOverlapTest(const vml::math::vec2<T> &p0, const vml::math::vec2<T> &p1,
+															    const vml::math::vec2<T> &q0, const vml::math::vec2<T> &q1,
+															    const float eps = vml::math::EPSILON)
 			{
 
 				vml::math::vec2<T> u, v, w;
@@ -577,10 +573,10 @@ namespace vml
 			// test if two lines intersects , point of intersection is computed
 
 			template<class T>
-			static uint32_t LineVsLine(const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
-								       const vml::math::vec2<T>& c, const vml::math::vec2<T>& d,
-									   vml::math::vec2<T> &q,
-									   const float eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t LineVsLine(const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
+											         const vml::math::vec2<T>& c, const vml::math::vec2<T>& d,
+												     vml::math::vec2<T> &q,
+												     const float eps = vml::math::EPSILON)
 			{
 
 				float denom = (c.y - d.y)*(b.x - a.x) - (c.x - d.x)*(b.y - a.y);
@@ -596,7 +592,7 @@ namespace vml
 					{
 						// lines may be collinear but still intersecting
 
-						if ( LineVsLineOverlapTest(a, b,c,d,eps))
+						if (LineVsLineOverlapTest(a, b,c,d,eps))
 							return vml::geo2d::Results::DOES_INTERSECT;
 
 						return vml::geo2d::Results::COLLINEAR;
@@ -1280,9 +1276,9 @@ namespace vml
 			// Implementing Cohen - Sutherland algorithm
 			// Clipping a line from P1 = (x2, y2) to P2 = (x2, y2)
 
-			static unsigned int CohenSutherlandClip(int x1, int y1, int x2, int y2,
-													int XMIN, int YMIN, int XMAX, int YMAX,
-													int& xp, int& yp, int& xq, int& yq)
+			static [[nodiscard]] uint32_t CohenSutherlandClip(int x1, int y1, int x2, int y2,
+															  int XMIN, int YMIN, int XMAX, int YMAX,
+															  int& xp, int& yp, int& xq, int& yq)
 			{
 				// Defining region codes
 

@@ -1,6 +1,30 @@
 #pragma once
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Circle
+
+namespace vml
+{
+	namespace geo2d
+	{
+		namespace transform
+		{
+
+			// ------------------------------------------------------------------------
+
+			template<typename T>
+			static vml::geo2d::Circle<T> TransformCircle(const vml::math::vec2<T>& pos, const float radius)
+			{
+				return vml::geo2d::Circle<T>(pos, radius);
+			}
+
+		} // end of namespace metrics
+
+	} // end of geo2d namespace
+
+} // end of vml namepsace
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Axis aligned bounding box
 
 namespace vml
@@ -13,18 +37,33 @@ namespace vml
 			// ------------------------------------------------------------------------
 
 			template<typename T>
-			static vml::geo2d::AABB<T> TransformAABB(const vml::geo2d::AABB<T>& aabb, const vml::math::vec2<T> &pos)
+			static vml::geo2d::AABB<T> TransformAABB(const vml::math::vec2<T> &bmin, const vml::math::vec2<T>& bmax,
+													 const vml::math::vec2<T> &pos,const vml::math::vec2<T>& scale )
 			{
-				return vml::geo2d::AABB<T>(aabb.Min.x + pos.x, aabb.Min.y + pos.y, aabb.Max.x + pos.x, aabb.Max.y + pos.y);
+				return vml::geo2d::AABB<T>(bmin.x*scale.x + pos.x, bmin.y*scale.y + pos.y, bmax.x*scale.x + pos.x, bmax.y*scale.y + pos.y);
 			}
 
-			// ------------------------------------------------------------------------
+		} // end of namespace metrics
+
+	} // end of geo2d namespace
+
+} // end of vml namepsace
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Ray
+
+namespace vml
+{
+	namespace geo2d
+	{
+		namespace transform
+		{
 
 			template<typename T>
-			static vml::geo2d::AABB<T> CentreAABB(const vml::geo2d::AABB<T>& aabb)
+			static [[nodiscard]] vml::geo2d::Ray<T> TransformRay(const vml::math::vec2<T>& pos, const float deg)
 			{
-				vml::math::vec2<T> c((aabb.Min.x + aabb.Max.x) * 0.5f, (aabb.Min.y + aabb.Max.y) * 0.5f);
-				return vml::geo2d::AABB<T>(aabb.Min.x - c.x, aabb.Min.y - c.y, aabb.Max.x - c.x, aabb.Max.y - c.y);
+				float rad = deg * vml::math::DEGTORAD;
+				return vml::geo2d::Ray<T>(pos, vml::math::vec2<T>(cos(rad), sin(rad)));
 			}
 
 		} // end of namespace metrics
@@ -46,22 +85,24 @@ namespace vml
 			// ------------------------------------------------------------------------
 
 			template <typename T>
-			static vml::geo2d::AOBB<T> TransformAOBB(const vml::geo2d::AOBB<T>& aobb, const vml::math::vec2<T> &pos, const vml::math::vec2<T>& scale, float deg)
+			static [[nodiscard]] vml::geo2d::AOBB<T> TransformAOBB(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2, const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
+				                                                   const vml::math::vec2<T> &pos, const vml::math::vec2<T>& scale, const float deg)
 			{
 				T rad = deg * vml::math::DEGTORAD;
+
 				T ccx = cos(rad);
 				T scx = sin(rad);
-				T cx = (aobb.P1.x + aobb.P2.x + aobb.P3.x + aobb.P4.x) * 0.25f;
-				T cy = (aobb.P1.y + aobb.P2.y + aobb.P3.y + aobb.P4.y) * 0.25f;
+				T cx = (p1.x + p2.x + p3.x + p4.x) * 0.25f;
+				T cy = (p1.y + p2.y + p3.y + p4.y) * 0.25f;
 
-				T r1x = aobb.P1.x - cx;
-				T r1y = aobb.P1.y - cy;
-				T r2x = aobb.P2.x - cx;
-				T r2y = aobb.P2.y - cy;
-				T r3x = aobb.P3.x - cx;
-				T r3y = aobb.P3.y - cy;
-				T r4x = aobb.P4.x - cx;
-				T r4y = aobb.P4.y - cy;
+				T r1x = p1.x - cx;
+				T r1y = p1.y - cy;
+				T r2x = p2.x - cx;
+				T r2y = p2.y - cy;
+				T r3x = p3.x - cx;
+				T r3y = p3.y - cy;
+				T r4x = p4.x - cx;
+				T r4y = p4.y - cy;
 
 				T s1x = r1x * scale.x;
 				T s1y = r1y * scale.y;
@@ -85,15 +126,6 @@ namespace vml
 				T wy4 = s4x * scx + s4y * ccx + pos.y;
 
 				return vml::geo2d::AOBB<T>(wx1, wy1, wx2, wy2, wx3, wy3, wx4, wy4);
-			}
-						
-			// ------------------------------------------------------------------------
-
-			template<typename T>
-			static vml::geo2d::AOBB<T> CentreAOBB(const vml::geo2d::AOBB<T>& aobb)
-			{
-				vml::math::vec2<T> c = (aobb.P1 + aobb.P2 + aobb.P3 + aobb.P4) * 0.25f;
-				return vml::geo2d::AOBB<T>(aobb.P1 -c, aobb.P2-c, aobb.P3-c, aobb.P4-c);
 			}
 						
 		} // end of namespace metrics

@@ -7,7 +7,7 @@
 //					
 //  Point			  X			 X 	 	  X  	  X  	     X  		  X	   
 // 
-//	Ray				  X 		 X	  	  X   	  X    		 X  
+//	Ray				  X 		 X	  	  X   	  X    		 X			  
 // 
 //	Line			  X          X		  X 	  X	  	     X  		    		   			  			 
 // 
@@ -15,7 +15,7 @@
 // 
 //	AABB			  X			 X 		  X       X			 X
 // 
-//	AOBB			  X
+//	AOBB			  X			
 // 
 // Polygon
 
@@ -164,7 +164,6 @@ namespace vml
 
 			/////////////////////////////////////////////////////////////////////////////
 			// minimum distance between lines
-			// TO DO : check when two lines intersects
 
 			template <typename T>
 			static [[nodiscard]] uint32_t ClosestPointBetweenLines(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& q1,
@@ -325,52 +324,32 @@ namespace vml
 			// minimum distance between ray and line
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointBetweenRayAndLine(const vml::math::vec2<T>& q, const vml::math::vec2<T>& u,
-																		const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
-																		vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-																		T& mindist,
-																		const T eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t ClosestPointFromRayToLine(const vml::math::vec2<T>& q, const vml::math::vec2<T>& dir,
+																	const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
+																	vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+																	T& mindist,
+																	const T eps = vml::math::EPSILON)
 			{
 				vml::math::vec2<T> r0, r1;
 				T num, denum;
 				T mindist0, mindist1;
-				T t, dp0, dp1;
+				T dp0, dp1;
 				T dx, dy;
 
 				// sets initial distance as maximum
 
 				mindist = FLT_MAX;
 
-				// compute line directions vector
-
-				dx = b.x - a.x;
-				dy = b.y - a.y;
-				denum = dx * dx + dy * dy;
-				if (denum > -eps && denum < eps)
-					denum = eps;
-				denum = 1 / sqrtf(denum);
-
-				vml::math::vec2<T> v(-dy * denum, dx * denum);
-
-				// the lines above equals to this line
-				// vml::math::vec2<T> v = vml::math::Normalize(vml::math::Ortho(b - a));
-
-				// comput denum for ray
-
-				denum = u.x * u.x + u.y * u.y;
-				if (denum > -eps && denum < eps)
-					denum = eps;
-
 				// project a line point on ray
 
-				num = (a.x - q.x) * u.y + (q.y - a.y) * u.x;
-				t = num / denum;
-				r0.x = a.x - t * u.y;
-				r0.y = a.y + t * u.x;
+				num = (a.x - q.x) * dir.x + (a.y - q.y) * dir.y;
+				r0.x = q.x + num * dir.x;
+				r0.y = q.y + num * dir.y;
 				dx = r0.x - a.x;
 				dy = r0.y - a.y;
 				mindist0 = dx * dx + dy * dy;
-				dp0 = dy * u.x - dx * u.y;
+				dp0 = dy * dir.x - dx * dir.y;
+
 				if (mindist0 < mindist)
 				{
 					mindist = mindist0;
@@ -378,35 +357,39 @@ namespace vml
 					closestq = a;
 				}
 
-				// project b line point on ray
-
-				num = (q.x - b.x) * (-u.y) + (q.y - b.y) * (u.x);
-				t = num / denum;
-				r1.x = b.x - t * u.y;
-				r1.y = b.y + t * u.x;
+				num = (b.x - q.x) * dir.x + (b.y - q.y) * dir.y;
+				r1.x = q.x + num * dir.x;
+				r1.y = q.y + num * dir.y;
 				dx = r1.x - b.x;
 				dy = r1.y - b.y;
 				mindist1 = dx * dx + dy * dy;
-				dp1 = dy * u.x - dx * u.y;
+				dp1 = dy * dir.x - dx * dir.y;
+
 				if (mindist1 < mindist)
 				{
 					mindist = mindist1;
 					closestp = r1;
 					closestq = b;
 				}
+
 				// check if line crosses the ray
 
 				if ((dp0 > -eps || dp1 < eps) && (dp0 < eps || dp1 > -eps))
 					return vml::geo2d::Results::DOES_NOT_INTERSECT;
 
-				num = (a.x - q.x) * u.y - (a.y - q.y) * u.x;
-				denum = u.x * v.x + u.y * v.y;
+				// compute intersection
+
+				dx = b.x - a.x;
+				dy = b.y - a.y;
+				num = (a.y - q.y) * dx  +( q.x - a.x) * dy;
+				denum = dx * dir.y -dir.x * dy;
 				if (denum > -eps && denum < eps)
 					denum = eps;
-				t = num / denum;
-				closestp.x = a.x - t * v.y;
-				closestp.y = a.y + t * v.x;
+				float t = num / denum;
+				closestp.x = q.x + t * dir.x;
+				closestp.y = q.y + t * dir.y;
 				mindist = 0;
+
 				return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT;
 			}
 
@@ -628,14 +611,14 @@ namespace vml
 					if (numa < 0 && numb < 0)
 					{
 						// border conditions for left side of the line
-						//closestp = closestp;
-						return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT;
+						// border point on circle is closestp
+						return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT_P;
 					}
 					else if (numa > 0 && numb > 0)
 					{
 						// border conditions for right side of the line
-						closestp = closestq;
-						return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT;
+						// border point on circle is closestq
+						return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT_Q;
 					}
 					else
 					{
@@ -659,16 +642,15 @@ namespace vml
 			// normal 'n' must be normalized
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointFromRayToCircle(const vml::math::vec2<T>& linep, const vml::math::vec2<T>& n,
+			static [[nodiscard]] uint32_t ClosestPointFromRayToCircle(const vml::math::vec2<T>& linep, const vml::math::vec2<T>& dir,
 																	  const vml::math::vec2<T>& p, const float r,
 																	  vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
 																      T &mindist,
 																	  const T eps = vml::math::EPSILON)
 			{
-				vml::math::vec2<T> pq = vml::math::vec2<T>(-n.y,n.x);
 				vml::math::vec2<T> ap = p - linep;
-				T b = pq.x * ap.x + pq.y * ap.y;
-				closestp = linep + b * pq;
+				T b = dir.x * ap.x + dir.y * ap.y;
+				closestp = linep + b * dir;
 				vml::math::vec2<T> dist = closestp - p;
 				T denum = sqrtf(dist.x * dist.x + dist.y * dist.y);
 				if (denum > -eps && denum < eps)
@@ -683,8 +665,8 @@ namespace vml
 					T delta = sqrtf(b * b - c);
 					T u = b + delta;
 					T v = b - delta;
-					closestp = linep + u * pq;
-					closestq = linep + v * pq;
+					closestp = linep + u * dir;
+					closestq = linep + v * dir;
 					mindist = 0;
 
 					return vml::geo2d::Results::DOES_INTERSECT_TWO_POINT;
@@ -738,6 +720,89 @@ namespace vml
 				if (d3 < dmax) { dmax = d3; closestp = p3; closestq = q3; }
 				vml::math::vec2<T> d = closestq-closestp;
 				mindist = sqrtf(d.x * d.x + d.y * d.y);
+				return vml::geo2d::Results::DOES_NOT_INTERSECT;
+			}
+
+			/////////////////////////////////////////////////////////////////////////////
+			// Return the shortest distance between a line and an axis alinged bounding box
+
+			template <typename T>
+			static [[nodiscard]] uint32_t ClosestPointFromAABBToRay(const vml::math::vec2<T>& aabbMin, const vml::math::vec2<T>& aabbMax,
+																	const vml::math::vec2<T>& linep, const vml::math::vec2<T>& dir,
+																	vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+																	T& mindist,
+																	const T eps = vml::math::EPSILON)
+			{
+				// check if box and line intersect
+				uint32_t result = vml::geo2d::intersections::AABBOXVsRay(aabbMin, aabbMax, linep, dir, closestp, closestq);
+				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT)
+					return result;
+
+				// if not, compute closest point from line to each side of the box
+				// cache box vertices
+
+				vml::math::vec2<T> b0 = vml::math::vec2<T>(aabbMin.x, aabbMin.y);
+				vml::math::vec2<T> b1 = vml::math::vec2<T>(aabbMax.x, aabbMin.y);
+				vml::math::vec2<T> b2 = vml::math::vec2<T>(aabbMax.x, aabbMax.y);
+				vml::math::vec2<T> b3 = vml::math::vec2<T>(aabbMin.x, aabbMax.y);
+
+				vml::math::vec2<T> r, d;
+				float num, dist;
+
+				mindist = FLT_MAX;
+
+				// distance from b0 to ray
+
+				num = (b0.x - linep.x) * dir.x + (b0.y - linep.y) * dir.y;
+				r = linep + num * dir;
+				d = r - b0;
+				dist = d.x * d.x + d.y * d.y;
+				if (dist < mindist) {
+					mindist = dist;
+					closestp = b0;
+					closestq = r;
+				}
+
+				// distance from b1 to ray
+
+				num = (b1.x - linep.x) * dir.x + (b1.y - linep.y) * dir.y;
+				r = linep + num * dir;
+				d = r - b1;
+				dist = d.x * d.x + d.y * d.y;
+				if (dist < mindist) {
+					mindist = dist;
+					closestp = b1;
+					closestq = r;
+				}
+
+				// distance from b2 to ray
+
+				num = (b2.x - linep.x) * dir.x + (b2.y - linep.y) * dir.y;
+				r = linep + num * dir;
+				d = r - b2;
+				dist = d.x * d.x + d.y * d.y;
+				if (dist < mindist) {
+					mindist = dist;
+					closestp = b2;
+					closestq = r;
+				}
+
+				// distance from b3 to ray
+
+				num = (b3.x - linep.x) * dir.x + (b3.y - linep.y) * dir.y;
+				r = linep + num * dir;
+				d = r - b3;
+				dist = d.x * d.x + d.y * d.y;
+				if (dist < mindist) {
+					mindist = dist;
+					closestp = b3;
+					closestq = r;
+				}
+
+				// compoute distance
+
+				mindist = sqrtf(mindist);
+
 				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
 
@@ -980,47 +1045,6 @@ namespace vml
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
-			// Return the shortest distance between a line and an axis alinged bounding box
-
-			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointFromAABBToRay(const vml::math::vec2<T>& aabbMin, const vml::math::vec2<T>& aabbMax,
-													  			    const vml::math::vec2<T>& linep, const vml::math::vec2<T>& dir,
-																    vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-																    T& mindist,
-																	const T eps = vml::math::EPSILON)
-			{
-				// check if box and line intersect
-				uint32_t result = vml::geo2d::intersections::AABBOXVsRay(aabbMin, aabbMax, linep, dir, closestp, closestq);
-				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT)
-					return result;
-				// if not, compute closest point from line to each side of the box
-				// cache box vertices
-				vml::math::vec2<T> b0 = vml::math::vec2<T>(aabbMin.x, aabbMin.y);
-				vml::math::vec2<T> b1 = vml::math::vec2<T>(aabbMax.x, aabbMin.y);
-				vml::math::vec2<T> b2 = vml::math::vec2<T>(aabbMax.x, aabbMax.y);
-				vml::math::vec2<T> b3 = vml::math::vec2<T>(aabbMin.x, aabbMax.y);
-				vml::math::vec2<T> p0, q0, p1, q1, p2, q2, p3, q3;
-				T d0 = FLT_MAX;
-				T d1 = FLT_MAX;
-				T d2 = FLT_MAX;
-				T d3 = FLT_MAX;
-				// compute distance from each side of the box to line
-				ClosestPointBetweenRayAndLine(linep, dir, b0, b1, p0, q0 ,d0 ,eps);
-				ClosestPointBetweenRayAndLine(linep, dir, b1, b2, p1, q1, d1, eps);
-				ClosestPointBetweenRayAndLine(linep, dir, b2, b3, p2, q2, d2, eps);
-				ClosestPointBetweenRayAndLine(linep, dir, b3, b0, p3, q3, d3, eps);
-				// find the closest point
-				float dmax = FLT_MAX;
-				if (d0 < dmax) { dmax = d0; closestp = p0; closestq = q0; }
-				if (d1 < dmax) { dmax = d1; closestp = p1; closestq = q1; }
-				if (d2 < dmax) { dmax = d2; closestp = p2; closestq = q2; }
-				if (d3 < dmax) { dmax = d3; closestp = p3; closestq = q3; }
-				vml::math::vec2<T> d = closestq - closestp;
-				mindist = sqrtf(d.x * d.x + d.y * d.y);
-				return vml::geo2d::Results::DOES_NOT_INTERSECT;
-			}
-
-			/////////////////////////////////////////////////////////////////////////////
 			// Return the shortest distance between an aabbox and another aabbx
 
 			template <typename T>
@@ -1136,7 +1160,7 @@ namespace vml
 				// u and v are respectively the axes center 
 				// in the counding box center
 
-				// computer inverse matricx
+				// computer inverse matrix
 				// so that the bounding box is centered at orgin
 				// with the rotational part aligned to an
 				// orthonormal base so that the oriented 

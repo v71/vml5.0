@@ -26,7 +26,9 @@ namespace vml
 			static const uint32_t DOES_NOT_INTERSECT	    =  5;
 			static const uint32_t COLLINEAR				    =  6;
 			static const uint32_t PARALLEL				    =  7;
-			
+			static const uint32_t DOES_INTERSECT_ONE_POINT_P = 8;
+			static const uint32_t DOES_INTERSECT_ONE_POINT_Q = 9;
+
 			// containment flags
 
 			static const uint32_t INSIDE					= 16;

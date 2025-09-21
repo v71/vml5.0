@@ -95,10 +95,10 @@ namespace vml
 			// -----------------------------------------------------
 			// ctor / dtor
 
-			AABB() :Min(0, 0), Max(0, 0)
+			AABB() : Min(0, 0), Max(0, 0)
 			{}
 
-			AABB(const vml::math::vec2<T>& min, const vml::math::vec2<T>& max) :Min(min), Max(max)
+			AABB(const vml::math::vec2<T>& min, const vml::math::vec2<T>& max) : Min(min), Max(max)
 			{
 				if (Max.x < Min.x) { T t = Min.x; Min.x = Max.x; Max.x = t; }
 				if (Max.y < Min.y) { T t = Min.y; Min.y = Max.y; Max.y = t; }
@@ -169,7 +169,10 @@ namespace vml
 			// this constructor accept 4 values, but you will ahve to make sure they are ordered
 			// width is compute as the lenght of p2-p1 , height as the lenght of p4-p1
 
-			AOBB(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2, const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4) : P1(p1), P2(p2), P3(p3), P4(p4)
+			AOBB(const vml::math::vec2<T>& p1, 
+				 const vml::math::vec2<T>& p2, 
+				 const vml::math::vec2<T>& p3, 
+				 const vml::math::vec2<T>& p4) : P1(p1), P2(p2), P3(p3), P4(p4)
 			{
 			}
 
