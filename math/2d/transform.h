@@ -1,6 +1,42 @@
 #pragma once
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Line
+
+namespace vml
+{
+	namespace geo2d
+	{
+		namespace transform
+		{
+
+			// ------------------------------------------------------------------------
+			// transform a line
+
+			template<typename T>
+			static vml::geo2d::Line<T> TransformLine(const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,const vml::math::vec2<T>& pos, const T deg)
+			{
+				T rad = deg * T(vml::math::DEGTORAD);
+				vml::math::vec2<T> c = (a + b) * (T)0.5;
+				vml::math::vec2<T> ra, rb, ca, cb;
+				T sx = sin(rad);
+				T cx = cos(rad);
+				ca = a - c;
+				cb = b - c;
+				ra.x = ca.x * cx - ca.y * sx + c.x + pos.x;
+				ra.y = ca.x * sx + ca.y * cx + c.y + pos.y;
+				rb.x = cb.x * cx - cb.y * sx + c.x + pos.x;
+				rb.y = cb.x * sx + cb.y * cx + c.y + pos.y;
+				return vml::geo2d::Line<T>(ra,rb);
+			}
+
+		} // end of namespace metrics
+
+	} // end of geo2d namespace
+
+} // end of vml namepsace
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Circle
 
 namespace vml
@@ -11,6 +47,7 @@ namespace vml
 		{
 
 			// ------------------------------------------------------------------------
+			// transform a circle
 
 			template<typename T>
 			static vml::geo2d::Circle<T> TransformCircle(const vml::math::vec2<T>& pos, const float radius)
@@ -60,9 +97,9 @@ namespace vml
 		{
 
 			template<typename T>
-			static [[nodiscard]] vml::geo2d::Ray<T> TransformRay(const vml::math::vec2<T>& pos, const float deg)
+			static [[nodiscard]] vml::geo2d::Ray<T> TransformRay(const vml::math::vec2<T>& pos, const T deg)
 			{
-				float rad = deg * vml::math::DEGTORAD;
+				T rad = deg * T(vml::math::DEGTORAD);
 				return vml::geo2d::Ray<T>(pos, vml::math::vec2<T>(cos(rad), sin(rad)));
 			}
 
@@ -86,9 +123,9 @@ namespace vml
 
 			template <typename T>
 			static [[nodiscard]] vml::geo2d::AOBB<T> TransformAOBB(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2, const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
-				                                                   const vml::math::vec2<T> &pos, const vml::math::vec2<T>& scale, const float deg)
+				                                                   const vml::math::vec2<T> &pos, const vml::math::vec2<T>& scale, const T deg)
 			{
-				T rad = deg * vml::math::DEGTORAD;
+				T rad = deg * T(vml::math::DEGTORAD);
 
 				T ccx = cos(rad);
 				T scx = sin(rad);

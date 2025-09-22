@@ -1,9 +1,6 @@
 #pragma once
 
 ////////////////////////////////////////////////////////////////////////////////////
-// 2d predicates
-
-////////////////////////////////////////////////////////////////////////////////////
 // Line
 
 namespace vml
@@ -45,8 +42,25 @@ namespace vml
 			// ctor / dtor
 
 			Ray() : P(vml::math::vec2<T>(0, 0)), Dir(vml::math::vec2<T>(0, 0)) {}
-			Ray(const vml::math::vec2<T>& p, const vml::math::vec2<T>& dir) : P(p), Dir(dir) {}
-			Ray(const T px, const T py, const T dx, const T dy) : P(px, py), Dir(dx, dy) {}
+			Ray(const vml::math::vec2<T>& p, const vml::math::vec2<T>& dir) : P(p), Dir(dir) 
+			{
+				T denum = Dir.x * Dir.x + Dir.y * Dir.y;
+				if (denum > -(T)vml::math::EPSILON && denum < (T)vml::math::EPSILON)
+					denum = (T)vml::math::EPSILON;
+				denum = (T)1 / sqrtf(denum);
+				Dir.x *= denum;
+				Dir.y *= denum;
+			}
+			
+			Ray(const T px, const T py, const T dirx, const T diry) : P(px, py), Dir(dirx, diry) 
+			{
+				T denum = Dir.x * Dir.x + Dir.y * Dir.y;
+				if (denum > -(T)vml::math::EPSILON && denum < (T)vml::math::EPSILON)
+					denum = (T)vml::math::EPSILON;
+				denum = (T)1 / sqrtf(denum);
+				Dir.x *= denum;
+				Dir.y *= denum;
+			}
 		};
 
 	} // end of geo2d namespace

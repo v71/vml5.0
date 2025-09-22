@@ -20,14 +20,14 @@ namespace vml
 
 			// intersections flags
 
-			static const uint32_t DOES_INTERSECT 		    =  2;
-			static const uint32_t DOES_INTERSECT_ONE_POINT  =  3;
-			static const uint32_t DOES_INTERSECT_TWO_POINT  =  4;
-			static const uint32_t DOES_NOT_INTERSECT	    =  5;
-			static const uint32_t COLLINEAR				    =  6;
-			static const uint32_t PARALLEL				    =  7;
-			static const uint32_t DOES_INTERSECT_ONE_POINT_P = 8;
-			static const uint32_t DOES_INTERSECT_ONE_POINT_Q = 9;
+			static const uint32_t DOES_INTERSECT 		    =   2;
+			static const uint32_t DOES_INTERSECT_ONE_POINT  =   3;
+			static const uint32_t DOES_INTERSECT_TWO_POINT  =   4;
+			static const uint32_t DOES_NOT_INTERSECT	    =   5;
+			static const uint32_t COLLINEAR				    =   6;
+			static const uint32_t PARALLEL				    =   7;
+			static const uint32_t DOES_INTERSECT_ONE_POINT_P =  8;
+			static const uint32_t DOES_INTERSECT_ONE_POINT_Q =  9;
 
 			// containment flags
 
