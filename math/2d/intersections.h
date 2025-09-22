@@ -147,7 +147,7 @@ namespace vml
 				// inclusion test for points to 
 				// fail due to floating points accuracy
 
-				float neps = 1.0f + vml::math::EPSILON;
+				float neps = 1.0f + eps;
 				vml::math::vec2<T> c = (bmin + bmax) * 0.5f;
 				vml::math::vec2<T> scaled_bmin = (bmin - c) * neps + c;
 				vml::math::vec2<T> scaled_bmax = (bmax - c) * neps + c;

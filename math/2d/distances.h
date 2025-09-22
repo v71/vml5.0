@@ -791,40 +791,45 @@ namespace vml
 			// Return the shortest distance between a line and an axis alinged bounding box
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointFromAABBToLine(const vml::math::vec2<T>& aabbMin, const vml::math::vec2<T>& aabbMax, 
-																     const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
-																     vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-																     T& mindist,
+			static [[nodiscard]] uint32_t ClosestPointFromAABBToLine(const vml::math::vec2<T>& aabbMin, const vml::math::vec2<T>& aabbMax,
+																	 const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
+																	 vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+																	 T& mindist,
 																	 const T eps = vml::math::EPSILON)
 			{
 				// check if box and line intersect
 				uint32_t result = vml::geo2d::intersections::AABBOXVsLine(aabbMin, aabbMax, linep, lineq, closestp, closestq);
-				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT)
+				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT) {
+					mindist = (T)0;
 					return result;
+				}
+
 				// if not, compute closest point from line to each side of the box
 				// cache box vertices
+
 				vml::math::vec2<T> b0 = vml::math::vec2<T>(aabbMin.x, aabbMin.y);
 				vml::math::vec2<T> b1 = vml::math::vec2<T>(aabbMax.x, aabbMin.y);
 				vml::math::vec2<T> b2 = vml::math::vec2<T>(aabbMax.x, aabbMax.y);
 				vml::math::vec2<T> b3 = vml::math::vec2<T>(aabbMin.x, aabbMax.y);
-				vml::math::vec2<T> p0, q0, p1, q1, p2, q2,p3, q3;
+				vml::math::vec2<T> p0, q0, p1, q1, p2, q2, p3, q3;
 				T d0 = FLT_MAX;
 				T d1 = FLT_MAX;
 				T d2 = FLT_MAX;
 				T d3 = FLT_MAX;
 				// compute distance from each side of the box to line
-				ClosestPointBetweenLines(linep, lineq, b0, b1, p0, q0, d0,eps);
-				ClosestPointBetweenLines(linep, lineq, b1, b2, p1, q1, d1,eps);
-				ClosestPointBetweenLines(linep, lineq, b2, b3, p2, q2, d2,eps);
-				ClosestPointBetweenLines(linep, lineq, b3, b0, p3, q3, d3,eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(linep, lineq, b0, b1, p0, q0, d0, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(linep, lineq, b1, b2, p1, q1, d1, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(linep, lineq, b2, b3, p2, q2, d2, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(linep, lineq, b3, b0, p3, q3, d3, eps);
 				// find the closest point
 				T dmax = FLT_MAX;
 				if (d0 < dmax) { dmax = d0; closestp = p0; closestq = q0; }
 				if (d1 < dmax) { dmax = d1; closestp = p1; closestq = q1; }
 				if (d2 < dmax) { dmax = d2; closestp = p2; closestq = q2; }
 				if (d3 < dmax) { dmax = d3; closestp = p3; closestq = q3; }
-				vml::math::vec2<T> d = closestq-closestp;
+				vml::math::vec2<T> d = closestq - closestp;
 				mindist = sqrtf(d.x * d.x + d.y * d.y);
+
 				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
 
@@ -839,9 +844,12 @@ namespace vml
 																	const T eps = vml::math::EPSILON)
 			{
 				// check if box and line intersect
+				
 				uint32_t result = vml::geo2d::intersections::AABBOXVsRay(aabbMin, aabbMax, linep, dir, closestp, closestq);
-				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT)
+				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT) {
+					mindist = (T)0;
 					return result;
+				}
 
 				// if not, compute closest point from line to each side of the box
 				// cache box vertices
@@ -911,6 +919,7 @@ namespace vml
 				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
 
+			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Given point p, return the point q on or in AABB b whichis closest to p
 			// For each coordinate axis, if the point coordinate value is
@@ -1322,6 +1331,7 @@ namespace vml
 				
 				return vml::geo2d::Results::INSIDE;
 			}
+			*/
 			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Return the shortest distance between a line and an axis alinged bounding box
