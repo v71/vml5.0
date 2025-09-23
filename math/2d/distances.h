@@ -77,8 +77,7 @@ namespace vml
 			template <typename T>
 			static [[nodiscard]] T SquaredDistanceBetweenPoints(const vml::math::vec2<T>& p,const vml::math::vec2<T>& q)
 			{
-				vml::math::vec2f d = q - p;
-				return d.x * d.x + d.y * d.y;
+				return vml::math::SquaredLength(q - p);
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
@@ -87,8 +86,7 @@ namespace vml
 			template <typename T>
 			static [[nodiscard]] T DistanceBetweenPoints(const vml::math::vec2<T>& p, const vml::math::vec2<T>& q)
 			{
-				vml::math::vec2f d = q - p;
-				return sqrtf(d.x * d.x + d.y * d.y);
+				return vml::math::Length(q - p);
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
@@ -104,10 +102,9 @@ namespace vml
 			// test if 2 2d points are whitin a radius
 
 			template <typename T>
-			static [[nodiscard]] bool ArePointsInRange(const vml::math::vec2<T> &p, const vml::math::vec2<T> &q, const float radius, const T eps = vml::math::EPSILON)
+			static [[nodiscard]] bool ArePointsInRange(const vml::math::vec2<T> &p, const vml::math::vec2<T> &q, const T radius, const T eps = vml::math::EPSILON)
 			{
-				vml::math::vec2f d = q - p;
-				return d.x * d.x + d.y * d.y - radius * radius < eps;
+				return vml::math::SquaredLength(q-p) - radius * radius < eps;
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
@@ -116,8 +113,7 @@ namespace vml
 			template <typename T>
 			static [[nodiscard]] bool ArePointsEquals(const vml::math::vec2<T> &p, const vml::math::vec2<T> &q, const T eps = vml::math::EPSILON)
 			{
-				vml::math::vec2f d = q - p;
-				return d.x * d.x + d.y * d.y < eps;
+				return vml::math::SquaredLength(p-q) < eps;
 			}
 
 		} // end of distances
@@ -140,8 +136,7 @@ namespace vml
 			template <typename T>
 			static [[nodiscard]] T SignedDistanceFromCircleToPoint(const vml::math::vec2<T>& c, const T r, const vml::math::vec2<T>& p)
 			{
-				vml::math::vec2f d = c - p;
-				return sqrtf(d.x * d.x + d.y * d.y) - r;
+				return vml::math::Length(c-p) - r;
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
@@ -151,7 +146,7 @@ namespace vml
 			template <typename T>
 			static [[nodiscard]] T SignedDistanceFromPointToRay(const vml::math::vec2<T>& p, const vml::math::vec2<T>& p0, const vml::math::vec2<T>& normal)
 			{
-				return (p0.x - p.x) * normal.x + (p0.y - p.y) * normal.y;
+				return vml::math::Dot(p0 - p, normal);
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
@@ -160,8 +155,7 @@ namespace vml
 			template <typename T>
 			static [[nodiscard]] T SignedDistanceFromCircleToCircle(const vml::math::vec2<T>& ca, const T ra, const vml::math::vec2<T>& cb, const T rb)
 			{
-				vml::math::vec2f d = cb - ca;
-				return sqrtf( d.x * d.x + d.y * d.y ) - (ra+rb);
+				return vml::math::Length(cb-ca) - (ra+rb);
 			}
 
 		} // end of distances
@@ -194,7 +188,7 @@ namespace vml
 
 				T a = d1.x * d1.x + d1.y * d1.y; // Squared length of segment S1, always nonnegative
 				T e = d2.x * d2.x + d2.y * d2.y; // Squared length of segment S2, always nonnegative
-				T f = d2.x * r.x + d2.y * r.y;
+				T f = d2.x *  r.x + d2.y *  r.y;
 
 				T s, t;
 
@@ -221,7 +215,7 @@ namespace vml
 				}
 				else
 				{
-					float c = d1.x*r.x + d1.y * r.y;
+					T c = d1.x * r.x + d1.y * r.y;
 
 					if (e < eps)
 					{
@@ -236,8 +230,8 @@ namespace vml
 					{
 						// The general nondegenerate case starts here
 
-						float b = d1.x * d2.x + d1.y * d2.y;
-						float denom = a * e - b * b; // Always nonnegative
+						T b = d1.x * d2.x + d1.y * d2.y;
+						T denom = a * e - b * b; // Always nonnegative
 
 						// If segments not parallel, compute closest point on L1 to L2 and
 						// clamp to segment S1. Else pick arbitrary s (here 0)
@@ -286,11 +280,11 @@ namespace vml
 				closestp = p1 + d1 * s;
 				closestq = p2 + d2 * t;
 				// minimum distance
-				vml::math::vec2<T> dist = closestq - closestp;
-				mindist = dist.x * dist.x + dist.y * dist.y;
 				if (mindist > eps) {
-					mindist = sqrtf(mindist);
-					return vml::geo2d::Results::DOES_NOT_INTERSECT; }
+					vml::math::vec2<T> dist = closestq - closestp;
+					mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
+					return vml::geo2d::Results::DOES_NOT_INTERSECT; 
+				}
 				mindist = 0;
 				return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT; 
 			}
@@ -324,7 +318,6 @@ namespace vml
 					closestq = q;
 					vml::math::vec2<T> d = closestq - closestp;
 					mindist = sqrtf(d.x * d.x + d.y * d.y);
-
 					return vml::geo2d::Results::DOES_NOT_INTERSECT;
 				}
 
@@ -342,11 +335,11 @@ namespace vml
 			// minimum distance between ray and line
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointFromRayToLine(const vml::math::vec2<T>& q, const vml::math::vec2<T>& dir,
-																	const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
-																	vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-																	T& mindist,
-																	const T eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t ClosestPointBetweenRayAndLine(const vml::math::vec2<T>& q, const vml::math::vec2<T>& dir,
+																		const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
+																		vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+																		T& mindist,
+																		const T eps = vml::math::EPSILON)
 			{
 				vml::math::vec2<T> r0, r1;
 				T num, denum;
@@ -405,7 +398,7 @@ namespace vml
 				denum = dx * dir.y -dir.x * dy;
 				if (denum > -eps && denum < eps)
 					denum = eps;
-				float t = num / denum;
+				T t = num / denum;
 				closestp.x = q.x + t * dir.x;
 				closestp.y = q.y + t * dir.y;
 				mindist = 0;
@@ -514,7 +507,7 @@ namespace vml
 
 			template <typename T>
 			static [[nodiscard]] uint32_t ClosestPointFromPointToCircle(const vml::math::vec2<T>& p,
-																		const vml::math::vec2<T>& c, const float r,
+																		const vml::math::vec2<T>& c, const T r,
 																		vml::math::vec2<T>& closestp,
 																		T& mindist,
 																	    const T eps = vml::math::EPSILON)
@@ -533,8 +526,8 @@ namespace vml
 			// Given point p, return the point q in Circle b which is closest to p
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointFromCircleToCircle(const vml::math::vec2<T>& c0, const float r0,
-																	     const vml::math::vec2<T>& c1, const float r1,
+			static [[nodiscard]] uint32_t ClosestPointFromCircleToCircle(const vml::math::vec2<T>& c0, const T r0,
+																	     const vml::math::vec2<T>& c1, const T r1,
 																		 vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
 																		 T& mindist,
 																		 const T eps = vml::math::EPSILON)
@@ -565,7 +558,7 @@ namespace vml
 					closestq = c1 + r1 * dir;
 					vml::math::vec2<T> d = closestq - closestp;
 					mindist = sqrt(d.y * d.y + d.x * d.x);
-					float diff = denum - (r0 - r1);
+					T diff = denum - (r0 - r1);
 					if (diff > -eps)
 						return vml::geo2d::Results::FIRST_INSIDE_SECOND;
 					else if (diff < eps)
@@ -671,7 +664,7 @@ namespace vml
 				{
 					pq.x = p.x - closestp.x;
 					pq.y = p.y - closestp.y;
-					float denum = pq.x * pq.x + pq.y * pq.y;
+					T denum = pq.x * pq.x + pq.y * pq.y;
 					if (denum > -eps && denum < eps)
 						denum = eps;
 					denum = (T)1 / sqrtf(denum);
@@ -688,7 +681,7 @@ namespace vml
 				{
 					pq.x = p.x - linep.x;
 					pq.y = p.y - linep.y;
-					float denum = pq.x * pq.x + pq.y * pq.y;
+					T denum = pq.x * pq.x + pq.y * pq.y;
 					if (denum > -eps && denum < eps)
 						denum = eps;
 					denum = (T)1 / sqrtf(denum);
@@ -706,7 +699,7 @@ namespace vml
 				{
 					pq.x = p.x - lineq.x;
 					pq.y = p.y - lineq.y;
-					float denum = pq.x * pq.x + pq.y * pq.y;
+					T denum = pq.x * pq.x + pq.y * pq.y;
 					if (denum > -eps && denum < eps)
 						denum = eps;
 					denum = (T)1 / sqrtf(denum);
@@ -844,82 +837,40 @@ namespace vml
 																	const T eps = vml::math::EPSILON)
 			{
 				// check if box and line intersect
-				
 				uint32_t result = vml::geo2d::intersections::AABBOXVsRay(aabbMin, aabbMax, linep, dir, closestp, closestq);
-				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT) {
+				if (result != vml::geo2d::Results::DOES_NOT_INTERSECT){
 					mindist = (T)0;
 					return result;
 				}
-
+		
 				// if not, compute closest point from line to each side of the box
 				// cache box vertices
-
 				vml::math::vec2<T> b0 = vml::math::vec2<T>(aabbMin.x, aabbMin.y);
 				vml::math::vec2<T> b1 = vml::math::vec2<T>(aabbMax.x, aabbMin.y);
 				vml::math::vec2<T> b2 = vml::math::vec2<T>(aabbMax.x, aabbMax.y);
 				vml::math::vec2<T> b3 = vml::math::vec2<T>(aabbMin.x, aabbMax.y);
-
-				vml::math::vec2<T> r, d;
-				float num, dist;
-
-				mindist = FLT_MAX;
-
-				// distance from b0 to ray
-
-				num = (b0.x - linep.x) * dir.x + (b0.y - linep.y) * dir.y;
-				r = linep + num * dir;
-				d = r - b0;
-				dist = d.x * d.x + d.y * d.y;
-				if (dist < mindist) {
-					mindist = dist;
-					closestp = b0;
-					closestq = r;
-				}
-
-				// distance from b1 to ray
-
-				num = (b1.x - linep.x) * dir.x + (b1.y - linep.y) * dir.y;
-				r = linep + num * dir;
-				d = r - b1;
-				dist = d.x * d.x + d.y * d.y;
-				if (dist < mindist) {
-					mindist = dist;
-					closestp = b1;
-					closestq = r;
-				}
-
-				// distance from b2 to ray
-
-				num = (b2.x - linep.x) * dir.x + (b2.y - linep.y) * dir.y;
-				r = linep + num * dir;
-				d = r - b2;
-				dist = d.x * d.x + d.y * d.y;
-				if (dist < mindist) {
-					mindist = dist;
-					closestp = b2;
-					closestq = r;
-				}
-
-				// distance from b3 to ray
-
-				num = (b3.x - linep.x) * dir.x + (b3.y - linep.y) * dir.y;
-				r = linep + num * dir;
-				d = r - b3;
-				dist = d.x * d.x + d.y * d.y;
-				if (dist < mindist) {
-					mindist = dist;
-					closestp = b3;
-					closestq = r;
-				}
-
-				// compoute distance
-
-				mindist = sqrtf(mindist);
-
+				vml::math::vec2<T> p0, q0, p1, q1, p2, q2, p3, q3;
+				T d0 = FLT_MAX;
+				T d1 = FLT_MAX;
+				T d2 = FLT_MAX;
+				T d3 = FLT_MAX;
+				// compute distance from each side of the box to line
+				ClosestPointBetweenRayAndLine(linep, dir, b0, b1, p0, q0, d0, eps);
+				ClosestPointBetweenRayAndLine(linep, dir, b1, b2, p1, q1, d1, eps);
+				ClosestPointBetweenRayAndLine(linep, dir, b2, b3, p2, q2, d2, eps);
+				ClosestPointBetweenRayAndLine(linep, dir, b3, b0, p3, q3, d3, eps);
+				// find the closest point
+				float dmax = FLT_MAX;
+				if (d0 < dmax) { dmax = d0; closestp = p0; closestq = q0; }
+				if (d1 < dmax) { dmax = d1; closestp = p1; closestq = q1; }
+				if (d2 < dmax) { dmax = d2; closestp = p2; closestq = q2; }
+				if (d3 < dmax) { dmax = d3; closestp = p3; closestq = q3; }
+				vml::math::vec2<T> d = closestq - closestp;
+				mindist = sqrtf(d.x * d.x + d.y * d.y);
+				
 				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
 
-			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Given point p, return the point q on or in AABB b whichis closest to p
 			// For each coordinate axis, if the point coordinate value is
@@ -947,6 +898,7 @@ namespace vml
 				return vml::geo2d::Results::INSIDE;
 			}
 
+			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Given point p, return the point q on or in AABB b whichis closest to p
 			// For each coordinate axis, if the point coordinate value is
@@ -954,7 +906,7 @@ namespace vml
 
 			template <typename T>
 			static [[nodiscard]] uint32_t ClosestPointFromAABBoxToCircle(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
-																		 const vml::math::vec2<T>& p, const float r,
+																		 const vml::math::vec2<T>& p, const T r,
 																		 std::vector <vml::math::vec2<T>>& points,
 																		 T& mindist,
 																		 const T eps = vml::math::EPSILON)
@@ -1131,7 +1083,7 @@ namespace vml
 				if (closestp.y < bmin.y) closestp.y = bmin.y;
 				if (closestp.y > bmax.y) closestp.y = bmax.y;
 				vml::math::vec2<T> dist = closestp - p;
-				float denum = sqrtf(dist.x * dist.x + dist.y * dist.y);
+				T denum = sqrtf(dist.x * dist.x + dist.y * dist.y);
 				if (denum > -eps && denum < eps)
 					denum = vml::math::EPSILON;
 				dist.x *= denum;
@@ -1145,7 +1097,7 @@ namespace vml
 				if (denum > -eps && denum < eps)
 					denum = vml::math::EPSILON;
 				denum = 1.0f / denum;
-				float t = r * denum;
+				T t = r * denum;
 				closestq = p + t * dist;
 
 				// compute minimum distance
@@ -1239,12 +1191,12 @@ namespace vml
 
 				// find shortest vector
 
-				float adx = closest_a_end.x - closest_a_start.x;
-				float ady = closest_a_end.y - closest_a_start.y;
-				float bdx = closest_b_end.x - closest_b_start.x;
-				float bdy = closest_b_end.y - closest_b_start.y;
-				float ad0 = adx * adx + ady * ady;
-				float bd0 = bdx * bdx + bdy * bdy;
+				T adx = closest_a_end.x - closest_a_start.x;
+				T ady = closest_a_end.y - closest_a_start.y;
+				T bdx = closest_b_end.x - closest_b_start.x;
+				T bdy = closest_b_end.y - closest_b_start.y;
+				T ad0 = adx * adx + ady * ady;
+				T bd0 = bdx * bdx + bdy * bdy;
 
 				closestp = closest_a_start;
 				closestq = closest_a_end;
