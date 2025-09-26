@@ -486,7 +486,7 @@ namespace fa2040
 					{
 						Roll = 0.0f;
 
-						if (DampingIsOver)
+					//	if (DampingIsOver)
 							State = RIGHT_POSE;
 					}
 				}
@@ -525,7 +525,7 @@ namespace fa2040
 					{
 						Roll = 0.0f;
 
-						if (DampingIsOver)
+					//	if (DampingIsOver)
 							State = LEFT_POSE;
 					}
 				}
@@ -878,7 +878,6 @@ namespace fa2040
 						Pitch -= ClimbSpeed;
 						if (Pitch < -10)
 							Pitch = -10;
-
 					}
 
 					// if right key is released, reset forward bow timer

@@ -898,7 +898,6 @@ namespace vml
 				return vml::geo2d::Results::INSIDE;
 			}
 
-			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Given point p, return the point q on or in AABB b whichis closest to p
 			// For each coordinate axis, if the point coordinate value is
@@ -1054,12 +1053,14 @@ namespace vml
 					}
 				}
 
-				// if we get here, there is no intersection
-				// but we meed to know if circle is entirely 
-				// inside the rectangle
+				// there are intersection points
 
 				if (numpoints != 0)
 					return vml::geo2d::Results::DOES_INTERSECT;
+
+				// if we get here, there is no intersection
+				// but we meed to know if circle is entirely 
+				// inside the rectangle
 
 				// check if the second bounding box is entirely inside the first bounding box
 
@@ -1107,9 +1108,10 @@ namespace vml
 				dist = closestq - closestp;
 				mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
 
-				return vml::geo2d::Results::OUTSIDE;
+				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
 
+			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Return the shortest distance between an aabbox and another aabbx
 

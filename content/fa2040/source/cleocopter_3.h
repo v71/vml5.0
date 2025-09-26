@@ -257,7 +257,6 @@ namespace fa2040
 					}
 					else
 					{
-
 						if (fabs(Pitch - PrevPitch) > ClimbAngleLimit)
 						{
 							State   = NEUTRAL;
@@ -290,7 +289,6 @@ namespace fa2040
 					}
 					else
 					{
-
 						if (fabs(Pitch - PrevPitch) > ClimbAngleLimit)
 						{
 							State   = NEUTRAL;
@@ -497,7 +495,7 @@ namespace fa2040
 					{
 						Roll = 0.0f;
 
-						if (DampingIsOver)
+					//	if (DampingIsOver)
 							State = RIGHT_POSE;
 					}
 				}
@@ -536,7 +534,7 @@ namespace fa2040
 					{
 						Roll = 0.0f;
 
-						if (DampingIsOver)
+					//	if (DampingIsOver)
 							State = LEFT_POSE;
 					}
 				}
@@ -1051,6 +1049,17 @@ namespace fa2040
 			bool GetKey(unsigned int key) const { return Keys[key]; }
 
 			// -------------------------------------------------------------------------
+			// get navigation mesh cell id
+
+			bool GetNavMeshCell(glm::ivec2 &cell)
+			{
+				if (PathFinder)
+					if (PathFinder->GetCellIndicesFromPoint(GetBodyModel()->GetTransformedPosition(), cell))
+						return true;
+				return false;
+			}
+
+			// -------------------------------------------------------------------------
 			// main controller
 
 			void Controller()
@@ -1207,8 +1216,8 @@ namespace fa2040
 					if (Keys[RIGHT_KEY_PRESSED])
 					{
 						Pitch -= ClimbSpeed;
-						if (Pitch < -10)
-							Pitch = -10;
+					//	if (Pitch < -10)
+					//		Pitch = -10;
 					}
 
 					// if right key is released, reset forward bow timer
@@ -1242,8 +1251,8 @@ namespace fa2040
 					if (Keys[LEFT_KEY_PRESSED])
 					{
 						Pitch -= ClimbSpeed;
-						if (Pitch < -10)
-							Pitch = -10;
+					//	if (Pitch < -10)
+					//		Pitch = -10;
 
 					}
 
@@ -1629,7 +1638,7 @@ namespace fa2040
 				NormalizeDirection	   = true;
 
 				RollAngleLimit	       = 70.0f;					
-				ClimbAngleLimit        = 45.0f;					
+				ClimbAngleLimit        = 45.0f+10.0f;					
 				
 				LastHorzDirectionState = 0;
 				LastVertDirectionState = 0;
@@ -1667,7 +1676,7 @@ namespace fa2040
 				MissileSpeed			= 0.025f;
 	
 				ForceMagnitude		   = 30.0f;								
-				RbForceMagnitude	   = 1.4f;								
+				RbForceMagnitude	   = 1.3f;								
 				Mass				   = 1.0f;
 				InvMass				   = 1.0f / Mass;
 				RbForceDirection	   = glm::vec3(0, 0, 0);
@@ -1694,17 +1703,17 @@ namespace fa2040
 				// each isolated region in the navmesh bitmap has a value
 				// assigned, we need to know in which of these region 
 				// the cleocopter is
-		//		
-		//		if (pathfinder)
-		//		{
-		//			PathFinder = pathfinder;
+			
+				if (pathfinder)
+				{
+					PathFinder = pathfinder;
 		//			glm::ivec2 ci = PathFinder->GetCellIndicesFromPoint(pos);
 		//			NavMeshCellId = PathFinder->GetCellIdFromIndices(ci.x, ci.y);
-		//		}
-		//		else
-		//		{
-		//			vml::os::Message::Error("CleoCopter :" ,"pathfinder pointer is null");
-		//		}
+				}
+				else
+				{
+					vml::os::Message::Error("CleoCopter :" ,"pathfinder pointer is null");
+				}
 				
 			}
 

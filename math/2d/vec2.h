@@ -283,9 +283,9 @@ namespace vml
 			// cross product
 
 			template <typename T>
-			__forceinline [[nodiscard]] vec2<T> Cross(const vec2<T>& v, const vec2<T>& w)
+			__forceinline [[nodiscard]] T Cross(const vec2<T>& v, const vec2<T>& w)
 			{
-				return vec2<T>(v.x * w.y, -v.y * w.x);
+				return v.x * w.y - v.y * w.x;
 			}
 
 			// --------------------------------------------------------

@@ -82,15 +82,18 @@ namespace fa2040
 
 				if (PathFinder)
 				{
-					glm::ivec2 ci = PathFinder->GetCellIndicesFromPoint(BodyModel->GetPosition());
-			
-					// NavMeshCellId its the isle in the navmesh bitmap where originally the drone had started
-				
-					if (PathFinder->GetCellIdFromIndices(ci) == -1)	{
-						return PathFinder->FindNearestCellToAnotherCell(ci.x, ci.y, NavMeshCellId);
-					}
+					glm::ivec2 ci;
 					
-					return ci;
+					if (PathFinder->GetCellIndicesFromPoint(BodyModel->GetPosition(), ci))
+					{
+						// NavMeshCellId its the isle in the navmesh bitmap where originally the drone had started
+
+						if (PathFinder->GetCellIdFromIndices(ci) == -1) {
+							return PathFinder->FindNearestCellToAnotherCell(ci.x, ci.y, NavMeshCellId);
+						}
+
+						return ci;
+					}
 				}
 
 				return glm::ivec2(-1, -1);
