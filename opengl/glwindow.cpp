@@ -75,24 +75,27 @@ namespace vml
 		void OpenGLContextWindow::Init(int width, int height, const std::string& strTitle, const vml::utils::Flags& preferencesflags)
 		{
 			// check if class has been initialised
+
 			if (Initialized)
 				vml::os::Message::Error("OpenglApi : Cannot restart context before it has not been closed");
 
 			Initialized = false;
 
 			// get flags
+
 			PreferencesFlags = preferencesflags;
 
 			// validate preferences flags
 
-		//	if (IsVerbose() && IsQuiet())
-		//		vml::os::Message::Error("OpenGlAPI : Verbose mode mismatch/not set");
+			if (IsVerbose() && IsQuiet())
+				vml::os::Message::Error("OpenGlAPI : Verbose mode mismatch/not set");
 
 			// get logger singleton
 
 			vml::logger::Logger2* logger = vml::logger::Logger2::GetInstance();
 
 			// log out verbose mode
+
 			logger->Info({ "OpenGlAPI","Initializing" });
 
 			if (IsVerbose())
@@ -231,6 +234,7 @@ namespace vml
 				glfwSwapInterval(0);
 
 			 // Register key callback
+
 			glfwSetKeyCallback(Window, GLFWKeyCallback);
 			glfwSetCursorPosCallback(Window, GLFWCursorPositionCallback);
 			glfwSetMouseButtonCallback(Window, GLFWMouseButtonsCallback);
@@ -256,15 +260,18 @@ namespace vml
 				vml::os::Message::Error("GlWindow : Failed to initialize glew");
 			}
 
-			logger->Info({ "OpenGlAPI","Initialized" });
+			logger->Info({ "OpenGlAPI", "Initialized" });
 
 			// set context as started
+
 			Initialized = true;
 
 			// set running flag as true
+
 			Running = true;
 
 			// cache exitonesc flag for later use
+
 			ExitOnEsc = PreferencesFlags.Get(vml::flags::Preferences::EXITONESC);
 
 		}
@@ -348,6 +355,12 @@ namespace vml
 
 		// ---------------------------------------------------------------------------
 		// Callback to handle key input
+
+		// Normalize movement by delta time
+		// Always scale movement(or rotation) by 
+		// deltaTime(time elapsed since last frame).
+		// That way, even if key events arrive irregularly, 
+		// the actual movement speed stays consistent.
 
 		void OpenGLContextWindow::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 		{

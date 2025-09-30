@@ -1191,8 +1191,8 @@ namespace fa2040
 					{
 						Pitch += ClimbSpeed;
 
-						if (Pitch > ClimbAngleLimit)
-							Pitch = ClimbAngleLimit;
+					//	if (Pitch > ClimbAngleLimit)
+					//		Pitch = ClimbAngleLimit;
 					}
 
 					// Pitch control , Climbing Down
@@ -1201,8 +1201,8 @@ namespace fa2040
 					{
 						Pitch -= ClimbSpeed;
 
-						if (Pitch < -ClimbAngleLimit)
-							Pitch = -ClimbAngleLimit;
+					//	if (Pitch < -ClimbAngleLimit)
+					//		Pitch = -ClimbAngleLimit;
 					}
 					
 				}
@@ -1231,11 +1231,16 @@ namespace fa2040
 
 					if (Keys[RIGHT_KEY_PRESSED] && Keys[UP_KEY_PRESSED])
 					{
+						Pitch += ClimbSpeed;
+
 						State = NEUTRAL;
 					}
 
 					if (Keys[RIGHT_KEY_PRESSED] && Keys[DOWN_KEY_PRESSED])
 					{
+					
+					//	Pitch -= ClimbSpeed;
+
 						State = NEUTRAL;
 					}
 
@@ -1245,7 +1250,6 @@ namespace fa2040
 
 				if (State == LEFT_POSE)
 				{
-
 					// if left key is pressed , then perform a forward bow
 
 					if (Keys[LEFT_KEY_PRESSED])
@@ -1256,7 +1260,7 @@ namespace fa2040
 
 					}
 
-					// if left key is relese, reset forward bow timer
+					// if left key is relese, reset forward bow 
 
 					if (!Keys[LEFT_KEY_PRESSED])
 					{
@@ -1267,11 +1271,15 @@ namespace fa2040
 
 					if (Keys[LEFT_KEY_PRESSED] && Keys[UP_KEY_PRESSED])
 					{
+						Pitch += ClimbSpeed;
+					
 						State = NEUTRAL;
 					}
 
 					if (Keys[LEFT_KEY_PRESSED] && Keys[DOWN_KEY_PRESSED])
 					{
+					//	Pitch -= ClimbSpeed;
+						
 						State = NEUTRAL;
 					}
 
@@ -1281,7 +1289,7 @@ namespace fa2040
 
 				Roll  *= RollDampening;
 				Pitch *= RollDampening;
-				
+			
 				//blades controller
 				BladesController();
 				
@@ -1447,7 +1455,7 @@ namespace fa2040
 
 				// integrate
 
-				Velocity += Accelleration * Dt ;
+				Velocity += Accelleration * Dt;
 				
 				// apply changes to root model
 
@@ -1456,6 +1464,7 @@ namespace fa2040
 				// set angles
 
 				BodyModel->SetAngles(glm::vec3(Roll, Pitch, Yaw));
+
 			}
 
 			/*
@@ -1638,7 +1647,7 @@ namespace fa2040
 				NormalizeDirection	   = true;
 
 				RollAngleLimit	       = 70.0f;					
-				ClimbAngleLimit        = 45.0f+10.0f;					
+				ClimbAngleLimit        = 45.0f+20.0f;					
 				
 				LastHorzDirectionState = 0;
 				LastVertDirectionState = 0;
@@ -1675,8 +1684,8 @@ namespace fa2040
 				MissileRotationSpeed	= 10.0f;
 				MissileSpeed			= 0.025f;
 	
-				ForceMagnitude		   = 30.0f;								
-				RbForceMagnitude	   = 1.3f;								
+				ForceMagnitude		   = 40.0f;								
+				RbForceMagnitude	   = 1.4f;								
 				Mass				   = 1.0f;
 				InvMass				   = 1.0f / Mass;
 				RbForceDirection	   = glm::vec3(0, 0, 0);

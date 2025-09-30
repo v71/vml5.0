@@ -885,10 +885,10 @@ namespace vml
 				if ((bmin.x >= p.x || p.x >= bmax.x) || (bmin.y >= p.y || p.y >= bmax.y))
 				{
 					closestp = p;
-					if (closestp.x < bmin.x) closestp.x = bmin.x;
-					if (closestp.x > bmax.x) closestp.x = bmax.x;
-					if (closestp.y < bmin.y) closestp.y = bmin.y;
-					if (closestp.y > bmax.y) closestp.y = bmax.y;
+					if (closestp.x <= bmin.x) closestp.x = bmin.x;
+					if (closestp.x >= bmax.x) closestp.x = bmax.x;
+					if (closestp.y <= bmin.y) closestp.y = bmin.y;
+					if (closestp.y >= bmax.y) closestp.y = bmax.y;
 					// compute minimum distance
 					vml::math::vec2<T> dist = p - closestp;
 					mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
@@ -912,6 +912,8 @@ namespace vml
 			{
 				vml::math::vec2<T> closestp;
 				vml::math::vec2<T> closestq;
+				
+				points.clear();
 
 				T dx, dy;
 				T cx, cy;
@@ -1079,10 +1081,10 @@ namespace vml
 
 				// compute closest point on box from circle center
 
-				if (closestp.x < bmin.x) closestp.x = bmin.x;
-				if (closestp.x > bmax.x) closestp.x = bmax.x;
-				if (closestp.y < bmin.y) closestp.y = bmin.y;
-				if (closestp.y > bmax.y) closestp.y = bmax.y;
+				if (closestp.x <= bmin.x) closestp.x = bmin.x;
+				if (closestp.x >= bmax.x) closestp.x = bmax.x;
+				if (closestp.y <= bmin.y) closestp.y = bmin.y;
+				if (closestp.y >= bmax.y) closestp.y = bmax.y;
 				vml::math::vec2<T> dist = closestp - p;
 				T denum = sqrtf(dist.x * dist.x + dist.y * dist.y);
 				if (denum > -eps && denum < eps)
@@ -1111,7 +1113,6 @@ namespace vml
 				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
 
-			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Return the shortest distance between an aabbox and another aabbx
 
@@ -1121,96 +1122,85 @@ namespace vml
 												   vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
 												   T& mindist)
 			{
-				// if the following conditions are met, the distance is zero
 
-				mindist = 0;
-
-				// check if the first bounding box is entirely inside the second bounding box
-
-				if ((amin.x >= bmin.x && amax.x <= bmax.x) &&
-					(amin.y >= bmin.y && amax.y <= bmax.y))
-					return;
-
-				// check if the second bounding box is entirely inside the first bounding box
-
-				if ((bmin.x >= amin.x && bmax.x <= amax.x) &&
-					(bmin.y >= amin.y && bmax.y <= amax.y))
-					return;
-
-				// check if bounding box intersects each other
-
-				if ((bmax.x >= amin.x && bmin.x <= amax.x) && (bmax.y >= amin.y && bmin.y <= amax.y))
-					return;
-
-				vml::math::vec2<T> c0, c1, c2, c3;
-				T dist[4] = { 0 };
-				vml::math::vec2<T> closest_a_start, closest_a_end;
-				vml::math::vec2<T> closest_b_start, closest_b_end;
-
-				// cache aabbox vertices
-
-				vml::math::vec2<T> pa0 = vml::math::vec2<T>(amin.x, amin.y);
-				vml::math::vec2<T> pa1 = vml::math::vec2<T>(amax.x, amin.y);
-				vml::math::vec2<T> pa2 = vml::math::vec2<T>(amax.x, amax.y);
-				vml::math::vec2<T> pa3 = vml::math::vec2<T>(amin.x, amax.y);
-
-				vml::math::vec2<T> pb0 = vml::math::vec2<T>(bmin.x, bmin.y);
-				vml::math::vec2<T> pb1 = vml::math::vec2<T>(bmax.x, bmin.y);
-				vml::math::vec2<T> pb2 = vml::math::vec2<T>(bmax.x, bmax.y);
-				vml::math::vec2<T> pb3 = vml::math::vec2<T>(bmin.x, bmax.y);
-
-				// compute closest point and minimum distance from each 
-				// vertex of first rect to second rect
-
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pb0, pb2, pa0, c0, dist[0]);
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pb0, pb2, pa1, c1, dist[1]);
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pb0, pb2, pa2, c2, dist[2]);
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pb0, pb2, pa3, c3, dist[3]);
-
-				// find shortest distance 
-
-				closest_a_start = pa0;
-				closest_a_end = c0;
-				if (dist[1] < dist[0]) { closest_a_start = pa1; closest_a_end = c1; }
-				if (dist[2] < dist[1]) { closest_a_start = pa2; closest_a_end = c2; }
-				if (dist[3] < dist[2]) { closest_a_start = pa3; closest_a_end = c3; }
-
-				// compute closest point and minimum distance from each 
-				// vertex of second rect to first rect
-
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pa0, pa2, pb0, c0, dist[0]);
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pa0, pa2, pb1, c1, dist[1]);
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pa0, pa2, pb2, c2, dist[2]);
-				vml::geo2d::distances::ClosestPointFromAABBoxToPoint(pa0, pa2, pb3, c3, dist[3]);
-
-				// find shortest distance 
-
-				closest_b_start = pb0;
-				closest_b_end = c0;
-				if (dist[1] < dist[0]) { closest_b_start = pb1; closest_b_end = c1; }
-				if (dist[2] < dist[1]) { closest_b_start = pb2; closest_b_end = c2; }
-				if (dist[3] < dist[2]) { closest_b_start = pb3; closest_b_end = c3; }
-
-				// find shortest vector
-
-				T adx = closest_a_end.x - closest_a_start.x;
-				T ady = closest_a_end.y - closest_a_start.y;
-				T bdx = closest_b_end.x - closest_b_start.x;
-				T bdy = closest_b_end.y - closest_b_start.y;
-				T ad0 = adx * adx + ady * ady;
-				T bd0 = bdx * bdx + bdy * bdy;
-
-				closestp = closest_a_start;
-				closestq = closest_a_end;
-				mindist = ad0;
-				if (bd0 < ad0)
+				// for X
+				
+				if (amax.x < bmin.x)
 				{
-					closestp = closest_b_start;
-					closestq = closest_b_end;
-					mindist = bd0;
+					// A is left of B
+
+					closestp.x = amax.x;
+					closestq.x = bmin.x;
 				}
+				else if (bmax.x < amin.x)
+				{
+					// B is left of A
+
+					closestp.x = amin.x;
+					closestq.x = bmax.x;
+				}
+				else 
+				{
+					// Overlapping in x, choose clamped value
+					// find minimum x
+
+					float xOverlap = amin.x;
+					if (bmin.x > xOverlap) xOverlap = bmin.x;
+
+					// clamp to x axis a bounding box extents
+
+					float minx = xOverlap;
+					if (amax.x < minx) minx = xOverlap;
+					float maxx = amin.x;
+					if (minx > maxx) maxx = minx;
+
+					closestp.x = maxx;
+					closestq.x = maxx;
+				}
+
+				// for Y
+				
+				if (amax.y < bmin.y)
+				{
+					// A is below B
+
+					closestp.y = amax.y;
+					closestq.y = bmin.y;
+				}
+				else if (bmax.y < amin.y)
+				{
+					// B is below A
+
+					closestp.y = amin.y;
+					closestq.y = bmax.y;
+				}
+				else 
+				{
+					// Overlapping in y, choose clamped value
+					// find minimum y
+
+					float yOverlap = amin.y;
+					if (bmin.y > yOverlap) yOverlap = bmin.y;
+
+					// clamp to y axis a bounding box extents
+
+					float miny = yOverlap;
+					if (amax.y < miny) miny = yOverlap;
+					float maxy = amin.y;
+					if (miny > maxy) maxy = miny;
+
+					closestp.y = maxy;
+					closestq.y = maxy;
+				}
+
+				// compute minimum distance
+
+				vml::math::vec2<T> d = closestq - closestp;
+				mindist = sqrtf(d.x * d.x + d.y * d.y);
+				
 			}
 
+			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Given point p, return the point q on or in AOBB b whichis closest to p
 

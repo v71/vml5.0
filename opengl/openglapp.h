@@ -34,6 +34,7 @@ class OpenglApp : public vml::Core
 
 		double CurrentTime;
 		double Accumulator;
+		double LastAccumulatedTime;
 		bool   TimerStarted;
 		float  Dt;
 
@@ -46,9 +47,6 @@ class OpenglApp : public vml::Core
 		vml::views::ViewHandler* ViewHandler;
 		vml::models::ModelHandler* ModelHandler;
 		vml::overlays::OverlayHandler* OverlayHandler;
-
-		//	vml::handlers::Scene*     Scene;
-
 
 		// ----------------------------------------------
 		// init opengl api
@@ -158,20 +156,23 @@ class OpenglApp : public vml::Core
 				{
 		
 					// call objects controllers
+			
 					Controller();
 
-		//			Scene->GetObjectHandler()->CallObjectsController(view);
-
-					// increazse acclumulator
+					// increase accumulator
 
 					Accumulator -= Dt;
 
 				}
+
+				LastAccumulatedTime = Accumulator;
+
 			}
+			
+			//0.244764 0.0166667
 
 			// call keybindings
 			KeyBindings();
-
 		}
 
 		// -----------------------------------------------------------
@@ -184,6 +185,7 @@ class OpenglApp : public vml::Core
 		__forceinline bool IsWindowRunning()							 const { return OpenGLContextWindow->IsRunning(); }
 		__forceinline GLFWwindow* GetGLFWindow()						 const { return OpenGLContextWindow->GetWindow(); }
 		__forceinline vml::OpenGLContextWindow* GetOpenGLContextWindow() const { return OpenGLContextWindow; }
+		__forceinline double GetLastAccumulatedTime()					 const { return LastAccumulatedTime; }
 
 		// -----------------------------------------------------------
 		// key bindings
@@ -205,10 +207,11 @@ class OpenglApp : public vml::Core
 
 		OpenglApp()
 		{
-			CurrentTime  = 0.0;
-			Accumulator  = 0.0;
-			TimerStarted = false;
-			Dt			 = 1.0f / 60.0f;
+			CurrentTime			= 0.0;
+			Accumulator			= 0.0;
+			LastAccumulatedTime = 0.0;
+			TimerStarted		= false;
+			Dt					= 1.0f / 60.0f;
 
 			OpenGLContextWindow = nullptr;
 			OpenglDebugRenderer = nullptr;
