@@ -33,10 +33,10 @@ namespace vml
 			// project point on normalized ray
 		
 			template <typename T>
-			static void ProjectPointOnRay(const vml::math::vec2<T>& point,
-										  const vml::math::vec2<T>& q, const vml::math::vec2<T>& dir,
-										  vml::math::vec2<T>& r,
-										  T& mindist)
+			static void DistanceFromPointToRay(const vml::math::vec2<T>& point,
+											   const vml::math::vec2<T>& q, const vml::math::vec2<T>& dir,
+											   vml::math::vec2<T>& r,
+											   T& mindist)
 			{
 				mindist = -(q.x - point.x) * dir.y + (q.y - point.y) * dir.x;
 				r.x = point.x - mindist * dir.y;
@@ -47,11 +47,11 @@ namespace vml
 			// project point on line
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ProjectPointOnLine(const vml::math::vec2<T>& p,
-														     const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
-														     vml::math::vec2<T>& r,
-															 T& mindist,
-															 const T eps = vml::math::EPSILON)
+			static [[nodiscard]] uint32_t DistanceFromPointToLine(const vml::math::vec2<T>& p,
+																  const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
+															      vml::math::vec2<T>& r,
+																  T& mindist,
+																  const T eps = vml::math::EPSILON)
 			{
 				vml::math::vec2f n;
 				n.x = -lineq.y + linep.y;
@@ -285,6 +285,7 @@ namespace vml
 					mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
 					return vml::geo2d::Results::DOES_NOT_INTERSECT; 
 				}
+			
 				mindist = 0;
 				return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT; 
 			}
@@ -1117,10 +1118,10 @@ namespace vml
 			// Return the shortest distance between an aabbox and another aabbx
 
 			template <typename T>
-			static void ClosestPointFromAABBToAABB(const vml::math::vec2<T>& amin, const vml::math::vec2<T>& amax,
-												   const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
-												   vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
-												   T& mindist)
+			static [[nodiscard]] uint32_t ClosestPointFromAABBToAABB(const vml::math::vec2<T>& amin, const vml::math::vec2<T>& amax,
+																     const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
+																     vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq,
+																     T& mindist)
 			{
 
 				// for X
@@ -1197,7 +1198,9 @@ namespace vml
 
 				vml::math::vec2<T> d = closestq - closestp;
 				mindist = sqrtf(d.x * d.x + d.y * d.y);
-				
+
+				return vml::geo2d::Results::DOES_NOT_INTERSECT;
+
 			}
 
 			/*

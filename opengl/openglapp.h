@@ -159,6 +159,9 @@ class OpenglApp : public vml::Core
 			
 					Controller();
 
+					// call keybindings
+					KeyBindings();
+
 					// increase accumulator
 
 					Accumulator -= Dt;
@@ -169,10 +172,6 @@ class OpenglApp : public vml::Core
 
 			}
 			
-			//0.244764 0.0166667
-
-			// call keybindings
-			KeyBindings();
 		}
 
 		// -----------------------------------------------------------
