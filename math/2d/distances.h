@@ -172,6 +172,21 @@ namespace vml
 		namespace distances
 		{
 
+			// Clamp projection of p onto segment ab
+			template <typename T>
+			vml::math::vec2<T> projectSegment(const vml::math::vec2<T>& c, const vml::math::vec2<T>& d, const vml::math::vec2<T>& b)
+			{
+				vml::math::vec2<T> ab = d - c;
+				vml::math::vec2<T> ap = b - c;
+				T t = (ap.x * ab.x + ap.y * ab.y) / (ab. x *ab.x + ab.y * ab.y);
+				T dmin = (T)1.0;
+				if (t < dmin) dmin = t;
+				t = std::max(0.0f, dmin);
+				T dmax = (T)0.0;
+				if (t > dmax)dmax = t;
+				return c + dmax * ab;
+			}
+
 			/////////////////////////////////////////////////////////////////////////////
 			// minimum distance between lines
 
@@ -182,112 +197,104 @@ namespace vml
 																   T& mindist,
 																   const T eps = vml::math::EPSILON)
 			{
-				vml::math::vec2<T> d1 = q1 - p1; // Direction vector of segment S1
-				vml::math::vec2<T> d2 = q2 - p2; // Direction vector of segment S2
-				vml::math::vec2<T> r = p1 - p2;
+				vml::math::vec2<T> ba = q1 - p1;
+				vml::math::vec2<T> da = q2 - p1;
+				vml::math::vec2<T> cd = p2 - q2;
 
-				T a = d1.x * d1.x + d1.y * d1.y; // Squared length of segment S1, always nonnegative
-				T e = d2.x * d2.x + d2.y * d2.y; // Squared length of segment S2, always nonnegative
-				T f = d2.x *  r.x + d2.y *  r.y;
+				T denom = cd.y * ba.x - cd.x * ba.y;
+				T numa  = cd.y * da.x - cd.x * da.y;
+				T numb  = ba.y * da.x - ba.x * da.y;
+				
+				// compute intersection point
 
-				T s, t;
+				denom = (T)1.0 / denom;
 
-				// Check if either or both segments degenerate into points
+				T ua = numa * denom;
+				T ub = numb * denom;
 
-				if (a < eps && e < eps)
+				if (ua >= -eps && ua <= (T)1.0 + eps && ub >= -eps && ub <= (T)1.0 + eps)
 				{
-					// Both segments degenerate into points
-					closestp = p1;
-					closestq = p2;
-					vml::math::vec2<T> dist = closestq - closestp;
-					mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
-					return vml::geo2d::Results::FAIL;
+					// Get the intersection point.
+
+					closestp = p1 + ua * ba;
+					closestq = closestp;
+					mindist = (T)0;
+
+					return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT;
 				}
 
-				if (a < eps)
-				{
-					// First segment degenerates into a point
+				// proejct segment vertices on both segments
 
-					s = 0;
-					t = f / e; // s = 0 => t = (b*s + f) / e = f / e
-					if (t < 0) t = 0;
-					if (t > 1) t = 1;
-				}
-				else
-				{
-					T c = d1.x * r.x + d1.y * r.y;
+				T dmin,t;
 
-					if (e < eps)
-					{
-						// Second segment degenerates into a point
+				vml::math::vec2<T> cb = p2 - q1;
+				vml::math::vec2<T> ca = p2 - p1;
 
-						t = 0;
-						s = -c / a; // t = 0 => s = (b*t - c) / a = -c / a
-						if (s < 0) s = 0;
-						if (s > 1) s = 1;
-					}
-					else
-					{
-						// The general nondegenerate case starts here
+				denom = (T) 1.0 / (ba.x * ba.x + ba.y * ba.y);
 
-						T b = d1.x * d2.x + d1.y * d2.y;
-						T denom = a * e - b * b; // Always nonnegative
+				// project c onto a and b
+				
+				t = (ca.x * ba.x + ca.y * ba.y) * denom;
+				dmin = (T)1.0;
+				if (t < dmin) dmin = t;
+				t = (T)0.0;
+				if (dmin > (T)0.0) t = dmin;
+				vml::math::vec2<T> r1 = p1 + t * ba;
 
-						// If segments not parallel, compute closest point on L1 to L2 and
-						// clamp to segment S1. Else pick arbitrary s (here 0)
+				// project d onto a and b
 
-						// if (denom != 0.0f)
-						if (denom < -eps || denom > eps)
-						{
-							s = (b * f - c * e) / denom;
-							if (s < 0) s = 0;
-							if (s > 1) s = 1;
-						}
-						else
-						{
-							s = 0;
-						}
+				t = (da.x * ba.x + da.y * ba.y) * denom;
+				dmin = (T)1.0;
+				if (t < dmin) dmin = t;
+				t = (T)0.0;
+				if (dmin > (T)0.0) t = dmin;
+				vml::math::vec2<T> r2 = p1 + t * ba;
 
-						// Compute point on L2 closest to S1(s) using
-						// t = Dot((P1 + D1*s) - P2,D2) / Dot(D2,D2) = (b*s + f) / e
+				// project c onto d and a
 
-						t = (b * s + f) / e;
+				denom = (T)1.0f / (cd.x * cd.x + cd.y * cd.y);
 
-						//If t in [0,1] done. Else clamp t, recompute s for the new value
-						// of t using s = Dot((P2 + D2*t) - P1,D1) / Dot(D1,D1)= (t*b - c) / a
-						// and clamp s to [0, 1]
+				t = (ca.x * cd.x + ca.y * cd.y) * denom;
+				dmin = (T)1.0;
+				if (t < dmin) dmin = t;
+				t = (T)0.0;
+				if (dmin > (T)0.0) t = dmin;
+				vml::math::vec2<T> r3 = p2 - t * cd;
 
-						if (t < 0)
-						{
-							t = 0;
-							s = -c / a;
+				// project c onto d and b
 
-							if (s < 0) s = 0;
-							if (s > 1) s = 1;
-						}
-						else if (t > (T)1)
-						{
-							t = 1;
-							s = (b - c) / a;
+				t = (cb.x * cd.x + cb.y * cd.y) * denom;
+				dmin = (T)1.0;
+				if (t < dmin) dmin = t;
+				t = (T)0.0;
+				if (dmin > (T)0.0) t = dmin;
+				vml::math::vec2<T> r4 = p2 - t * cd;
 
-							if (s < 0) s = 0;
-							if (s > 1) s = 1;
-						}
-					}
-				}
+				// sort distanfes
+				
+				vml::math::vec2<T> dist;
 
-				// closest points
-				closestp = p1 + d1 * s;
-				closestq = p2 + d2 * t;
-				// minimum distance
-				if (mindist > eps) {
-					vml::math::vec2<T> dist = closestq - closestp;
-					mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
-					return vml::geo2d::Results::DOES_NOT_INTERSECT; 
-				}
-			
-				mindist = 0;
-				return vml::geo2d::Results::DOES_INTERSECT_ONE_POINT; 
+				dist = p2 - r1;
+				T d0 = dist.x * dist.x + dist.y * dist.y;
+
+				dist = q2 - r2;
+				T d1 = dist.x * dist.x + dist.y * dist.y;
+
+				dist = r3 - p1;
+				T d2 = dist.x * dist.x + dist.y * dist.y;
+
+				dist = r4 - q1;
+				T d3 = dist.x * dist.x + dist.y * dist.y;
+
+				mindist = FLT_MAX;
+
+				if (d0 < mindist) { mindist = d0; closestp = r1; closestq = p2; }
+				if (d1 < mindist) { mindist = d1; closestp = r2; closestq = q2; }
+				if (d2 < mindist) { mindist = d2; closestp = p1; closestq = r3; }
+				if (d3 < mindist) { mindist = d3; closestp = q1; closestq = r4; }
+
+				return vml::geo2d::Results::DOES_NOT_INTERSECT;
+
 			}
 
 			/////////////////////////////////////////////////////////////////////////////

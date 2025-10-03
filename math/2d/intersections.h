@@ -493,7 +493,7 @@ namespace vml
 			template<class T>
 			static [[nodiscard]] uint32_t LineVsLineOverlapTest(const vml::math::vec2<T> &p0, const vml::math::vec2<T> &p1,
 															    const vml::math::vec2<T> &q0, const vml::math::vec2<T> &q1,
-															    const float eps = vml::math::EPSILON)
+															    const T eps = vml::math::EPSILON)
 			{
 
 				vml::math::vec2<T> u, v, w;
@@ -576,12 +576,12 @@ namespace vml
 			static [[nodiscard]] uint32_t LineVsLine(const vml::math::vec2<T>& a, const vml::math::vec2<T>& b,
 											         const vml::math::vec2<T>& c, const vml::math::vec2<T>& d,
 												     vml::math::vec2<T> &q,
-												     const float eps = vml::math::EPSILON)
+												     const T eps = vml::math::EPSILON)
 			{
 
-				float denom = (c.y - d.y)*(b.x - a.x) - (c.x - d.x)*(b.y - a.y);
-				float numa  = (c.x - d.x)*(a.y - d.y) - (c.y - d.y)*(a.x - d.x);
-				float numb  = (b.x - a.x)*(a.y - d.y) - (b.y - a.y)*(a.x - d.x);
+				T denom = (c.y - d.y)*(b.x - a.x) - (c.x - d.x)*(b.y - a.y);
+				T numa  = (c.x - d.x)*(a.y - d.y) - (c.y - d.y)*(a.x - d.x);
+				T numb  = (b.x - a.x)*(a.y - d.y) - (b.y - a.y)*(a.x - d.x);
 
 				if (denom > -eps && denom < eps)
 				{
