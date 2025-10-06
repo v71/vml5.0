@@ -1,15 +1,9 @@
 #pragma once
 
-#include <mutex>
-#include <thread>
-#include <vector>
-#include <unordered_set>
-
-
 #define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
 #define JPH_OBJECT_STREAM
 #define JPH_PROFILE_ENABLED 
-//#define JPH_DEBUG_RENDERER
+#define JPH_DEBUG_RENDERER
 
 #include <Jolt/Jolt.h>
 #include <Jolt/RegisterTypes.h>
@@ -892,6 +886,9 @@ namespace JPH
 
 			void Init()
 			{
+				// i commenti li ho aggiunti per testare l'allocazione della classe, jolt funziona
+
+				/*
 				// Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
 				// This needs to be done before any other Jolt function is called.
 				JPH::RegisterDefaultAllocator();
@@ -947,7 +944,7 @@ namespace JPH
 
 			//	BodyManager::DrawSettings drawsettings;
 			//	drawsettings.mDrawShapeWireframe = true;
-
+				*/
 				/*
 				// create the box shape (convex)
 				
@@ -1001,6 +998,7 @@ namespace JPH
 
 			JoltPhysics()
 			{
+		//		std::cout << "jolt initted" << std::endl;
 
 				TempAllocator = nullptr;
 				JobSystem = nullptr;

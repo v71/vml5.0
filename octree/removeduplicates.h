@@ -237,10 +237,6 @@ namespace vml
 
 					GainRatio = 100.0f * ((float)oldverts - (float)newverts) / (float)oldverts;
 
-				//	vml::os::Message::Trace("Mesh Builder : ","Gain ", GainRatio,"%");
-					
-					std::cout << "Mesh Builder : Gain : " << GainRatio << std::endl;
-
 					// reindex surface indices
 
 					for (int i = 0; i < surfacesarray.size(); i++)

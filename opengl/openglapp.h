@@ -42,11 +42,12 @@ class OpenglApp : public vml::Core
 
 		// ----------------------------------------------
 
-		vml::OpenGLContextWindow* OpenGLContextWindow;
-		vml::OpenglDebugRender* OpenglDebugRenderer;
-		vml::views::ViewHandler* ViewHandler;
-		vml::models::ModelHandler* ModelHandler;
+		vml::OpenGLContextWindow*	   OpenGLContextWindow;
+		vml::OpenglDebugRender*		   OpenglDebugRenderer;
+		vml::views::ViewHandler*	   ViewHandler;
+		vml::models::ModelHandler*     ModelHandler;
 		vml::overlays::OverlayHandler* OverlayHandler;
+		JPH::JoltPhysics*		   Jolt;
 
 		// ----------------------------------------------
 		// init opengl api
@@ -88,6 +89,32 @@ class OpenglApp : public vml::Core
 			OpenglDebugRenderer->CheckeredPlaneMesh->FinalColor = OpenglDebugRenderer->GetClearColor();
 		}
 
+		// ----------------------------------------------
+		// init handlers
+
+		void InitHandlers()
+		{
+			// allocate handlers
+
+			ViewHandler = new vml::views::ViewHandler();
+			OverlayHandler = new vml::overlays::OverlayHandler();
+			ModelHandler = new vml::models::ModelHandler();
+
+			// init handlers
+
+			ViewHandler->Init();
+			ModelHandler->Init();
+			OverlayHandler->Init();
+		}
+
+		// ----------------------------------------------
+		// init jolt
+
+		void InitJolt()
+		{
+			Jolt = new JPH::JoltPhysics();
+		}
+
 		// -----------------------------------------------------------
 		// clear stores, we need to delete stores
 		// the store might address some, rendering classes such as
@@ -119,6 +146,9 @@ class OpenglApp : public vml::Core
 			vml::os::SafeDelete(vml::stores::ShaderStore);
 			vml::os::SafeDelete(vml::stores::TextureStore);
 
+			// delete jolt
+			vml::os::SafeDelete(Jolt);
+
 			// close opengl context
 			vml::os::SafeDelete(OpenGLContextWindow);
 		}
@@ -135,7 +165,7 @@ class OpenglApp : public vml::Core
 		// -------------------------------------------------------------
 		// fixed time controller
 
-		void FixedTimeController(vml::views::View* view)
+		void FixedTimeController()
 		{
 			if (!TimerStarted)
 			{
@@ -160,6 +190,7 @@ class OpenglApp : public vml::Core
 					Controller();
 
 					// call keybindings
+
 					KeyBindings();
 
 					// increase accumulator
@@ -185,6 +216,8 @@ class OpenglApp : public vml::Core
 		__forceinline GLFWwindow* GetGLFWindow()						 const { return OpenGLContextWindow->GetWindow(); }
 		__forceinline vml::OpenGLContextWindow* GetOpenGLContextWindow() const { return OpenGLContextWindow; }
 		__forceinline double GetLastAccumulatedTime()					 const { return LastAccumulatedTime; }
+		__forceinline bool IsJoltInitted()								 const { return Jolt != nullptr; }
+		__forceinline JPH::JoltPhysics* GetJolt()						 const { return Jolt; }
 
 		// -----------------------------------------------------------
 		// key bindings
@@ -217,6 +250,7 @@ class OpenglApp : public vml::Core
 			ViewHandler			= nullptr;
 			ModelHandler		= nullptr;
 			OverlayHandler		= nullptr;
+			Jolt				= nullptr;
 		}
 
 		virtual ~OpenglApp()

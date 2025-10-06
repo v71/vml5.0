@@ -96,7 +96,14 @@ namespace vml
 						vml::logger::Logger2::GetInstance()->Info({ "Level","Loading Nav Mesh : " + NavMeshFileName });
 						NavMesh = new vml::meshes::Mesh3d(NavMeshFileName, {},scale);
 						// load bitmap mask for pathfinding 
+						
 						PathFinder = new vml::geo2d::PathFinder(NavMaskFileName,scale);
+
+						// emit wanring if number of connected compoents is greater than 1
+						// its mandatory that the reachable connected regions must be exactly 1
+
+						vml::logger::Logger2::GetInstance()->Warn({ "PathFinder *WARNING*","Connected Componets : " + std::to_string(PathFinder->GetConnectedComponentsCount()) });
+
 					}
 					
 					// compile level
@@ -141,6 +148,7 @@ namespace vml
 				const std::string&      GetMapMeshFileName()   const { return MapMeshFileName; }
 				vml::octree::OctTree*   GetOctTree()           const { return OctTree; }
 				vml::geo2d::PathFinder* GetPathFinder()        const { return PathFinder; }
+				
 				vml::meshes::Mesh3d* GetMapMesh() const { 
 					if (!MapMesh->IsDataRetained())
 						vml::os::Message::Error("Mesh data is not set to be retained");

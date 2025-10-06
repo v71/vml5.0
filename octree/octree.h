@@ -418,7 +418,9 @@ namespace vml
 								int i2 = sourcesurfaceindices->at((size_t)idx + 2);
 								
 							//	std::cout << "Surface : " << i << " [ " << i0 << " , " << i1 << " , " << i2 << " ]" << std::endl;
-								
+				
+								// get triangle attributes
+
 								glm::vec4 p0 = glm::vec4(sourcevertexarray->at(i0 * 4), sourcevertexarray->at(i0 * 4 + 1), sourcevertexarray->at(i0 * 4 + 2),1);
 								glm::vec4 p1 = glm::vec4(sourcevertexarray->at(i1 * 4), sourcevertexarray->at(i1 * 4 + 1), sourcevertexarray->at(i1 * 4 + 2),1);
 								glm::vec4 p2 = glm::vec4(sourcevertexarray->at(i2 * 4), sourcevertexarray->at(i2 * 4 + 1), sourcevertexarray->at(i2 * 4 + 2),1);
@@ -431,9 +433,13 @@ namespace vml
 								glm::vec2 uv1 = glm::vec2(sourceuvarray->at(i1 * 2), sourceuvarray->at(i1 * 2 + 1));
 								glm::vec2 uv2 = glm::vec2(sourceuvarray->at(i2 * 2), sourceuvarray->at(i2 * 2 + 1));
 								
+								// add triangle vertices to the vertex array
+
 								VertexArray.emplace_back(vml::geo3d::Vertex(p0, n0, uv0));
 								VertexArray.emplace_back(vml::geo3d::Vertex(p1, n1, uv1));
 								VertexArray.emplace_back(vml::geo3d::Vertex(p2, n2, uv2));
+
+								// add surface indices
 
 								SurfaceIndices.emplace_back(vml::geo3d::IndexedTriangle(i, (int)VertexArray.size() - 3, (int)VertexArray.size() - 2, (int)VertexArray.size() - 1));
 								
@@ -548,7 +554,8 @@ namespace vml
 								vml::meshes::RemoveDuplicates3D rd;
 								rd.Begin(node->GetBoundingBox().GetMin(), node->GetBoundingBox().GetMax());
 								rd.RemoveDuplicates(destvertexarray, destsurfacearray);
-							//	rd.Finalize();
+							
+								vml::logger::Logger2::GetInstance()->Info({ "Octree","Node Removed Vertices Gain : " + std::to_string(rd.GetGainRatio()) + "%" });
 
 								// create node vao
 	
@@ -578,7 +585,7 @@ namespace vml
 
 								std::vector<OctTreeNode*> nodes = SplitNode(node);
 
-								std::cout << "Octree : Branch node, Surfaces in node " << destlist.size() << " recursing" << std::endl;
+								vml::logger::Logger2::GetInstance()->Info({ "Octree","Branch Node, Surfaces in Node : " + std::to_string(destlist.size()) + " , Recursing" });
 
 								RecurseNode(nodes[0], destlist);
 								RecurseNode(nodes[1], destlist);
@@ -595,9 +602,7 @@ namespace vml
 
 								if (destlist.size() > 0)
 								{
-									//		vml::os::Trace(L"Leaf node, Surfaces in node %d\n", destlist.size());
-							
-									std::cout << "Octree : Leaf node, Surfaces in node " << destlist.size() << std::endl;
+									vml::logger::Logger2::GetInstance()->Info({ "Octree","Leaf Node, Surfaces in Node : " + std::to_string(destlist.size()) });
 
 									if (CreateNode(node, destlist))
 									{
@@ -917,8 +922,8 @@ namespace vml
 								
 								ResourceFileName = mesh->GetResourceFileName();
 
-							//	std::cout << "Octree File : " << ResourceFileName << std::endl;
-								
+								vml::logger::Logger2::GetInstance()->Info({ "Octree","Loading File : '" + ResourceFileName + "'" });
+
 								// free octree data
 
 								ReleaseAll();
@@ -929,15 +934,16 @@ namespace vml
 																
 								// converts mesh data to internal format 
 
-						//		std::cout << "TRIANGLES : " << mesh->GetSurfaceCount() << std::endl;
-						//		std::cout << "TRIANGLES / 4: " << mesh->GetSurfaceCount()/4 << std::endl;
+								vml::logger::Logger2::GetInstance()->Info({ "Octree","Triangles : " + std::to_string(mesh->GetSurfaceCount()) });
 
 								ConvertData(&mesh->GetVertexArray(), &mesh->GetNormalArray(), &mesh->GetUVArray(), &mesh->GetSurfaceIndices());
 								
+								// max surfaces actually is 1/6 of total surfaces
+
 								MaxSurfaces = ceil(mesh->GetSurfaceCount() / 6);
 
-							//	std::cout << "Octree : Max Triangles per Node : " << MaxSurfaces << std::endl;
-																
+								vml::logger::Logger2::GetInstance()->Info({ "Octree","Max Triangles per Node : " + std::to_string(MaxSurfaces) });
+
 								// create root node
 							
 								Root = new OctTreeNode(nullptr, 0, mesh->GetBoundingBox().GetMin(), mesh->GetBoundingBox().GetMax());
@@ -963,19 +969,22 @@ namespace vml
 
 								VertexArray.clear();
 								SurfaceIndices.clear();
-																
+									
 								for (size_t i = 0; i < GetNodesCount(); ++i)
 								{
 						
 									const vml::octree::OctTreeNode* node = GetNodeAt(i);
 						
+							//		std::string text = std::format("Node id : {0} bmin : {1}, {2}, {3}", i, node->GetBoundingBox().GetMin().x, node->GetBoundingBox().GetMin().y, node->GetBoundingBox().GetMin().z);
+									
+							//		std::cout << text << std::endl;
+
 									/*
 									vml::os::Message::Trace("id: \nbmin :%f %f %f\nbmax: %f %f %f\n", i,
 															node->GetBoundingBox().GetMin().x, node->GetBoundingBox().GetMin().y, node->GetBoundingBox().GetMin().z,
 															node->GetBoundingBox().GetMax().x, node->GetBoundingBox().GetMax().y, node->GetBoundingBox().GetMax().z);
 									*/
 								}
-								
 							}
 							else
 							{

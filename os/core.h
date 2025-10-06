@@ -106,14 +106,22 @@ namespace vml
 
 				// extract flags
 
-				bool verbose     = PreferencesFlags.Get(vml::flags::Preferences::VERBOSE);
+				#ifdef _DEBUG
+					bool verbose = 1;
+				#else
+					bool verbose = 0;
+				#endif
+
 				bool logtostdout = PreferencesFlags.Get(vml::flags::Preferences::LOG_TO_STDOUT);
 				bool logtofile   = PreferencesFlags.Get(vml::flags::Preferences::LOG_TO_FILE);
 				bool logtomem    = PreferencesFlags.Get(vml::flags::Preferences::LOG_TO_MEM);
 		
 				// check if debug flag is set
 
-				if (logtostdout && logtofile)
+				if (!logtostdout && !logtofile && !logtomem)
+					vml::os::Message::Error("Core : Output Debug mode not set");
+
+				if (logtostdout && logtofile && logtomem)
 					vml::os::Message::Error("Core : Debug mode mismatch/not set");
 
 				// get logger singleton

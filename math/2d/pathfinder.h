@@ -93,6 +93,7 @@ namespace vml
                 int            Bi, Bj;
                 float          PathLength;
                 float          Scale;
+                int            ConnectedComponents;
 
                 // ------------------------------------------------------------------------------
                 //
@@ -437,7 +438,6 @@ namespace vml
                 {
                     Node* stack;
                     unsigned char* visited;
-                    int            idcounter;
                     bool           found;
 
                     stack = new Node[Size];
@@ -449,8 +449,8 @@ namespace vml
                     for (size_t i = 0; i < Size; ++i)
                         stack[i] = Node(-1, -1);
 
-                    idcounter = 0;
-                                        
+                    ConnectedComponents = 0;
+
                     do
                     {
                         Node point = Node(-1, -1);
@@ -469,7 +469,7 @@ namespace vml
                             {
                                 int offset = GetAddressFromPoint(stack[sc]);
 
-                                IdData[offset] = idcounter;
+                                IdData[offset] = ConnectedComponents;
 
                                 visited[offset] = 1;
 
@@ -486,7 +486,7 @@ namespace vml
                                         {
                                             visited[offset] = 1;
 
-                                            IdData[offset] = idcounter;
+                                            IdData[offset] = ConnectedComponents;
 
                                             stack[stackcounter] = Adjacent[i];
 
@@ -496,20 +496,14 @@ namespace vml
                                 }
                             }
 
-                            idcounter++;
+                            ConnectedComponents++;
 
                         }
  
                     } while (found);
-                   
-                    if ( idcounter>1)
-                        std::cout << "PathFinder : WARNING : Connected Componets : " << idcounter << std::endl;
-                    else
-                        std::cout << "PathFinder : Connected Componets : " << idcounter << std::endl;
-
+                
                     delete[] stack;
                     delete[] visited;
-                    
                 }
 
                 // ------------------------------------------------------------------------------
@@ -578,6 +572,7 @@ namespace vml
                 [[nodiscard]] const float *GetPAvgrInvSegmentLength() const { return PAvgrInvSegmentLength; }
                 [[nodiscard]] const float* GetPAvgrSegmentLength()    const { return PAvgrSegmentLength; }
                 [[nodiscard]] float GetZDepth()                       const { return ZDepth; }
+                [[nodiscard]] int GetConnectedComponentsCount()       const{ return ConnectedComponents; }
 
                 // -------------------------------------------------------------
                 //
@@ -724,7 +719,6 @@ namespace vml
                     p1 = Pb[offset];
                     p2 = Pc[offset];
                     p3 = Pd[offset];
-
                 }
 
                 // ------------------------------------------------------------------------------
@@ -1399,7 +1393,8 @@ namespace vml
 					Width                 =  0;
 					Height                =  0;
 					Size                  =  0;
-					Data                  =  nullptr;
+                    ConnectedComponents   =  0;
+                    Data                  =  nullptr;
                     Data                  =  nullptr;
                     IdData                =  nullptr;
                     Distance              =  nullptr;

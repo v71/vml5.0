@@ -238,7 +238,7 @@ private:
 	}
 
 	/// Free memory
-	inline void				free()
+	inline void				myFree()
 	{
 		get_allocator().deallocate(mElements, mCapacity);
 		mElements = nullptr;
@@ -251,7 +251,7 @@ private:
 		if (mElements != nullptr)
 		{
 			clear();
-			free();
+			myFree();
 		}
 	}
 
@@ -411,7 +411,7 @@ public:
 		if (mElements != nullptr)
 		{
 			if (mSize == 0)
-				free();
+				myFree();
 			else if (mCapacity > mSize)
 				reallocate(mSize);
 		}

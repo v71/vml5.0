@@ -502,6 +502,15 @@ namespace vml
 				}
 
 				// ----------------------------------------------------------------
+				//
+				
+				void TransformFPSAndUpdateGlViewport(const float w, const float h)
+				{
+					UpdateView(w, h);
+					glViewport(0, 0, ViewPortWidth, ViewPortHeight);
+				}
+
+				// ----------------------------------------------------------------
 				//  transforms a vector using view matrix
 
 				[[nodiscard]] glm::vec3 TransformForward(const glm::vec3 &dir)
