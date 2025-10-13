@@ -356,12 +356,6 @@ namespace vml
 		// ---------------------------------------------------------------------------
 		// Callback to handle key input
 
-		// Normalize movement by delta time
-		// Always scale movement(or rotation) by 
-		// deltaTime(time elapsed since last frame).
-		// That way, even if key events arrive irregularly, 
-		// the actual movement speed stays consistent.
-
 		void OpenGLContextWindow::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			GlfwKeyPressed[key] = action;

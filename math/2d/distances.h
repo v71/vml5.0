@@ -7,7 +7,7 @@
 //					
 //  Point			  X			 X 	 	  X  	  X  	     X  		  X	   
 // 
-//	Ray				  X 		 X	  	  X   	  X    		 X			  
+//	Ray				  X 		 X	  	  X   	  X    		 X			  X
 // 
 //	Line			  X          X		  X 	  X	  	     X  		    		   			  			 
 // 
@@ -15,7 +15,7 @@
 // 
 //	AABB			  X			 X 		  X       X			 X
 // 
-//	AOBB			  X			
+//	AOBB			  X			 X
 // 
 // Polygon
 
@@ -901,9 +901,10 @@ namespace vml
 			static [[nodiscard]] uint32_t ClosestPointFromAABBoxToPoint(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
 																	    const vml::math::vec2<T>& p,
 																	    vml::math::vec2<T>& closestp,
-																		T& mindist)
+																		T& mindist, 
+				                                                        const T eps = vml::math::EPSILON)
 			{
-				if ((bmin.x >= p.x || p.x >= bmax.x) || (bmin.y >= p.y || p.y >= bmax.y))
+				if ((bmin.x -p.x> -eps || p.x -bmax.x > -eps) || (bmin.y -p.y> -eps || p.y-bmax.y > -eps))
 				{
 					closestp = p;
 					if (closestp.x <= bmin.x) closestp.x = bmin.x;
@@ -1142,10 +1143,10 @@ namespace vml
 
 			template <typename T>
 			static [[nodiscard]] uint32_t ClosestPointFromAABBToAABB(const vml::math::vec2<T>& amin, const vml::math::vec2<T>& amax,
-																	const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
-																	std::vector<vml::math::vec2<T>>& points,
-																	T& mindist,
-																	const T eps = vml::math::EPSILON)
+																	 const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
+																	 std::vector<vml::math::vec2<T>>& points,
+																	 T& mindist,
+																	 const T eps = vml::math::EPSILON)
 			{
 				vml::math::vec2<T> pa(amin.x, amin.y);
 				vml::math::vec2<T> pb(amax.x, amin.y);
@@ -1321,83 +1322,122 @@ namespace vml
 
 				return vml::geo2d::Results::DOES_NOT_INTERSECT;
 			}
-
-			/*
+			
 			/////////////////////////////////////////////////////////////////////////////
 			// Given point p, return the point q on or in AOBB b whichis closest to p
 
 			template <typename T>
-			static [[nodiscard]] uint32_t ClosestPointFromAOBBoxToPoint(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
-																		const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
-																		const vml::math::vec2<T>& o,
-																		const vml::math::vec2<T>& u, const vml::math::vec2<T>& v,
-																		const vml::math::vec2<T>& p,
-																		vml::math::vec2<T>& closestp,
-																		T &mindist,
-																		const T eps = vml::math::EPSILON)
+			static uint32_t  ClosestPointFromAOBBoxToPoint(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
+														   const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
+														   const vml::math::vec2<T>& point,
+														   vml::math::vec2<T>& closestPoint,
+														   float& mindist, 
+														   const T eps = vml::math::EPSILON)
 			{
-				// extract bounding box reference system
-				// u and v are respectively the axes center 
-				// in the counding box center
+				// compute box center
+				vml::math::vec2<T> center = (p1 + p2 + p3 + p4) * 0.25f;
 
-				// computer inverse matrix
-				// so that the bounding box is centered at orgin
-				// with the rotational part aligned to an
-				// orthonormal base so that the oriented 
-				// bounding boixs is transformed into an
-				// axis aligned bounding box
+				// compute box axis lenght and normalize box refderence system
+				vml::math::vec2<T> u = p2 - p1;
+				vml::math::vec2<T> v = p4 - p1;
+				float du = sqrtf(u.x * u.x + u.y * u.y);
+				float dv = sqrtf(v.x * v.x + v.y * v.y);
+				T w = du * 0.5f;
+				T h = dv * 0.5f;
+				du = (T)1 / du;
+				dv = (T)1 / dv;
+				u.x *= du;
+				u.y *= du;
+				v.x *= dv;
+				v.y *= dv;
 
-				T det = v.y * u.x - u.y * v.x;
-				if (det > -eps && det < eps)
-					det = eps;
-				det = 1 / det;
+				// Vector from rectangle center to point
+				vml::math::vec2<T> d(point.x - center.x, point.y - center.y);
 
-				T N0 = -v.x * det;
-				T N1 = -u.x * det;
-				T N2 = v.y * det;
-				T N3 = u.y * det;
+				// Transform point into rectangle's local coordinates
+				vml::math::vec2<T> local(d.x * u.x + d.y * u.y, d.x * v.x + d.y * v.y);
 
-				// compute transformed point
-				// so we can test the trasnfored point against
-				// the axis aligned bounding box
+				// Clamp local coordinates to rectangle bounds
 
-				T dx = p.x - o.x;
-				T dy = p.y - o.y;
+				vml::math::vec2<T> clamped;
+				uint32_t result = vml::geo2d::distances::ClosestPointFromAABBoxToPoint(vml::math::vec2<T>(-w, -h),
+																					   vml::math::vec2<T>(w, h),
+																					   local, clamped, mindist,eps);
 
-				vml::math::vec2<T> tp,tq;
+				// if clamped point is outside rectangle, then return minimim distance
 
-				tp.x = dx * N0 + dy * N1;
-				tp.y = dx * N2 + dy * N3;
-
-				T t1x = p1.x - o.x;
-				T t1y = p1.y - o.y;
-				T t2x = p2.x - o.x;
-				T t2y = p2.y - o.y;
-				T t3x = p3.x - o.x;
-				T t3y = p3.y - o.y;
-				T t4x = p4.x - o.x;
-				T t4y = p4.y - o.y;
-
-				vml::math::vec2<T> bmin(t1x * N0 + t1y * N1, t1x * N2 + t1y * N3);
-				vml::math::vec2<T> bmax(t3x * N0 + t3y * N1, t3x * N2 + t3y * N3);
-
-				// compute the transformed point closest point to the
-				// axis alinged bounding box
-
-				mindist = 0;
-
-				if (vml::geo2d::distances::ClosestPointFromAABBoxToPoint(bmin, bmax, tp, tq, mindist) == vml::geo2d::Results::OUTSIDE)
+				if (result == vml::geo2d::Results::OUTSIDE)
 				{
-					// transform point into original axis oriented bounding box reference system
-					closestp = vml::math::vec2<T>(tq.x * N0 + tq.y * N2 + o.x, tq.x * N1 + tq.y * N3 + o.y);
-					vml::math::vec2<T> dist = closestp - p;
-					mindist = sqrtf(dist.x * dist.x + dist.y * dist.y);
-					return vml::geo2d::Results::OUTSIDE;
+					// Transform clamped point back to global space
+					closestPoint = vml::math::vec2<T>(center.x + clamped.x * u.x + clamped.y * v.x, center.y + clamped.x * u.y + clamped.y * v.y);
 				}
-				
-				return vml::geo2d::Results::INSIDE;
+
+				return result;
 			}
-			*/
+
+			/////////////////////////////////////////////////////////////////////////////
+			// Given point p, and adirection, return the points on or in AOBB b which are closest to ray
+
+			template <typename T>
+			static uint32_t  ClosestPointFromAOBBoxToRay(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
+														 const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
+														 const vml::math::vec2<T>& p0,
+														 const vml::math::vec2<T>& dir,
+														 vml::math::vec2<T>& closestp,
+														 vml::math::vec2<T>& closestq,
+														 float& mindist,
+														 const T eps = vml::math::EPSILON)
+			{
+				// compute box center
+				vml::math::vec2<T> center = (p1 + p2 + p3 + p4) * 0.25f;
+
+				// compute box axis lenght and normalize box refderence system
+				vml::math::vec2<T> u = p2 - p1;
+				vml::math::vec2<T> v = p4 - p1;
+				float du = sqrtf(u.x * u.x + u.y * u.y);
+				float dv = sqrtf(v.x * v.x + v.y * v.y);
+				T w = du * 0.5f;
+				T h = dv * 0.5f;
+				du = (T)1 / du;
+				dv = (T)1 / dv;
+				u.x *= du;
+				u.y *= du;
+				v.x *= dv;
+				v.y *= dv;
+				
+				// Vector from rectangle center to point
+				vml::math::vec2<T> d(p0.x - center.x, p0.y - center.y);
+
+				// Transform point into rectangle's local coordinates
+				vml::math::vec2<T> localp0(d.x * u.x + d.y * u.y, d.x * v.x + d.y * v.y);
+				vml::math::vec2<T> localdir(dir.x * u.x + dir.y * u.y, dir.x * v.x + dir.y * v.y);
+				du = sqrtf(localdir.x * localdir.x + localdir.y * localdir.y);
+				du = (T)1 / du;
+				localdir.x *= du;
+				localdir.y *= du;
+
+				vml::math::vec2f p, q;
+				
+				uint32_t result = ClosestPointFromAABBToRay(vml::math::vec2<T>(-w, -h), vml::math::vec2<T>(w, h),
+															localp0, localdir, 
+														    p, q, mindist,
+															eps);
+		
+				// Transform clamped point back to global space
+				
+				if (result == vml::geo2d::Results::DOES_INTERSECT_ONE_POINT)
+				{
+					closestp = vml::math::vec2<T>(center.x + p.x * u.x + p.y * v.x, center.y + p.x * u.y + p.y * v.y);
+				}
+				else
+				{
+					closestp = vml::math::vec2<T>(center.x + p.x * u.x + p.y * v.x, center.y + p.x * u.y + p.y * v.y);
+					closestq = vml::math::vec2<T>(center.x + q.x * u.x + q.y * v.x, center.y + q.x * u.y + q.y * v.y);
+				}
+
+				return result;
+			}
+
 			/*
 			/////////////////////////////////////////////////////////////////////////////
 			// Return the shortest distance between a line and an axis alinged bounding box

@@ -154,6 +154,7 @@ namespace fa2040
 
 			static constexpr unsigned int BLADES_NEUTRAL = 0;
 			static constexpr unsigned int BLADES_ON		 = 1;
+			static constexpr unsigned int BLADES_OFF	 = 2;
 
 			// -------------------------------------------------------------------------
 			// Bump copter on the right
@@ -562,7 +563,7 @@ namespace fa2040
 					}
 				}
 
-				if (BladesState == 2)
+				if (BladesState == BLADES_OFF)
 				{
 					// decellerate to null angular velocity
 
@@ -580,7 +581,7 @@ namespace fa2040
 				}
 
 				// blades are stopped and the state
-				// is resetted
+				// is reset
 
 				if (BladeAngularSpeed < 0.0f)
 				{
@@ -983,6 +984,11 @@ namespace fa2040
 			{
 				if (BladesState == 1 || BladesState == 3)
 					BladesState = 2;
+			}
+
+			void BladesAlreadyOn()
+			{
+				BladesState = 3;
 			}
 
 			// -------------------------------------------------------------------

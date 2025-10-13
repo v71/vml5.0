@@ -68,8 +68,6 @@ namespace vml
 					NavMeshFileName = MainPath + "/" + LevelName + "_nav.3df";
 					NavMaskFileName = MainPath + "/" + LevelName + "_nav_mask.nvm";
 					
-				//	std::cout << MapMeshFileName << std::endl;
-
 					vml::logger::Logger2::GetInstance()->Info({ "Level","Loading Level : " + LevelName});
 					vml::logger::Logger2::GetInstance()->Info({ "Level","Loading Map Mesh : " + MapMeshFileName});
 					vml::logger::Logger2::GetInstance()->Info({ "Level","Loading Collision Mesh : " + ColMeshFileName });
@@ -94,6 +92,7 @@ namespace vml
 					if (std::filesystem::exists(NavMeshFileName)) 
 					{
 						vml::logger::Logger2::GetInstance()->Info({ "Level","Loading Nav Mesh : " + NavMeshFileName });
+
 						NavMesh = new vml::meshes::Mesh3d(NavMeshFileName, {},scale);
 						// load bitmap mask for pathfinding 
 						

@@ -158,9 +158,11 @@ namespace fa2040
 			// -------------------------------------------------------------------------
 			// state for blades animation
 
-			static constexpr unsigned int BLADES_NEUTRAL = 0;
-			static constexpr unsigned int BLADES_ON		 = 1;
-			
+			static constexpr unsigned int BLADES_NEUTRAL    = 0;
+			static constexpr unsigned int BLADES_ON		    = 1;
+			static constexpr unsigned int BLADES_OFF	    = 2;
+			static constexpr unsigned int BLADES_FULL_SPEED = 3;
+
 			// -------------------------------------------------------------------------
 			// Bump copter on the right
 
@@ -571,7 +573,7 @@ namespace fa2040
 					}
 				}
 
-				if (BladesState == 2)
+				if (BladesState == BLADES_OFF)
 				{
 					// decellerate to null angular velocity
 
@@ -588,8 +590,7 @@ namespace fa2040
 					}
 				}
 
-				// blades are stopped and the state
-				// is resetted
+				// blades are stopped and the state is reset
 
 				if (BladeAngularSpeed < 0.0f)
 				{
@@ -597,7 +598,9 @@ namespace fa2040
 					BladeAngularSpeed = 0.0f;
 				}
 
-				if (BladesState == 3)
+				// start with balesd at full spees
+
+				if (BladesState == BLADES_FULL_SPEED)
 				{
 					BladeAngularSpeed = BladeAngularSpeedLimit + BladeAcc;
 					BladesOverlay->SetVisible();
@@ -605,6 +608,7 @@ namespace fa2040
 				}
 
 				// integrate angualr bvelocity
+
 				BladeAngle += BladeAngularSpeed;
 				RotorModel->SetAngles(glm::vec3(0, BladeAngle, 0));
 				TailRotorModel->SetAngles(glm::vec3(BladeAngle, 0, 0));
@@ -1064,7 +1068,6 @@ namespace fa2040
 
 			void Controller()
 			{
-
 				// check if damping is over
 
 				DampingIsOver = Pitch > -DampingEps && Pitch < DampingEps;
@@ -1320,8 +1323,8 @@ namespace fa2040
 
 			void TurnOnBlades()
 			{
-				if (BladesState == 0 || BladesState==3)
-					BladesState = 1;
+				if (BladesState == BLADES_NEUTRAL || BladesState == BLADES_FULL_SPEED)
+					BladesState = BLADES_ON;
 			}
 
 			// -------------------------------------------------------------------
@@ -1329,8 +1332,16 @@ namespace fa2040
 
 			void TurnOffBlades()
 			{
-				if (BladesState == 1 || BladesState == 3)
-					BladesState = 2;
+				if (BladesState == BLADES_ON || BladesState == BLADES_FULL_SPEED)
+					BladesState = BLADES_OFF;
+			}
+
+			// -------------------------------------------------------------------
+			//
+
+			void BladesAtFull()
+			{
+				BladesState = BLADES_FULL_SPEED;
 			}
 
 			// -------------------------------------------------------------------
@@ -1620,7 +1631,7 @@ namespace fa2040
 
 				// Cleocopter scale
 				
-				Scale=scale;
+				Scale = scale;
 				
 				// flags
 				

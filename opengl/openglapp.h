@@ -47,7 +47,7 @@ class OpenglApp : public vml::Core
 		vml::views::ViewHandler*	   ViewHandler;
 		vml::models::ModelHandler*     ModelHandler;
 		vml::overlays::OverlayHandler* OverlayHandler;
-		JPH::JoltPhysics*		   Jolt;
+		vml::jolt::JoltPhysics*		   JoltHandler;
 
 		// ----------------------------------------------
 		// init opengl api
@@ -94,6 +94,8 @@ class OpenglApp : public vml::Core
 
 		void InitHandlers()
 		{
+			vml::logger::Logger2::GetInstance()->Info({ "Core","Initting Handlers" });
+
 			// allocate handlers
 
 			ViewHandler = new vml::views::ViewHandler();
@@ -112,7 +114,10 @@ class OpenglApp : public vml::Core
 
 		void InitJolt()
 		{
-			Jolt = new JPH::JoltPhysics();
+			vml::logger::Logger2::GetInstance()->Info({ "Jolt","Initting Jolt" });
+
+			JoltHandler = new vml::jolt::JoltPhysics();
+			JoltHandler->Init();
 		}
 
 		// -----------------------------------------------------------
@@ -147,7 +152,10 @@ class OpenglApp : public vml::Core
 			vml::os::SafeDelete(vml::stores::TextureStore);
 
 			// delete jolt
-			vml::os::SafeDelete(Jolt);
+	
+			if(JoltHandler)
+				JoltHandler->Close();
+			vml::os::SafeDelete(JoltHandler);
 
 			// close opengl context
 			vml::os::SafeDelete(OpenGLContextWindow);
@@ -169,15 +177,15 @@ class OpenglApp : public vml::Core
 		{
 			if (!TimerStarted)
 			{
-				CurrentTime = glfwGetTime();
-		//		CurrentTime = GetTimeAsDouble();
+		//		CurrentTime = glfwGetTime();
+				CurrentTime = GetTimeAsDouble();
 				Accumulator = 0;
 				TimerStarted = true;
 			}
 			else
 			{
-				double newTime = glfwGetTime();
-		//		double newTime = GetTimeAsDouble();
+		//		double newTime = glfwGetTime();
+				double newTime = GetTimeAsDouble();
 				double frameTime = newTime - CurrentTime;
 				CurrentTime = newTime;
 				Accumulator += frameTime;
@@ -188,7 +196,7 @@ class OpenglApp : public vml::Core
 					// call objects controllers
 			
 					Controller();
-
+			
 					// call keybindings
 
 					KeyBindings();
@@ -203,6 +211,7 @@ class OpenglApp : public vml::Core
 
 			}
 			
+		
 		}
 
 		// -----------------------------------------------------------
@@ -216,8 +225,8 @@ class OpenglApp : public vml::Core
 		__forceinline GLFWwindow* GetGLFWindow()						 const { return OpenGLContextWindow->GetWindow(); }
 		__forceinline vml::OpenGLContextWindow* GetOpenGLContextWindow() const { return OpenGLContextWindow; }
 		__forceinline double GetLastAccumulatedTime()					 const { return LastAccumulatedTime; }
-		__forceinline bool IsJoltInitted()								 const { return Jolt != nullptr; }
-		__forceinline JPH::JoltPhysics* GetJolt()						 const { return Jolt; }
+		__forceinline bool IsJoltInitted()								 const { return JoltHandler != nullptr; }
+		__forceinline vml::jolt::JoltPhysics* GetJolt()					 const { return JoltHandler; }
 
 		// -----------------------------------------------------------
 		// key bindings
@@ -250,7 +259,7 @@ class OpenglApp : public vml::Core
 			ViewHandler			= nullptr;
 			ModelHandler		= nullptr;
 			OverlayHandler		= nullptr;
-			Jolt				= nullptr;
+			JoltHandler			= nullptr;
 		}
 
 		virtual ~OpenglApp()

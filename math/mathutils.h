@@ -47,7 +47,7 @@
 #include <vml5.0\libs\glm\gtc\matrix_transform.hpp>			// glm matrix
 #include <vml5.0\libs\glm\gtc\type_ptr.hpp>					// glm pointers
 #include <vml5.0\libs\glm\gtc\matrix_inverse.hpp>			// for inverting and transposing 
+#include <vml5.0\libs\glm\gtc\quaternion.hpp>
 #include <vml5.0\libs\glm\gtx\quaternion.hpp>				// quaternion class for orientation
-#include <vml5.0\libs\glm\gtx\perpendicular.hpp>			// quaternion class for orientation
-
+//#include <vml5.0\libs\glm\gtx\perpendicular.hpp>			// quaternion class for orientation
 

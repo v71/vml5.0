@@ -35,56 +35,13 @@ namespace vml
 
 				vml::scenes::Level* GetLevel() const
 				{
-					if (Level) {
+					if (Level) 
 						return Level;
-					}
-					else {
+					else 
 						vml::os::Message::Error("Scene : ", "Level is not loaded");
-					}
 					return nullptr;
 				}
 				
-				// -------------------------------------------------------------------
-				//
-
-				vml::octree::OctTree* GetLevelOctTree() const
-				{
-					if (Level)
-					{
-						if (Level->GetOctTree()) {
-							return Level->GetOctTree();
-						}
-						else {
-							vml::os::Message::Error("Scene : ", "Octree is not valid");
-						}
-					}
-					else {
-						vml::os::Message::Error("Scene : ", "Scene is not initted");
-					}
-					return nullptr;
-				}
-
-				/*
-				// -------------------------------------------------------------------
-				//
-
-				vml::meshes::Mesh3d* GetLevelNavMesh() const
-				{
-					if (!vml::utils::bits32::Get(InternalFlags, vml::utils::InternalFlags::INITTED))
-						vml::os::Message::Error("Scene : ", "Scene is not initted");
-					return Level->GetNavMesh();
-				}
-				*/
-				// -------------------------------------------------------------------
-				//
-				/*
-				vml::meshes::Mesh3d* GetLevelCollisionMesh() const
-				{
-					if (!vml::utils::bits32::Get(InternalFlags, vml::utils::InternalFlags::INITTED))
-						vml::os::Message::Error("Scene : ", "Scene is not initted");
-					return Level->GetCollisionMesh();
-				}
-				*/
 				// -------------------------------------------------------------------
 				//
 				

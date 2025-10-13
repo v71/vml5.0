@@ -86,7 +86,7 @@ namespace vml
 				glm::vec3						   Forward;							// Forward direction vector
 				glm::vec3						   Up;								// Up direction vector
 				glm::mat4						   M;								// model matrix
-				glm::mat4						   R;								// model matrix
+				glm::mat4						   R;								// rotation matrix
 				glm::mat4						   MV;								// model * view matrix
 				glm::mat4						   MVP;								// model * view * projection matrix
 				glm::mat3						   NV;								// viewnormal matrix
@@ -211,11 +211,11 @@ namespace vml
 				// --------------------------------------------------------------------------
 				// hierarchy getters
 
-				[[nodiscard]] Model3d_2*				GetChild(size_t pos)				   const; 
-				[[nodiscard]] vml::meshes::Mesh3d*		GetCurrentMesh()					   const; 
-				[[nodiscard]] vml::meshes::Mesh3d*		GetMeshAt(const size_t pos)			   const; 
-				[[nodiscard]] size_t					GetMeshesCount()					   const; 
-				[[nodiscard]] Model3d_2*			    GetChild(const std::string& childname) const;
+				[[nodiscard]] Model3d_2*		   GetChild(size_t pos)				      const; 
+				[[nodiscard]] vml::meshes::Mesh3d* GetCurrentMesh()					      const; 
+				[[nodiscard]] vml::meshes::Mesh3d* GetMeshAt(const size_t pos)			  const; 
+				[[nodiscard]] size_t			   GetMeshesCount()					      const; 
+				[[nodiscard]] Model3d_2*		   GetChild(const std::string& childname) const;
 				
 				// --------------------------------------------------------------------------
 				// matrix getters
