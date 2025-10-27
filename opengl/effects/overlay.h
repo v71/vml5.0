@@ -608,7 +608,7 @@ namespace vml
 
 					// compute axis aligned bounding box
 
-					AABoundingBox.Set(AOBoundingBox.GetMin(), AOBoundingBox.GetMax());
+					AABoundingBox.Set(AOBoundingBox.GetAABBMin(), AOBoundingBox.GetAABBMax());
 
 					// compute bounding sphere
 

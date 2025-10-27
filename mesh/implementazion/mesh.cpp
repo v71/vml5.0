@@ -37,8 +37,6 @@ namespace vml
 			SurfaceIndices.clear();
 
 			// delete vbo
-			if (VAOid) { glDeleteVertexArrays(1, &VAOid); VAOid = 0; }
-			if (IndexBufferObject) { glDeleteBuffers(1, &IndexBufferObject); IndexBufferObject = 0; }
 			if (BufferObjects[0]) { glDeleteBuffers(1, &BufferObjects[0]); BufferObjects[0] = 0; }
 			if (BufferObjects[1]) { glDeleteBuffers(1, &BufferObjects[1]); BufferObjects[1] = 0; }
 			if (BufferObjects[2]) { glDeleteBuffers(1, &BufferObjects[2]); BufferObjects[2] = 0; }
@@ -47,6 +45,9 @@ namespace vml
 			if (BufferObjects[5]) { glDeleteBuffers(1, &BufferObjects[5]); BufferObjects[5] = 0; }
 			if (BufferObjects[6]) { glDeleteBuffers(1, &BufferObjects[6]); BufferObjects[6] = 0; }
 			if (BufferObjects[7]) { glDeleteBuffers(1, &BufferObjects[7]); BufferObjects[7] = 0; }
+			if (IndexBufferObject) { glDeleteBuffers(1, &IndexBufferObject); IndexBufferObject = 0; }
+			if (VAOid) { glDeleteVertexArrays(1, &VAOid); VAOid = 0; }
+
 		}
 
 		// ---------------------------------------------------------------

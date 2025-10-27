@@ -20,7 +20,7 @@ namespace vml
 			static const uint32_t FAIL = 1;
 
 			// intersections flags
-
+			
 			static const uint32_t DOES_INTERSECT	  = 1;
 			static const uint32_t DOES_NOT_INTERSECT  = 2;
 			static const uint32_t COLLINEAR			  = 4;
@@ -51,7 +51,7 @@ namespace vml
 
 				return "Undefined BitValue";
 			}
-
+			
 		};
 
 	} // end of geo2d namespace

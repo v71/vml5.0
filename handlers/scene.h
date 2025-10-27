@@ -51,7 +51,7 @@ namespace vml
 					vml::os::SafeDelete(Level);
 
 					// reallocate classes
-					Level  = new vml::scenes::Level();
+					Level = new vml::scenes::Level();
 
 					// log message
 					vml::logger::Logger2::GetInstance()->Info({ "Scene","Clearing Scene : '" + Name + "'" });

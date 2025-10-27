@@ -594,7 +594,6 @@ namespace vml
 	}	// end of geo3d namespace
 }	// end of vml namespace
 
-
 namespace vml
 {
 	namespace geo3d

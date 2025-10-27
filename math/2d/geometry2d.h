@@ -20,28 +20,28 @@ namespace vml
 
 			// intersections flags
 
-			static const uint32_t DOES_INTERSECT 		    =   2;
-			static const uint32_t DOES_INTERSECT_ONE_POINT  =   3;
-			static const uint32_t DOES_INTERSECT_TWO_POINT  =   4;
-			static const uint32_t DOES_NOT_INTERSECT	    =   5;
-			static const uint32_t COLLINEAR				    =   6;
-			static const uint32_t PARALLEL				    =   7;
-			static const uint32_t DOES_INTERSECT_ONE_POINT_P =  8;
-			static const uint32_t DOES_INTERSECT_ONE_POINT_Q =  9;
+			static const uint32_t DOES_INTERSECT 		    =  2;
+			static const uint32_t DOES_INTERSECT_ONE_POINT  =  3;
+			static const uint32_t DOES_INTERSECT_TWO_POINT  =  4;
+			static const uint32_t DOES_NOT_INTERSECT	    =  5;
+			static const uint32_t COLLINEAR				    =  6;
+			static const uint32_t PARALLEL				    =  7;
+			static const uint32_t DOES_INTERSECT_ONE_POINT_P = 8;
+			static const uint32_t DOES_INTERSECT_ONE_POINT_Q = 9;
 
 			// containment flags
 
-			static const uint32_t INSIDE					= 16;
-			static const uint32_t OUTSIDE					= 17;
-			static const uint32_t SECOND_INSIDE_FIRST		= 18;
-			static const uint32_t FIRST_INSIDE_SECOND		= 19;
+			static const uint32_t INSIDE					 = 16;
+			static const uint32_t OUTSIDE					 = 17;
+			static const uint32_t SECOND_INSIDE_FIRST		 = 18;
+			static const uint32_t FIRST_INSIDE_SECOND		 = 19;
 
 			// position flags
 
-			static const uint32_t TOP						= 32;
-			static const uint32_t RIGHT						= 33;
-			static const uint32_t BOTTOM					= 34;
-			static const uint32_t LEFT						= 35;
+			static const uint32_t TOP						 = 32;
+			static const uint32_t RIGHT						 = 33;
+			static const uint32_t BOTTOM					 = 34;
+			static const uint32_t LEFT						 = 35;
 
 			// get bit desciptors
 

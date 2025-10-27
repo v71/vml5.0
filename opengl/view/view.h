@@ -82,7 +82,7 @@ namespace vml
 				//  orbit camera
 				// example : View->UpdateView(vml::GlWindow,Model->GetPosition(),40);
 						
-				void UpdateView(const float w, const float h, const glm::vec3 &pos, float distance)
+				void Transform(const float w, const float h, const glm::vec3 &pos, float distance)
 				{
 					// Set aspect
 
@@ -285,7 +285,7 @@ namespace vml
 				// ----------------------------------------------------------------
 				//  fps camera
 
-				void UpdateView(const float w, const float h)
+				void Transform(const float w, const float h)
 				{
 					// Set aspect
 					ViewPortWidth = w;
@@ -506,7 +506,7 @@ namespace vml
 				
 				void TransformFPSAndUpdateGlViewport(const float w, const float h)
 				{
-					UpdateView(w, h);
+					Transform(w, h);
 					glViewport(0, 0, ViewPortWidth, ViewPortHeight);
 				}
 
@@ -728,15 +728,15 @@ namespace vml
 					// fill in data
 
 					RotationMode	  = rotationmode;
-					Position		  = position;												// initial position
+					Position		  = position;											// initial position
 					Angles			  = angles;												// euler angles
-					OldPosition		  = position;												// needed for resetting position
+					OldPosition		  = position;											// needed for resetting position
 					OldAngles		  = angles;												// needed for resetting angles
 					NearClippingPlane = nearclippingplane;									// near z clipping plane
-					FarClippingPlane  = farclippingplane;										// far z clipping plane
-					Fov               = fov*vml::math::DEGTORAD;								// field of view
+					FarClippingPlane  = farclippingplane;									// far z clipping plane
+					Fov               = fov*vml::math::DEGTORAD;							// field of view
 					RotationSpeed     = rotationspeed;										// rotation speed
-					TranslationSpeed  = translationspeed;										// translation speed
+					TranslationSpeed  = translationspeed;									// translation speed
 					Right			  = glm::vec3(1, 0, 0);									// right vector	( x axis )
 					Up				  = glm::vec3(0, 1, 0);									// up vector ( y axis )
 					Forward			  = glm::vec3(0, 0, 1);									// direction vector ( z axis )
@@ -754,7 +754,7 @@ namespace vml
 					Planes[4]		  = glm::vec4(0,0,0,0);									// frustum planes
 					Planes[5]		  = glm::vec4(0,0,0,0);									// frustum planes
 					Quaternion		  = glm::quat(0,0,0,0);									// quaternion
-					ScreenName		  = vml::strings::StringUtils::MakeLower(screenname);		// screenname
+					ScreenName		  = vml::strings::StringUtils::MakeLower(screenname);	// screenname
 					MouseX			  = 0.0;
 					MouseY			  = 0.0;
 					LeftButtonState   = 0;

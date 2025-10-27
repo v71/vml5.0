@@ -41,6 +41,10 @@ namespace fa2040
 			vml::overlays::EffectOverlay* BulletOverlays[16];
 			vml::overlays::EffectOverlay* MissileOverlays[16];
 			
+			// array containing connected models
+
+			std::vector<vml::models::Model3d_2*> ModelsTree;
+
 			// keys
 
 			unsigned char Keys[1024] = { 0 };		// keys to bind
@@ -65,7 +69,7 @@ namespace fa2040
 			bool	  Bumping;
 
 			float	  ClimbSpeed;					// Climb Speed
-			
+
 			glm::vec3 DirectionVector;				// Driection vector
 			int		  LastHorzDirectionState;		// horizontal animation state 
 			int		  LastVertDirectionState;		// vertical animation state
@@ -79,7 +83,6 @@ namespace fa2040
 			float	  Mass;							// Newtonian Mass
 			float	  InvMass;						// Inverse of mass
 			float	  Dt;
-			bool	  NormalizeDirection;
 
 			// landing gear controller
 
@@ -1008,6 +1011,13 @@ namespace fa2040
 					MissileOverlays[i]->SetInVisible();
 				}
 				
+				// Get array of models building up the cleocopter
+
+				ModelsTree = BodyModel->GetModelsTree();
+
+				for (size_t i = 0; i < ModelsTree.size(); ++i)
+					std::cout << ModelsTree[i]->GetScreenName() << std::endl;
+			
 			}
 
 		public:
@@ -1418,25 +1428,22 @@ namespace fa2040
 					// is the result of different sum of base vectors (1,0,0), (0,1,0), (0,0,1) 
 					// and negative directions as well
 					
-					if(NormalizeDirection)
+					float denum = DirectionVector.x * DirectionVector.x + DirectionVector.y * DirectionVector.y + DirectionVector.z * DirectionVector.z;
+
+					// this never happens
+
+					if (denum > -vml::math::EPSILON && denum < vml::math::EPSILON)
 					{
-						float denum = DirectionVector.x * DirectionVector.x + DirectionVector.y * DirectionVector.y + DirectionVector.z * DirectionVector.z;
-
-						// this never happens
-
-						if (denum > -vml::math::EPSILON && denum < vml::math::EPSILON)
-						{
-							DirectionVector.x = 0;
-							DirectionVector.y = 0;
-							DirectionVector.z = 0;
-						}
-						else
-						{
-							denum = 1.0f / sqrtf(denum);
-							DirectionVector.x *= denum;
-							DirectionVector.y *= denum;
-							DirectionVector.z *= denum;
-						}
+						DirectionVector.x = 0.0f;
+						DirectionVector.y = 0.0f;
+						DirectionVector.z = 0.0f;
+					}
+					else
+					{
+						denum = 1.0f / sqrtf(denum);
+						DirectionVector.x *= denum;
+						DirectionVector.y *= denum;
+						DirectionVector.z *= denum;
 					}
 
 					// detect keypress
@@ -1476,6 +1483,14 @@ namespace fa2040
 
 				BodyModel->SetAngles(glm::vec3(Roll, Pitch, Yaw));
 
+			}
+
+			// -------------------------------------------------------------------
+			//
+
+			void SetPosition(const glm::vec3& position)
+			{
+				BodyModel->SetPosition(position);
 			}
 
 			/*
@@ -1525,20 +1540,43 @@ namespace fa2040
 			*/		
 			
 			// -------------------------------------------------------------------
-			//
+			// Getters
 
-			[[nodiscard]] vml::models::Model3d_2* GetBodyModel() const { return BodyModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetBladesModel() const { return BladesModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetLandingGearModel() const { return LandingGearModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetGunRotorModel() const { return GunRotorModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetRotorModel() const { return RotorModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetTailRotorModel() const { return TailRotorModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetGunModel() const { return GunModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetJetsModel() const { return JetsModel; }
-			[[nodiscard]] vml::models::Model3d_2* GetGunPivotModel() const { return GunPivotModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetBodyModel()				   const { return BodyModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetBladesModel()				   const { return BladesModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetLandingGearModel()			   const { return LandingGearModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetGunRotorModel()			   const { return GunRotorModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetRotorModel()				   const { return RotorModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetTailRotorModel()			   const { return TailRotorModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetGunModel()					   const { return GunModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetJetsModel()				   const { return JetsModel; }
+			[[nodiscard]] vml::models::Model3d_2* GetGunPivotModel()			   const { return GunPivotModel; }
 			[[nodiscard]] vml::models::Model3d_2* GetMissileModel(const size_t id) const { return MissileModel[id]; }
-			[[nodiscard]] float GetElongazion() const { return Elongazion; }
-			[[nodiscard]] const std::string& GetScreenName() const { return ScreenName; }
+			[[nodiscard]] float					  GetElongazion()				   const { return Elongazion; }
+			[[nodiscard]] const std::string&	  GetScreenName()				   const { return ScreenName; }
+			[[nodiscard]] float					  GetScale()					   const { return Scale; }
+			[[nodiscard]] const	glm::vec3&		  GetVelocityDirection()		   const { return DirectionVector; }
+			[[nodiscard]] float					  GetDt()						   const { return Dt; }
+
+			// * Velocity vector is returned multiplied by Dt *
+			// if you want the pure velocity vector , divide by dt
+
+			[[nodiscard]] const glm::vec3& GetVelocity() const { return Velocity; } 
+
+			// * Speed is returned multiplied by Dt *
+			// if you want pure scalar velocity ( speed ) , divide by dt
+
+			[[nodiscard]] float GetSpeed() const 
+			{
+				return sqrtf(Velocity.x * Velocity.x + Velocity.y * Velocity.y + Velocity.z * Velocity.z);
+			}
+
+			// return models tree array
+
+			[[nodiscard]] const std::vector<vml::models::Model3d_2*>& GetModelsTree()
+			{
+				return ModelsTree;
+			}
 
 	//		int GetNavMeshCellId() const { return NavMeshCellId; }
 			
@@ -1561,34 +1599,34 @@ namespace fa2040
 
 				// models
 
-				BodyModel                = nullptr;
-				CanopyModel              = nullptr;
-				JetsModel                = nullptr;
-				RotorModel               = nullptr;
-				RadarModel               = nullptr;
-				TailRotorModel           = nullptr;
-				BladesModel              = nullptr;
-				LandingGearModel         = nullptr;
-				GunRotorModel            = nullptr;
-				GunMountModel            = nullptr;
-				GunPivotModel            = nullptr;
-				GunModel                 = nullptr;
-				MissileModel[ 0]         = nullptr;
-				MissileModel[ 1]         = nullptr;
-				MissileModel[ 2]         = nullptr;
-				MissileModel[ 3]         = nullptr;
-				MissileModel[ 4]         = nullptr;
-				MissileModel[ 5]         = nullptr;
-				MissileModel[ 6]         = nullptr;
-				MissileModel[ 7]         = nullptr;
-				MissileModel[ 8]         = nullptr;
-				MissileModel[ 9]         = nullptr;
-				MissileModel[10]         = nullptr;
-				MissileModel[11]         = nullptr;
-				MissileModel[12]         = nullptr;
-				MissileModel[13]         = nullptr;
-				MissileModel[14]         = nullptr;
-				MissileModel[15]         = nullptr;
+				BodyModel        = nullptr;
+				CanopyModel      = nullptr;
+				JetsModel        = nullptr;
+				RotorModel       = nullptr;
+				RadarModel       = nullptr;
+				TailRotorModel   = nullptr;
+				BladesModel      = nullptr;
+				LandingGearModel = nullptr;
+				GunRotorModel    = nullptr;
+				GunMountModel    = nullptr;
+				GunPivotModel    = nullptr;
+				GunModel         = nullptr;
+				MissileModel[ 0] = nullptr;
+				MissileModel[ 1] = nullptr;
+				MissileModel[ 2] = nullptr;
+				MissileModel[ 3] = nullptr;
+				MissileModel[ 4] = nullptr;
+				MissileModel[ 5] = nullptr;
+				MissileModel[ 6] = nullptr;
+				MissileModel[ 7] = nullptr;
+				MissileModel[ 8] = nullptr;
+				MissileModel[ 9] = nullptr;
+				MissileModel[10] = nullptr;
+				MissileModel[11] = nullptr;
+				MissileModel[12] = nullptr;
+				MissileModel[13] = nullptr;
+				MissileModel[14] = nullptr;
+				MissileModel[15] = nullptr;
 
 				// overlays
 
@@ -1655,7 +1693,6 @@ namespace fa2040
 				RollSpeed			   = 3.2f;
 				BumpSpeed	           = 2.0f;
 				Bumping				   = false;
-				NormalizeDirection	   = true;
 
 				RollAngleLimit	       = 70.0f;					
 				ClimbAngleLimit        = 45.0f+20.0f;					

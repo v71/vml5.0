@@ -44,7 +44,6 @@ namespace vml
 
 		static constexpr uint32_t EULER					= 0;
 		static constexpr uint32_t SPHERICAL_QUATERNION  = 1;
-		static constexpr uint32_t QUATERNION			= 2;
 
 		// ---------------------------------------------------------------
 		// visiblity flag
@@ -86,13 +85,12 @@ namespace vml
 				glm::vec3						   Forward;							// Forward direction vector
 				glm::vec3						   Up;								// Up direction vector
 				glm::mat4						   M;								// model matrix
-				glm::mat4						   R;								// rotation matrix
 				glm::mat4						   MV;								// model * view matrix
 				glm::mat4						   MVP;								// model * view * projection matrix
 				glm::mat3						   NV;								// viewnormal matrix
 				glm::mat2						   TM;								// texture matrix
 				vml::textures::Texture			  *DiffuseTexture;
-			
+
 				// ---------------------------------------------------------------
 				// remove mesh if uniqe , if mesh is still in use, the
 				// resource manager waits until no more models use it.
@@ -103,11 +101,6 @@ namespace vml
 				// Compute quaternion matrix
 
 				void ComputeSphericalQuaternionMatrix();
-
-				// ------------------------------------------------------------------
-				// Compute quaternion matrix
-
-				void ComputeQuaternionMatrix();
 
 				// -----------------------------------------------------------------------
 				// Compute euler matrix
@@ -128,6 +121,11 @@ namespace vml
 				// recursive function to get the compound axis aligned bounding box
 
 				void GetAACompoundBoundingBoxRecursive(glm::vec3& bmin, glm::vec3& bmax, vml::models::Model3d_2* model);
+
+				// -----------------------------------------------------------------------
+				// recursive function to get the compound models
+
+				void GetModelsTreeRecursive(std::vector<vml::models::Model3d_2*> &modellist, vml::models::Model3d_2* model, int depth=0);
 
 			public:
 
@@ -206,7 +204,6 @@ namespace vml
 				[[nodiscard]] bool								   IsSolid()				   const; 
 				[[nodiscard]] const vml::geo3d::AABBox			   GetAACompoundBoundingBox();
 				[[nodiscard]] std::vector<vml::models::Model3d_2*> GetModelsTree();
-				void GetModelsTreeRecursive(vml::models::Model3d_2* model, int depth=0);
 
 				// --------------------------------------------------------------------------
 				// hierarchy getters
@@ -221,7 +218,6 @@ namespace vml
 				// matrix getters
 
 				[[nodiscard]] float* GetMptr(); 
-				[[nodiscard]] float* GetRptr();
 				[[nodiscard]] float* GetNVptr(); 
 				[[nodiscard]] float* GetMVptr(); 
 				[[nodiscard]] float* GetMVPptr(); 
@@ -232,7 +228,8 @@ namespace vml
 				[[nodiscard]] const glm::mat4& GetMV()  const; 
 				[[nodiscard]] const glm::mat4& GetMVP() const; 
 				[[nodiscard]] const glm::mat3& GetNV()  const; 
-				
+				[[nodiscard]] const glm::mat4 GetNormalizedRotationMatrix() const;
+
 				// rotation / postion / scaling getters
 
 				[[nodiscard]] const glm::vec3& GetPosition() const; 

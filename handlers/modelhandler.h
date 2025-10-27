@@ -134,19 +134,25 @@ namespace vml
 							PopulateStack(parent);
 					} while (parent);
 
-					//	std::cout << "Models : " << Models.size() << " , StackSize : " << Last << std::endl;
-					//	for (size_t i = 0; i < Last; ++i)
-					//	{
-					//		if (Stack[i]->GetParent())
-					//			std::cout << "# " << i << " Stack [ " << Stack[i]->GetScreenName() << " ] , Parent [ " << Stack[i]->GetParent()->GetScreenName() << " ]\n";
-					//		else
-					//			std::cout << "# " << i << " Stack [ " << Stack[i]->GetScreenName() << " ]\n";
-					//	}
+				//	std::cout << "Models : " << Models.size() << " , StackSize : " << Last << std::endl;
+				//	for (size_t i = 0; i < Last; ++i)
+				//	{
+				//		if (Stack[i]->GetParent())
+				//			std::cout << "# " << i << " Stack [ " << Stack[i]->GetScreenName() << " ] , Parent [ " << Stack[i]->GetParent()->GetScreenName() << " ]\n";
+				//		else
+				//			std::cout << "# " << i << " Stack [ " << Stack[i]->GetScreenName() << " ]\n";
+				//	}
+				
+					// reset visited flag
+
+					for (size_t i = 0; i < Models.size(); ++i)
+						Models[i]->Visited = false;
+
 				}
 
 				// ------------------------------------------------------------------
 				// recursively traverse the model tree composed by linked children model(s)
-
+				/*
 				void DumpModelRecursive(vml::models::Model3d_2* model, int depth = 0)
 				{
 					if (!model)
@@ -170,7 +176,7 @@ namespace vml
 					for (size_t i = 0; i < model->GetChildCount(); ++i)
 						DumpModelRecursive(model->GetChild(i), depth + 1);
 				}
-
+				*/
 			public:
 
 				//-------------------------------------------------------------------------

@@ -50,14 +50,6 @@ namespace vml
 		// ------------------------------------------------------------------
 		// Compute quaternion matrix
 
-		void Model3d_2::ComputeQuaternionMatrix()
-		{
-			
-		}
-
-		// ------------------------------------------------------------------
-		// Compute quaternion matrix
-
 		void Model3d_2::ComputeSphericalQuaternionMatrix()
 		{
 			// cache scaling factors
@@ -94,7 +86,6 @@ namespace vml
 			// create quaternion around this axis
 
 			Quaternion = glm::angleAxis(alpha, axis);
-
 			glm::mat4 Q = glm::toMat4(Quaternion);
 
 			float* QMatrix = glm::value_ptr(Q);
@@ -129,51 +120,26 @@ namespace vml
 
 			// hardcoded version of the above code
 
-			float r0  =  cx * cy;
-			float r1  =  sx;
-			float r2  =  cx * sy;
-			float r4  = -cy * sx;
-			float r5  =  cx;
-			float r6  = -sx * sy;
-			float r8  = -sy;
-			float r10 =  cy;
-
-			// get rotation matrix pointer
-
-			float* rmatrix = glm::value_ptr(R);
-
-			rmatrix[ 0] = -r8 * f0 - r10 *  f8;
-			rmatrix[ 1] = -r8 * f1 - r10 *  f9;
-			rmatrix[ 2] = -r8 * f2 - r10 * f10;
-			rmatrix[ 3] =  0;
-			rmatrix[ 4] =  r4 * f0 + r5 * f4 + r6 *  f8;
-			rmatrix[ 5] =  r4 * f1 + r5 * f5 + r6 *  f9;
-			rmatrix[ 6] =  r4 * f2 + r5 * f6 + r6 * f10;
-			rmatrix[ 7] =  0;
-			rmatrix[ 8] =  r0 * f0 + r1 * f4 + r2 *  f8;
-			rmatrix[ 9] =  r0 * f1 + r1 * f5 + r2 *  f9;
-			rmatrix[10] =  r0 * f2 + r1 * f6 + r2 * f10;
-			rmatrix[11] =  0;
-			rmatrix[12] =  0;
-			rmatrix[13] =  0;
-			rmatrix[14] =  0;
-			rmatrix[15] =  1;
+			float cxcy  =  cx * cy;
+			float cxsy  =  cx * sy;
+			float cysx  = -cy * sx;
+			float sxsy  = -sx * sy;
 
 			// get parent matrix pointer
 
 			float* matrix = glm::value_ptr(M);
 
-			matrix[ 0] = rmatrix[ 0] * scx;
-			matrix[ 1] = rmatrix[ 1] * scx;
-			matrix[ 2] = rmatrix[ 2] * scx;
+			matrix[ 0] = (sy * f0 - cy *  f8) * scx;
+			matrix[ 1] = (sy * f1 - cy *  f9) * scx;
+			matrix[ 2] = (sy * f2 - cy * f10) * scx;
 			matrix[ 3] = 0;
-			matrix[ 4] = rmatrix[ 4] * scy;
-			matrix[ 5] = rmatrix[ 5] * scy;
-			matrix[ 6] = rmatrix[ 6] * scy;
+			matrix[ 4] = (cysx * f0 + cx * f4 + sxsy *  f8) * scy;
+			matrix[ 5] = (cysx * f1 + cx * f5 + sxsy *  f9) * scy;
+			matrix[ 6] = (cysx * f2 + cx * f6 + sxsy * f10) * scy;
 			matrix[ 7] = 0;
-			matrix[ 8] = rmatrix[ 8] * scz;
-			matrix[ 9] = rmatrix[ 9] * scz;
-			matrix[10] = rmatrix[10] * scz;
+			matrix[ 8] = (cxcy * f0 + sx * f4 + cxsy *  f8) * scz;
+			matrix[ 9] = (cxcy * f1 + sx * f5 + cxsy *  f9) * scz;
+			matrix[10] = (cxcy * f2 + sx * f6 + cxsy * f10) * scz;
 			matrix[11] = 0;
 			matrix[12] = Position.x;
 			matrix[13] = Position.y;
@@ -217,42 +183,21 @@ namespace vml
 			float cy = cos(phi);
 			float cz = cos(theta);
 
-			// get rotation matrix pointer
-
-			float* rmatrix = glm::value_ptr(R);
-
-			rmatrix[ 0] =  cy * cz;
-			rmatrix[ 1] =  sx * sy * cz + cx * sz;
-			rmatrix[ 2] = -cx * sy * cz + sx * sz;
-			rmatrix[ 3] =  0;
-			rmatrix[ 4] = -cy * sz;
-			rmatrix[ 5] = -sx * sy * sz + cx * cz;
-			rmatrix[ 6] =  cx * sy * sz + sx * cz;
-			rmatrix[ 7] =  0;
-			rmatrix[ 8] =  sy;
-			rmatrix[ 9] = -sx * cy;
-			rmatrix[10] =  cx * cy;
-			rmatrix[11] =  0;
-			rmatrix[12] =  0;
-			rmatrix[13] =  0;
-			rmatrix[14] =  0;
-			rmatrix[15] =  1;
-
 			// get parent matrix pointer
 
 			float* matrix = glm::value_ptr(M);
 
-			matrix[ 0] = rmatrix[0] * scx;
-			matrix[ 1] = rmatrix[1] * scx;
-			matrix[ 2] = rmatrix[2] * scx;
+			matrix[ 0] = ( cy * cz ) * scx;
+			matrix[ 1] = ( sx * sy * cz + cx * sz ) * scx;
+			matrix[ 2] = (-cx * sy * cz + sx * sz ) * scx;
 			matrix[ 3] = 0;
-			matrix[ 4] = rmatrix[4] * scy;
-			matrix[ 5] = rmatrix[5] * scy;
-			matrix[ 6] = rmatrix[6] * scy;
+			matrix[ 4] = (-cy * sz) * scy;
+			matrix[ 5] = (-sx * sy * sz + cx * cz) * scy;
+			matrix[ 6] = ( cx * sy * sz + sx * cz) * scy;
 			matrix[ 7] = 0;
-			matrix[ 8] = rmatrix[ 8] * scz;
-			matrix[ 9] = rmatrix[ 9] * scz;
-			matrix[10] = rmatrix[10] * scz;
+			matrix[ 8] = sy * scz;
+			matrix[ 9] = (-sx * cy) * scz;
+			matrix[10] = ( cx * cy) * scz;
 			matrix[11] = 0;
 			matrix[12] = Position.x;
 			matrix[13] = Position.y;
@@ -333,7 +278,7 @@ namespace vml
 
 			// compute axis aligned bounding box
 
-			AABoundingBox.Set(AOBoundingBox.GetMin(), AOBoundingBox.GetMax());
+			AABoundingBox.Set(AOBoundingBox.GetAABBMin(), AOBoundingBox.GetAABBMax());
 
 			// compute bounding sphere
 
@@ -565,8 +510,8 @@ namespace vml
 		{
 			// get model bounding box
 
-			glm::vec3 model_bmin = model->AABoundingBox.GetMin();
-			glm::vec3 model_bmax = model->AABoundingBox.GetMax();
+			const glm::vec3 &model_bmin = model->AABoundingBox.GetMin();
+			const glm::vec3 &model_bmax = model->AABoundingBox.GetMax();
 
 			// expand current compound bounding box
 
@@ -597,51 +542,54 @@ namespace vml
 
 		// ------------------------------------------------------------------
 		// recursively traverse the model tree composed by linked children model(s)
-
-		void Model3d_2::GetModelsTreeRecursive(vml::models::Model3d_2* model,int depth)
+		
+		void Model3d_2::GetModelsTreeRecursive(std::vector<vml::models::Model3d_2*> &modellist,vml::models::Model3d_2* model,int depth)
 		{
 			if (!model)
 				return;
 
 			if (model->Visited)
 				return;
-
+			
 			// Print indentation spaces
 
-			for (int i = 0; i < depth; ++i)
-				std::cout << "    "; // 4 spaces per depth level
+		//	for (int i = 0; i < depth; ++i)
+		//		std::cout << "    "; // 4 spaces per depth level
 
 			// print model screenname
 
-			std::cout << model->GetScreenName() << std::endl;
-				model->Visited = true;
+		//	std::cout << model->GetScreenName() << std::endl;
+
+			modellist.emplace_back(model);
+
+			model->Visited = true;
 
 			// recurse
 
 			for (size_t i = 0; i < model->GetChildCount(); ++i)
-				GetModelsTreeRecursive(model->GetChild(i), depth + 1);
+				GetModelsTreeRecursive(modellist,model->GetChild(i), depth + 1);
 		 }
-
+		
 		// --------------------------------------------------------------------------
 
 		[[nodiscard]] std::vector<vml::models::Model3d_2*> Model3d_2::GetModelsTree()
 		{
 			std::vector<vml::models::Model3d_2*> modellist;
-			std::cout <<GetScreenName() << std::endl;
+			modellist.emplace_back(this);
 			for (auto& model : Child)
-				GetModelsTreeRecursive(model);
+				GetModelsTreeRecursive(modellist,model);
 			for ( auto &model : modellist)
 				model->Visited = false;
 			return modellist;
 		}
-
+		
 		// --------------------------------------------------------------------------
 		// hierarchy getters
 
-		[[nodiscard]] Model3d_2*				Model3d_2::GetChild(size_t pos)		   const { return *(Child.begin() + pos); }
-		[[nodiscard]] vml::meshes::Mesh3d*		Model3d_2::GetCurrentMesh()			   const { return Meshes[CurrentMesh]; }
-		[[nodiscard]] vml::meshes::Mesh3d*		Model3d_2::GetMeshAt(const size_t pos) const { return Meshes[pos]; }
-		[[nodiscard]] size_t					Model3d_2::GetMeshesCount()			   const { return Meshes.size(); }
+		[[nodiscard]] Model3d_2*		   Model3d_2::GetChild(size_t pos)		  const { return *(Child.begin() + pos); }
+		[[nodiscard]] vml::meshes::Mesh3d* Model3d_2::GetCurrentMesh()			  const { return Meshes[CurrentMesh]; }
+		[[nodiscard]] vml::meshes::Mesh3d* Model3d_2::GetMeshAt(const size_t pos) const { return Meshes[pos]; }
+		[[nodiscard]] size_t			   Model3d_2::GetMeshesCount()			  const { return Meshes.size(); }
 
 		[[nodiscard]] Model3d_2* Model3d_2::GetChild(const std::string& childname) const
 		{
@@ -670,14 +618,12 @@ namespace vml
 		// matrix getters
 
 		[[nodiscard]] float* Model3d_2::GetMptr()	{ return glm::value_ptr(M); }
-		[[nodiscard]] float* Model3d_2::GetRptr()   { return glm::value_ptr(R); }
 		[[nodiscard]] float* Model3d_2::GetNVptr()	{ return glm::value_ptr(NV); }
 		[[nodiscard]] float* Model3d_2::GetMVptr()  { return glm::value_ptr(MV); }
 		[[nodiscard]] float* Model3d_2::GetMVPptr() { return glm::value_ptr(MVP); }
 		[[nodiscard]] float* Model3d_2::GetTMptr()  { return glm::value_ptr(TM); }
 		[[nodiscard]] const glm::quat& Model3d_2::GetQuaternion() const { return Quaternion; }
 		[[nodiscard]] const glm::mat4& Model3d_2::GetM()   const { return M; }
-		[[nodiscard]] const glm::mat4& Model3d_2::GetR()   const { return R; }
 		[[nodiscard]] const glm::mat4& Model3d_2::GetMV()  const { return MV; }
 		[[nodiscard]] const glm::mat4& Model3d_2::GetMVP() const { return MVP; }
 		[[nodiscard]] const glm::mat3& Model3d_2::GetNV()  const { return NV; }
@@ -695,10 +641,83 @@ namespace vml
 		{
 			if (PreferencesFlags.Get(EULER)) return EULER;
 			if (PreferencesFlags.Get(SPHERICAL_QUATERNION)) return SPHERICAL_QUATERNION;
-			if (PreferencesFlags.Get(QUATERNION)) return QUATERNION;
 			return -1;
 		}
+
+		// --------------------------------------------------------------------------
+
+		[[nodiscard]] const glm::mat4 Model3d_2::GetNormalizedRotationMatrix() const
+		{
+			/*
+			const float* srcmatrix = glm::value_ptr(M);
+
+			// normalize matrix
+
+			float a = srcmatrix[ 0];
+			float b = srcmatrix[ 1];
+			float c = srcmatrix[ 2];
+			float d = srcmatrix[ 4];
+			float e = srcmatrix[ 5];
+			float f = srcmatrix[ 6];
+			float g = srcmatrix[ 8];
+			float h = srcmatrix[ 9];
+			float i = srcmatrix[10];
+
+			float denum0 = sqrtf(a * a + b * b + c * c);
+			if (denum0 > -vml::math::EPSILON && denum0 < vml::math::EPSILON)
+				denum0 = vml::math::EPSILON;
+			denum0 = 1.0f / denum0;
+
+			float denum1 = sqrtf(d * d + e * e + f * f);
+			if (denum1 > -vml::math::EPSILON && denum1 < vml::math::EPSILON)
+				denum1 = vml::math::EPSILON;
+			denum1 = 1.0f / denum1;
+
+			float denum2 = sqrtf(g * g + h * h + i * i);
+			if (denum2 > -vml::math::EPSILON && denum2 < vml::math::EPSILON)
+				denum2 = vml::math::EPSILON;
+			denum2 = 1.0f / denum2;
+
+			glm::mat4 m = {};
+			float* matrix = glm::value_ptr(m);
+
+			matrix[ 0] = a * denum0;
+			matrix[ 1] = b * denum0;
+			matrix[ 2] = c * denum0;
+			matrix[ 3] = 0;
+			matrix[ 4] = d * denum1;
+			matrix[ 5] = e * denum1;
+			matrix[ 6] = f * denum1;
+			matrix[ 7] = 0;
+			matrix[ 8] = g * denum2;
+			matrix[ 9] = h * denum2;
+			matrix[10] = i * denum2;
+			matrix[11] = 0;
+			matrix[12] = 0;
+			matrix[13] = 0;
+			matrix[14] = 0;
+			matrix[15] = 1;
+
+			return m;
+			*/
+
+			// Remove scaling by normalizing the basis vectors
+			glm::vec3 x = glm::normalize(M[0]);
+			glm::vec3 y = glm::normalize(M[1]);
 		
+			// ensures orthogonality
+			glm::vec3 z = glm::normalize(glm::cross(x, y)); 
+
+			// Rebuild the matrix and keep translation intact
+			glm::mat4 result = M;
+			result[0] = glm::vec4(x, 0.0f);
+			result[1] = glm::vec4(y, 0.0f);
+			result[2] = glm::vec4(z, 0.0f);
+			result[3] = M[3];
+
+			return result;
+		}
+
 		// --------------------------------------------------------------------------
 		// texturing
 
@@ -707,24 +726,23 @@ namespace vml
 		// ----------------------------------------------------------------------------------------
 		// Setters
 
-		void Model3d_2::SetParent(Model3d_2* parent)								 { Parent = parent; }
-		void Model3d_2::ClearChild(Model3d_2* child)								 { Child.clear(); }
-		void Model3d_2::AddChild(Model3d_2* child)									 { Child.emplace_back(child); }
-		void Model3d_2::SetInVisible()												 { PreferencesFlags.SetToTrue(NOT_VISIBLE); }
-		void Model3d_2::SetVisible()												 { PreferencesFlags.SetToFalse(NOT_VISIBLE); }
-		void Model3d_2::SetCullingFlags(unsigned int cullingflags)					 { CullingFlags = cullingflags; }
-		void Model3d_2::SetCullingFlagToOutside()									 { CullingFlags = vml::views::frustum::OUTSIDE; }
-		void Model3d_2::SetCullingFlagToIntersected()								 { CullingFlags = vml::views::frustum::INTERSECTED; }
-		void Model3d_2::SetCullingFlagToInside()									 { CullingFlags = vml::views::frustum::INSIDE; }
+		void Model3d_2::SetParent(Model3d_2* parent)			   { Parent = parent; }
+		void Model3d_2::ClearChild(Model3d_2* child)			   { Child.clear(); }
+		void Model3d_2::AddChild(Model3d_2* child)				   { Child.emplace_back(child); }
+		void Model3d_2::SetInVisible()							   { PreferencesFlags.SetToTrue(NOT_VISIBLE); }
+		void Model3d_2::SetVisible()							   { PreferencesFlags.SetToFalse(NOT_VISIBLE); }
+		void Model3d_2::SetCullingFlags(unsigned int cullingflags) { CullingFlags = cullingflags; }
+		void Model3d_2::SetCullingFlagToOutside()				   { CullingFlags = vml::views::frustum::OUTSIDE; }
+		void Model3d_2::SetCullingFlagToIntersected()			   { CullingFlags = vml::views::frustum::INTERSECTED; }
+		void Model3d_2::SetCullingFlagToInside()				   { CullingFlags = vml::views::frustum::INSIDE; }
 		
-		void Model3d_2::SetRotationMode(int mode)
+		void Model3d_2::SetRotationMode(const int mode)
 		{
-			if (mode != EULER && mode != SPHERICAL_QUATERNION && mode!=QUATERNION )
+			if (mode != EULER && mode != SPHERICAL_QUATERNION )
 				vml::os::Message::Error("Model : unacceptable rotation mode");
 			// set flags to false
 			PreferencesFlags.SetToFalse(EULER);
 			PreferencesFlags.SetToFalse(SPHERICAL_QUATERNION);
-			PreferencesFlags.SetToFalse(QUATERNION);
 			// set selected flag to true
 			PreferencesFlags.SetToTrue(mode);
 		}
@@ -778,7 +796,13 @@ namespace vml
 
 		// --------------------------------------------------------------------------------
 
-		void Model3d_2::SetTextureMatrixScale(const glm::vec2& scale) { TM[0][0] = scale.x;	TM[0][1] = 0; TM[1][0] = 0; TM[1][1] = scale.y; }
+		void Model3d_2::SetTextureMatrixScale(const glm::vec2& scale)
+		{ 
+			TM[0][0] = scale.x;	
+			TM[0][1] = 0; 
+			TM[1][0] = 0; 
+			TM[1][1] = scale.y; 
+		}
 		
 		// --------------------------------------------------------------------------------
 
@@ -801,8 +825,7 @@ namespace vml
 
 		void Model3d_2::ComputeMatrix()
 		{
-			if (PreferencesFlags.Get(EULER))				ComputeEulerMatrix();
-			if (PreferencesFlags.Get(QUATERNION))			ComputeQuaternionMatrix();
+			if (PreferencesFlags.Get(EULER)) ComputeEulerMatrix();
 			if (PreferencesFlags.Get(SPHERICAL_QUATERNION)) ComputeSphericalQuaternionMatrix();
 		}
 		
@@ -918,11 +941,10 @@ namespace vml
 				fabs(Scaling.z) < vml::math::EPSILON)
 					vml::os::Message::Error("Model : Scale cannot be negative or null for model ' ", ScreenName.c_str(), " '");
 
-			// if angles flag is not euler, quaternion or spherical polar, emit error
+			// if angles flag is not euler, spherical quaternion, emit error
 
-			if (!( PreferencesFlags.Get(EULER) && !PreferencesFlags.Get(SPHERICAL_QUATERNION) && !PreferencesFlags.Get(QUATERNION)) &&
-				!(!PreferencesFlags.Get(EULER) &&  PreferencesFlags.Get(SPHERICAL_QUATERNION) && !PreferencesFlags.Get(QUATERNION)) &&
-				!(!PreferencesFlags.Get(EULER) && !PreferencesFlags.Get(SPHERICAL_QUATERNION) &&  PreferencesFlags.Get(QUATERNION)))
+			if ( (!PreferencesFlags.Get(EULER) && !PreferencesFlags.Get(SPHERICAL_QUATERNION)) ||
+				 ( PreferencesFlags.Get(EULER) &&  PreferencesFlags.Get(SPHERICAL_QUATERNION)) )
 			{
 				vml::os::Message::Error("Model : Choose rotation mode for model ' ", ScreenName.c_str(), " '");
 			}
@@ -936,7 +958,6 @@ namespace vml
 			// init matrices
 
 			M   = glm::mat4(0);
-			R	= glm::mat4(0);
 			MV  = glm::mat4(0);
 			MVP = glm::mat4(0);
 			NV  = glm::mat3(0);

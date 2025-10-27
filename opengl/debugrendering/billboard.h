@@ -120,8 +120,8 @@ namespace vml
 
 						// Row 4
 
-						mv[12] = center.x * v[0] + center.y * v[4] + center.z * v[8] + v[12];
-						mv[13] = center.x * v[1] + center.y * v[5] + center.z * v[9] + v[13];
+						mv[12] = center.x * v[0] + center.y * v[4] + center.z * v[ 8] + v[12];
+						mv[13] = center.x * v[1] + center.y * v[5] + center.z * v[ 9] + v[13];
 						mv[14] = center.x * v[2] + center.y * v[6] + center.z * v[10] + v[14];
 						mv[15] = center.x * v[3] + center.y * v[7] + center.z * v[11] + v[15];
 
@@ -269,7 +269,7 @@ namespace vml
 					glUseProgram(0);
 
 				}
-				
+
 				// ---------------------------------------------------------------
 				// constructors / destructors
 

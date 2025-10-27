@@ -37,6 +37,7 @@
 #include <vml5.0/opengl/debugrendering/billboard.h>
 #include <vml5.0/opengl/debugrendering/sphere.h>
 #include <vml5.0/opengl/debugrendering/refsystem.h>
+#include <vml5.0/opengl/debugrendering/fbo.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -213,6 +214,11 @@ namespace vml
 				void SetClearColor(const glm::vec4& color)
 				{
 					ClearColor = color;
+					glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.w);
+				}
+
+				void ResetClearColor() const
+				{
 					glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.w);
 				}
 
@@ -775,6 +781,7 @@ namespace vml
 					{
 						glm::vec3 bmin = aabbox.GetMin();
 						glm::vec3 bmax = aabbox.GetMax();
+					
 						WireCubeMesh->Draw(view, bmin, bmax, col);
 						
 						if (drawpoints == DRAW_POINTS)
@@ -1172,6 +1179,64 @@ namespace vml
 				}
 
 				// -----------------------------------------------------------------------------------
+			//
+
+				void DrawDebugModelWire(vml::views::View* view, vml::models::Model3d_2* model)
+				{
+					if (view)
+					{
+
+						if (model)
+						{
+							//	DrawAABBox(view, model, vml::colors::Yellow, true);
+							//	DrawAOBBox(view, model, vml::colors::Blue, true);
+
+							// get shader
+
+							GLuint Id = SingleColorShader->GetID();
+
+							glUseProgram(Id);
+
+							// set shader locations
+
+							glUniformMatrix4fv(SingleColorShader->GetViewMatrixLocation(), 1, GL_FALSE, view->GetVptr());
+							glUniformMatrix4fv(SingleColorShader->GetProjectionMatrixLocation(), 1, GL_FALSE, view->GetPptr());
+							glUniformMatrix4fv(SingleColorShader->GetModelMatrixLocation(), 1, GL_FALSE, model->GetMptr());
+							glUniformMatrix3fv(SingleColorShader->GetNormalMatrixLocation(), 1, GL_FALSE, model->GetNVptr());
+							glUniformMatrix4fv(SingleColorShader->GetModelViewMatrixLocation(), 1, GL_FALSE, model->GetMVptr());
+							glUniformMatrix4fv(SingleColorShader->GetModelViewProjectionMatrixLocation(), 1, GL_FALSE, model->GetMVPptr());
+
+							glUniform4f(ColorLocation, WireFrameColor[0], WireFrameColor[1], WireFrameColor[2], WireFrameColor[3]);
+
+							// draw mesh
+
+							glEnable(GL_CULL_FACE);
+							glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+							glBindVertexArray(model->GetCurrentMesh()->GetVAOId());
+
+							glDrawElements(
+								GL_TRIANGLES,								// mode
+								model->GetCurrentMesh()->GetIndicesCount(),	// count
+								GL_UNSIGNED_INT,							// type
+								(void*)0									// element array buffer offset
+							);
+
+							glBindVertexArray(0);
+							glUseProgram(0);
+						}
+						else
+						{
+							vml::os::Message::Error("OpenGLDebugRenderer : Null Mesh pointer");
+						}
+					}
+					else
+					{
+						vml::os::Message::Error("OpenGLDebugRenderer : Null view  matrix for draw wire debug object");
+					}
+				}
+
+				// -----------------------------------------------------------------------------------
 				// draw model
 
 				void DrawDebugModelSolid(vml::views::View* view, 
@@ -1243,7 +1308,6 @@ namespace vml
 					}
 				}
 
-
 				// -----------------------------------------------------------------------------------
 				// draw rendered models
 
@@ -1263,7 +1327,7 @@ namespace vml
 							{
 								if (model->IsWireFrame())
 								{
-									DrawModelWire(view, model);
+									DrawDebugModelWire(view, model);
 								}
 								else
 								{
@@ -1347,63 +1411,6 @@ namespace vml
 					}
 				}
 				*/
-				// -----------------------------------------------------------------------------------
-				//
-							
-				void DrawModelWire(vml::views::View* view, vml::models::Model3d_2* model)
-				{
-					if (view)
-					{
-
-						if (model)
-						{
-							//	DrawAABBox(view, model, vml::colors::Yellow, true);
-							//	DrawAOBBox(view, model, vml::colors::Blue, true);
-
-							// get shader
-
-							GLuint Id = SingleColorShader->GetID();
-
-							glUseProgram(Id);
-
-							// set shader locations
-
-							glUniformMatrix4fv(SingleColorShader->GetViewMatrixLocation(), 1, GL_FALSE, view->GetVptr());
-							glUniformMatrix4fv(SingleColorShader->GetProjectionMatrixLocation(), 1, GL_FALSE, view->GetPptr());
-							glUniformMatrix4fv(SingleColorShader->GetModelMatrixLocation(), 1, GL_FALSE, model->GetMptr());
-							glUniformMatrix3fv(SingleColorShader->GetNormalMatrixLocation(), 1, GL_FALSE, model->GetNVptr());
-							glUniformMatrix4fv(SingleColorShader->GetModelViewMatrixLocation(), 1, GL_FALSE, model->GetMVptr());
-							glUniformMatrix4fv(SingleColorShader->GetModelViewProjectionMatrixLocation(), 1, GL_FALSE, model->GetMVPptr());
-
-							glUniform4f(ColorLocation, WireFrameColor[0], WireFrameColor[1], WireFrameColor[2], WireFrameColor[3]);
-
-							// draw mesh
-
-							glEnable(GL_CULL_FACE);
-							glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-							glBindVertexArray(model->GetCurrentMesh()->GetVAOId());
-
-							glDrawElements(
-								GL_TRIANGLES,								// mode
-								model->GetCurrentMesh()->GetIndicesCount(),	// count
-								GL_UNSIGNED_INT,							// type
-								(void*)0									// element array buffer offset
-							);
-
-							glBindVertexArray(0);
-							glUseProgram(0);
-						}
-						else
-						{
-							vml::os::Message::Error("OpenGLDebugRenderer : Null Mesh pointer");
-						}
-					}
-					else
-					{
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view  matrix for draw wire debug object");
-					}
-				}
 				
 				// -----------------------------------------------------------------------------------
 				//
@@ -1711,6 +1718,7 @@ namespace vml
 				{
 					if (view)
 					{
+						
 						glm::mat4 M;							// model matrix
 						glm::mat4 MV;							// model * view matrix
 						glm::mat4 MVP;							// model * view * projection matrix
@@ -1776,13 +1784,14 @@ namespace vml
 
 						MV = V * M;
 						MVP = P * MV;
-				
-						// get shader
+						NV = glm::mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
 
+						// get shader
+						
 						GLuint Id = SingleColorShader->GetID();
 
 						glUseProgram(Id);
-
+						
 						// set shader locations
 
 						glUniformMatrix4fv(SingleColorShader->GetViewMatrixLocation(), 1, GL_FALSE, view->GetVptr());
@@ -1791,7 +1800,6 @@ namespace vml
 						glUniformMatrix3fv(SingleColorShader->GetNormalMatrixLocation(), 1, GL_FALSE, glm::value_ptr(NV));
 						glUniformMatrix4fv(SingleColorShader->GetModelViewMatrixLocation(), 1, GL_FALSE, glm::value_ptr(MV));
 						glUniformMatrix4fv(SingleColorShader->GetModelViewProjectionMatrixLocation(), 1, GL_FALSE, glm::value_ptr(MVP));
-
 						glUniform4f(ColorLocation, col[0], col[1], col[2], col[3]);
 
 						// draw mesh
@@ -1807,9 +1815,10 @@ namespace vml
 							GL_UNSIGNED_INT,			// type
 							(void*)0					// element array buffer offset
 						);
-
+						
 						glBindVertexArray(0);
 						glUseProgram(0);
+						
 					}
 					else
 					{

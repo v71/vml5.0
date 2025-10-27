@@ -3,19 +3,19 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 //										Distance Functions
 //
-//					Point		Ray		Line	Circle		AABB		AOBB		Polygon
+//					Point	Ray	Line Circle AABB  AOBB Polygon
 //					
-//  Point			  X			 X 	 	  X  	  X  	     X  		  X	   
+//  Point			  X     X     X     X     X     X	   
 // 
-//	Ray				  X 		 X	  	  X   	  X    		 X			  X
+//	Ray				  X     X     X   	X	  X		X
 // 
-//	Line			  X          X		  X 	  X	  	     X  		    		   			  			 
+//	Line			  X     X     X 	X	  X  	X	    		   			  			 
 // 
-//	Circle			  X			 X		  X		  X			 X 			  		   		    									  
+//	Circle			  X     X	  X		X	  X 	X		   		    									  
 // 
-//	AABB			  X			 X 		  X       X			 X
+//	AABB			  X     X	  X     X	  X
 // 
-//	AOBB			  X			 X
+//	AOBB			  X     X	  X		X
 // 
 // Polygon
 
@@ -198,12 +198,12 @@ namespace vml
 				
 				// compute intersection point
 
-				denom = (T)1.0 / denom;
+				denom = (T)1 / denom;
 
 				T ua = numa * denom;
 				T ub = numb * denom;
 
-				if (ua >= -eps && ua <= (T)1.0 + eps && ub >= -eps && ub <= (T)1.0 + eps)
+				if (ua >= -eps && ua <= (T)1 + eps && ub >= -eps && ub <= (T)1 + eps)
 				{
 					// Get the intersection point.
 
@@ -221,44 +221,44 @@ namespace vml
 				vml::math::vec2<T> cb = p2 - q1;
 				vml::math::vec2<T> ca = p2 - p1;
 
-				denom = (T) 1.0 / (ba.x * ba.x + ba.y * ba.y);
+				denom = (T) 1 / (ba.x * ba.x + ba.y * ba.y);
 
 				// project c onto a and b
 				
 				t = (ca.x * ba.x + ca.y * ba.y) * denom;
-				dmin = (T)1.0;
+				dmin = (T)1;
 				if (t < dmin) dmin = t;
-				t = (T)0.0;
-				if (dmin > (T)0.0) t = dmin;
+				t = (T)0;
+				if (dmin > (T)0) t = dmin;
 				vml::math::vec2<T> r1 = p1 + t * ba;
 
 				// project d onto a and b
 
 				t = (da.x * ba.x + da.y * ba.y) * denom;
-				dmin = (T)1.0;
+				dmin = (T)1;
 				if (t < dmin) dmin = t;
-				t = (T)0.0;
-				if (dmin > (T)0.0) t = dmin;
+				t = (T)0;
+				if (dmin > (T)0) t = dmin;
 				vml::math::vec2<T> r2 = p1 + t * ba;
 
 				// project c onto d and a
 
-				denom = (T)1.0f / (cd.x * cd.x + cd.y * cd.y);
+				denom = (T)1 / (cd.x * cd.x + cd.y * cd.y);
 
 				t = (ca.x * cd.x + ca.y * cd.y) * denom;
-				dmin = (T)1.0;
+				dmin = (T)1;
 				if (t < dmin) dmin = t;
-				t = (T)0.0;
-				if (dmin > (T)0.0) t = dmin;
+				t = (T)0;
+				if (dmin > (T)0) t = dmin;
 				vml::math::vec2<T> r3 = p2 - t * cd;
 
 				// project c onto d and b
 
 				t = (cb.x * cd.x + cb.y * cd.y) * denom;
-				dmin = (T)1.0;
+				dmin = (T)1;
 				if (t < dmin) dmin = t;
-				t = (T)0.0;
-				if (dmin > (T)0.0) t = dmin;
+				t = (T)0;
+				if (dmin > (T)0) t = dmin;
 				vml::math::vec2<T> r4 = p2 - t * cd;
 
 				// sort distanfes
@@ -716,7 +716,7 @@ namespace vml
 
 				// we never get here
 
-				return vml::geo2d::Results::FAIL;
+				return vml::geo2d::Results::OUTSIDE;
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
@@ -782,8 +782,9 @@ namespace vml
 
 				// we never get here
 
-				return vml::geo2d::Results::FAIL;
+				return vml::geo2d::Results::OUTSIDE;
 			}
+
 			/////////////////////////////////////////////////////////////////////////////
 			// Return the shortest distance between a line and an axis alinged bounding box
 
@@ -1376,12 +1377,12 @@ namespace vml
 			}
 
 			/////////////////////////////////////////////////////////////////////////////
-			// Given point p, and adirection, return the points on or in AOBB b which are closest to ray
+			// Given point p, a direction and a AOBB return the points on or in AOBB b which are closest to ray
 
 			template <typename T>
 			static uint32_t  ClosestPointFromAOBBoxToRay(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
 														 const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
-														 const vml::math::vec2<T>& p0,
+														 const vml::math::vec2<T>& a,
 														 const vml::math::vec2<T>& dir,
 														 vml::math::vec2<T>& closestp,
 														 vml::math::vec2<T>& closestq,
@@ -1406,15 +1407,15 @@ namespace vml
 				v.y *= dv;
 				
 				// Vector from rectangle center to point
-				vml::math::vec2<T> d(p0.x - center.x, p0.y - center.y);
+				vml::math::vec2<T> d(a.x - center.x, a.y - center.y);
 
 				// Transform point into rectangle's local coordinates
 				vml::math::vec2<T> localp0(d.x * u.x + d.y * u.y, d.x * v.x + d.y * v.y);
 				vml::math::vec2<T> localdir(dir.x * u.x + dir.y * u.y, dir.x * v.x + dir.y * v.y);
-				du = sqrtf(localdir.x * localdir.x + localdir.y * localdir.y);
-				du = (T)1 / du;
-				localdir.x *= du;
-				localdir.y *= du;
+				T denum = sqrtf(localdir.x * localdir.x + localdir.y * localdir.y);
+				denum = (T)1 / denum;
+				localdir.x *= denum;
+				localdir.y *= denum;
 
 				vml::math::vec2f p, q;
 				
@@ -1438,19 +1439,332 @@ namespace vml
 				return result;
 			}
 
-			/*
 			/////////////////////////////////////////////////////////////////////////////
-			// Return the shortest distance between a line and an axis alinged bounding box
+			// Given point a, and b and a AOBB, return the points on or in AOBB b which are closest to line
 
-			static void ClosestPointFromAOBBToLine(const vml::math::vec2<T>& linep, const vml::math::vec2<T>& lineq,
-												   const vml::math::vec2<T>& b0, const vml::math::vec2<T>& b1, const vml::math::vec2<T>& b2, const vml::math::vec2<T>& b3,
-												   vml::math::vec2<T>& closestp, vml::math::vec2<T>& closestq)
-
+			template <typename T>
+			static uint32_t  ClosestPointFromAOBBoxToLine(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
+														  const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
+														  const vml::math::vec2<T>& a,
+														  const vml::math::vec2<T>& b,
+														  vml::math::vec2<T>& closestp,
+														  vml::math::vec2<T>& closestq,
+														  float& mindist,
+														  const T eps = vml::math::EPSILON)
 			{
-			
+				// compute box center
+				vml::math::vec2<T> center = (p1 + p2 + p3 + p4) * 0.25f;
 
+				// compute box axis lenght and normalize box refderence system
+				vml::math::vec2<T> u = p2 - p1;
+				vml::math::vec2<T> v = p4 - p1;
+				float du = sqrtf(u.x * u.x + u.y * u.y);
+				float dv = sqrtf(v.x * v.x + v.y * v.y);
+				T w = du * 0.5f;
+				T h = dv * 0.5f;
+				du = (T)1 / du;
+				dv = (T)1 / dv;
+				u.x *= du;
+				u.y *= du;
+				v.x *= dv;
+				v.y *= dv;
+
+				// Vector from rectangle center to point
+				vml::math::vec2<T> da(a.x - center.x, a.y - center.y);
+				vml::math::vec2<T> db(b.x - center.x, b.y - center.y);
+
+				// Transform point into rectangle's local coordinates
+				vml::math::vec2<T> locala(da.x * u.x + da.y * u.y, da.x * v.x + da.y * v.y);
+				vml::math::vec2<T> localb(db.x * u.x + db.y * u.y, db.x * v.x + db.y * v.y);
+
+				vml::math::vec2f p, q;
+
+				uint32_t result=ClosestPointFromAABBToLine(vml::math::vec2<T>(-w, -h), vml::math::vec2<T>(w, h),
+														   locala, localb,
+														   p, q, mindist,
+														   eps);
+
+				// Transform clamped point back to global space
+
+				if (result == vml::geo2d::Results::DOES_INTERSECT_ONE_POINT)
+				{
+					closestp = vml::math::vec2<T>(center.x + p.x * u.x + p.y * v.x, center.y + p.x * u.y + p.y * v.y);
+				}
+				else
+				{
+					closestp = vml::math::vec2<T>(center.x + p.x * u.x + p.y * v.x, center.y + p.x * u.y + p.y * v.y);
+					closestq = vml::math::vec2<T>(center.x + q.x * u.x + q.y * v.x, center.y + q.x * u.y + q.y * v.y);
+				}
+
+				return result;
 			}
-			*/
+
+			/////////////////////////////////////////////////////////////////////////////
+			// Given circle a and radius return the points on or in AOBB b which are closest to circle
+
+			template <typename T>
+			static uint32_t  ClosestPointFromAOBBoxToCircle(const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
+															const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
+															const vml::math::vec2<T>& a,
+															const float  radius,
+															std::vector <vml::math::vec2<T>>& points,
+															float& mindist,
+															const T eps = vml::math::EPSILON)
+			{
+				// compute box center
+				vml::math::vec2<T> center = (p1 + p2 + p3 + p4) * 0.25f;
+
+				// compute box axis lenght and normalize box refderence system
+				vml::math::vec2<T> u = p2 - p1;
+				vml::math::vec2<T> v = p4 - p1;
+				float du = sqrtf(u.x * u.x + u.y * u.y);
+				float dv = sqrtf(v.x * v.x + v.y * v.y);
+				T w = du * 0.5f;
+				T h = dv * 0.5f;
+				du = (T)1 / du;
+				dv = (T)1 / dv;
+				u.x *= du;
+				u.y *= du;
+				v.x *= dv;
+				v.y *= dv;
+
+				// Vector from rectangle center to point
+				vml::math::vec2<T> d(a.x - center.x, a.y - center.y);
+
+				// Transform point into rectangle's local coordinates
+				vml::math::vec2<T> localp0(d.x * u.x + d.y * u.y, d.x * v.x + d.y * v.y);
+	
+				std::vector <vml::math::vec2<T>> localpoints;
+
+				uint32_t result = ClosestPointFromAABBoxToCircle(vml::math::vec2<T>(-w, -h), vml::math::vec2<T>(w, h), localp0, radius, localpoints, mindist);
+
+				if (result == vml::geo2d::Results::DOES_INTERSECT)
+				{
+					points.clear();
+					for (size_t i = 0; i < localpoints.size(); ++i)
+						points.emplace_back( vml::math::vec2<T>(center.x + localpoints[i].x * u.x + localpoints[i].y * v.x, center.y + localpoints[i].x * u.y + localpoints[i].y * v.y));
+				}
+				if (result == vml::geo2d::Results::DOES_NOT_INTERSECT)
+				{
+					points.clear();
+					points.emplace_back(vml::math::vec2<T>(center.x + localpoints[0].x * u.x + localpoints[0].y * v.x, center.y + localpoints[0].x * u.y + localpoints[0].y * v.y));
+					points.emplace_back(vml::math::vec2<T>(center.x + localpoints[1].x * u.x + localpoints[1].y * v.x, center.y + localpoints[1].x * u.y + localpoints[1].y * v.y));
+				}
+
+				return result;
+			}
+
+
+			/////////////////////////////////////////////////////////////////////////////
+			// Given circle a and radius return the points on or in AOBB b which are closest to circle
+
+			template <typename T>
+			static uint32_t ClosestPointFromAABBoxToAOBBox(const vml::math::vec2<T>& bmin, const vml::math::vec2<T>& bmax,
+														   const vml::math::vec2<T>& p1, const vml::math::vec2<T>& p2,
+														   const vml::math::vec2<T>& p3, const vml::math::vec2<T>& p4,
+														   std::vector <vml::math::vec2<T>>& points,
+														   float& mindist,
+														   const T eps = vml::math::EPSILON)
+			{
+				vml::math::vec2<T> a1 = vml::math::vec2f(bmin.x, bmin.y);
+				vml::math::vec2<T> a2 = vml::math::vec2f(bmax.x, bmin.y);
+				vml::math::vec2<T> a3 = vml::math::vec2f(bmax.x, bmax.y);
+				vml::math::vec2<T> a4 = vml::math::vec2f(bmin.x, bmax.y);
+
+				// oriented box inside axis aligned box
+
+				if (((p1.x >= a1.x && p1.x <= a3.x) && (p1.y >= a1.y && p1.y <= a3.y)) &&
+					((p2.x >= a1.x && p2.x <= a3.x) && (p2.y >= a1.y && p2.y <= a3.y)) &&
+					((p3.x >= a1.x && p3.x <= a3.x) && (p3.y >= a1.y && p3.y <= a3.y)) &&
+					((p4.x >= a1.x && p4.x <= a3.x) && (p4.y >= a1.y && p4.y <= a3.y)))
+						return vml::geo2d::Results::SECOND_INSIDE_FIRST;
+
+				vml::math::vec2<T> dir1(p1.y - p2.y, p2.x - p1.x);
+				vml::math::vec2<T> dir2(p2.y - p3.y, p3.x - p2.x);
+				vml::math::vec2<T> dir3(p3.y - p4.y, p4.x - p3.x);
+				vml::math::vec2<T> dir4(p4.y - p1.y, p1.x - p4.x);
+
+				// axis aligned box inside oriented box
+
+				if ( ((((p1.x - a1.x) * dir1.x + (p1.y - a1.y) * dir1.y < 0) &&
+					   ((p2.x - a1.x) * dir2.x + (p2.y - a1.y) * dir2.y < 0) &&
+					   ((p3.x - a1.x) * dir3.x + (p3.y - a1.y) * dir3.y < 0) &&
+					   ((p4.x - a1.x) * dir4.x + (p4.y - a1.y) * dir4.y < 0))) &&
+				     ((((p1.x - a2.x) * dir1.x + (p1.y - a2.y) * dir1.y < 0) &&
+					   ((p2.x - a2.x) * dir2.x + (p2.y - a2.y) * dir2.y < 0) &&
+					   ((p3.x - a2.x) * dir3.x + (p3.y - a2.y) * dir3.y < 0) &&
+					   ((p4.x - a2.x) * dir4.x + (p4.y - a2.y) * dir4.y < 0))) &&
+					 ((((p1.x - a3.x) * dir1.x + (p1.y - a3.y) * dir1.y < 0) &&
+					   ((p2.x - a3.x) * dir2.x + (p2.y - a3.y) * dir2.y < 0) &&
+					   ((p3.x - a3.x) * dir3.x + (p3.y - a3.y) * dir3.y < 0) &&
+					   ((p4.x - a3.x) * dir4.x + (p4.y - a3.y) * dir4.y < 0))) &&
+					 ((((p1.x - a4.x) * dir1.x + (p1.y - a4.y) * dir1.y < 0) &&
+					   ((p2.x - a4.x) * dir2.x + (p2.y - a4.y) * dir2.y < 0) &&
+					   ((p3.x - a4.x) * dir3.x + (p3.y - a4.y) * dir3.y < 0) &&
+					   ((p4.x - a4.x) * dir4.x + (p4.y - a4.y) * dir4.y < 0))))
+					return vml::geo2d::Results::FIRST_INSIDE_SECOND;
+
+				vml::math::vec2f q;
+				uint32_t result;
+
+				mindist = (T)0;
+				points.clear();
+
+				result = vml::geo2d::intersections::LineVsLine(a1, a2, p1, p2, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a1, a2, p2, p3, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a1, a2, p3, p4, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a1, a2, p4, p1, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+
+				result = vml::geo2d::intersections::LineVsLine(a2, a3, p1, p2, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a2, a3, p2, p3, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a2, a3, p3, p4, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a2, a3, p4, p1, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+
+				result = vml::geo2d::intersections::LineVsLine(a3, a4, p1, p2, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a3, a4, p2, p3, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a3, a4, p3, p4, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a3, a4, p4, p1, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+
+				result = vml::geo2d::intersections::LineVsLine(a4, a1, p1, p2, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a4, a1, p2, p3, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a4, a1, p3, p4, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+				result = vml::geo2d::intersections::LineVsLine(a4, a1, p4, p1, q); if (result == vml::geo2d::Results::DOES_INTERSECT) points.emplace_back(q);
+
+				if (points.size() != 0)
+					return vml::geo2d::Results::DOES_INTERSECT;
+
+				vml::math::vec2f closestp, closestq;
+				vml::math::vec2f closestp1, closestq1;
+				vml::math::vec2f closestp2, closestq2;
+				vml::math::vec2f closestp3, closestq3;
+				vml::math::vec2f closestp4, closestq4;
+
+				float mindist1;
+				float mindist2;
+				float mindist3;
+				float mindist4;
+
+				// find point wih minimum distance from each singl eline of
+				// the axisa ligned bounding box to the oriented bounding box
+
+				vml::math::vec2<T> r1, s1, r2, s2, r3, s3, r4, s4, d;
+				T d1, d2, d3, d4, dmax;
+
+				d1 = FLT_MAX;
+				d2 = FLT_MAX;
+				d3 = FLT_MAX;
+				d4 = FLT_MAX;
+				dmax = FLT_MAX;
+
+				// compute distance from each side of the box to line
+
+				vml::geo2d::distances::ClosestPointBetweenLines(p1, p2, a1, a2, r1, s1, d1, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p1, p2, a2, a3, r2, s2, d2, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p1, p2, a3, a4, r3, s3, d3, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p1, p2, a4, a1, r4, s4, d4, eps);
+
+				// find the closest point
+
+				if (d1 < dmax) { dmax = d1; closestp1 = r1; closestq1 = s1; }
+				if (d2 < dmax) { dmax = d2; closestp1 = r2; closestq1 = s2; }
+				if (d3 < dmax) { dmax = d3; closestp1 = r3; closestq1 = s3; }
+				if (d4 < dmax) { dmax = d4; closestp1 = r4; closestq1 = s4; }
+
+				//
+
+				d1 = FLT_MAX;
+				d2 = FLT_MAX;
+				d3 = FLT_MAX;
+				d4 = FLT_MAX;
+				dmax = FLT_MAX;
+
+				// compute distance from each side of the box to line
+
+				vml::geo2d::distances::ClosestPointBetweenLines(p2, p3, a1, a2, r1, s1, d1, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p2, p3, a2, a3, r2, s2, d2, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p2, p3, a3, a4, r3, s3, d3, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p2, p3, a4, a1, r4, s4, d4, eps);
+
+				// find the closest point
+
+				if (d1 < dmax) { dmax = d1; closestp2 = r1; closestq2 = s1; }
+				if (d2 < dmax) { dmax = d2; closestp2 = r2; closestq2 = s2; }
+				if (d3 < dmax) { dmax = d3; closestp2 = r3; closestq2 = s3; }
+				if (d4 < dmax) { dmax = d4; closestp2 = r4; closestq2 = s4; }
+
+				//
+
+				d1 = FLT_MAX;
+				d2 = FLT_MAX;
+				d3 = FLT_MAX;
+				d4 = FLT_MAX;
+				dmax = FLT_MAX;
+
+				// compute distance from each side of the box to line
+
+				vml::geo2d::distances::ClosestPointBetweenLines(p3, p4, a1, a2, r1, s1, d1, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p3, p4, a2, a3, r2, s2, d2, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p3, p4, a3, a4, r3, s3, d3, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p3, p4, a4, a1, r4, s4, d4, eps);
+
+				// find the closest point
+
+				if (d1 < dmax) { dmax = d1; closestp3 = r1; closestq3 = s1; }
+				if (d2 < dmax) { dmax = d2; closestp3 = r2; closestq3 = s2; }
+				if (d3 < dmax) { dmax = d3; closestp3 = r3; closestq3 = s3; }
+				if (d4 < dmax) { dmax = d4; closestp3 = r4; closestq3 = s4; }
+
+				//
+
+				d1 = FLT_MAX;
+				d2 = FLT_MAX;
+				d3 = FLT_MAX;
+				d4 = FLT_MAX;
+				dmax = FLT_MAX;
+
+				// compute distance from each side of the box to line
+
+				vml::geo2d::distances::ClosestPointBetweenLines(p4, p1, a1, a2, r1, s1, d1, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p4, p1, a2, a3, r2, s2, d2, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p4, p1, a3, a4, r3, s3, d3, eps);
+				vml::geo2d::distances::ClosestPointBetweenLines(p4, p1, a4, a1, r4, s4, d4, eps);
+
+				// find the closest point
+
+				if (d1 < dmax) { dmax = d1; closestp4 = r1; closestq4 = s1; }
+				if (d2 < dmax) { dmax = d2; closestp4 = r2; closestq4 = s2; }
+				if (d3 < dmax) { dmax = d3; closestp4 = r3; closestq4 = s3; }
+				if (d4 < dmax) { dmax = d4; closestp4 = r4; closestq4 = s4; }
+
+				//
+
+				d = closestq1 - closestp1;
+				mindist1 = d.x * d.x + d.y * d.y;
+				d = closestq2 - closestp2;
+				mindist2 = d.x * d.x + d.y * d.y;
+				d = closestq3 - closestp3;
+				mindist3 = d.x * d.x + d.y * d.y;
+				d = closestq4 - closestp4;
+				mindist4 = d.x * d.x + d.y * d.y;
+
+				mindist = mindist1;
+				closestp = closestp1;
+				closestq = closestq1;
+
+				if (mindist1 < mindist) { mindist = mindist1; closestp = closestp1; closestq = closestq1; }
+				if (mindist2 < mindist) { mindist = mindist2; closestp = closestp2; closestq = closestq2; }
+				if (mindist3 < mindist) { mindist = mindist3; closestp = closestp3; closestq = closestq3; }
+				if (mindist4 < mindist) { mindist = mindist4; closestp = closestp4; closestq = closestq4; }
+
+				// store closest point and dstance
+
+				points.emplace_back(closestp);
+				points.emplace_back(closestq);
+				mindist = sqrtf(mindist);
+
+				return vml::geo2d::Results::DOES_NOT_INTERSECT;
+			}
+
 		}  // end of closest distances namespace
 	} // end of geo2d namespace
 } // end of vml namepsace

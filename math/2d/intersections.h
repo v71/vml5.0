@@ -539,7 +539,7 @@ namespace vml
 						float a2 = (u.x*a.x + u.y*a.y) * d0;
 						float b2 = (u.x*b.x + u.y*b.y) * d0;
 
-						if (a2 > -1 && b2 < 0)
+						if (a2 >(T) -1 && b2 <(T) 0)
 							return true;
 
 						return false;
@@ -557,7 +557,7 @@ namespace vml
 						float a2 = (u.x*a.x + u.y*a.y) * d0;
 						float b2 = (u.x*b.x + u.y*b.y) * d0;
 
-						if (a2 < 1 && b2 > 0)
+						if (a2 <(T) 1 && b2 >(T) 0)
 							return true;
 
 						return false;
@@ -605,12 +605,12 @@ namespace vml
 
 				// compute intersection point
 
-				denom = 1.0f / denom;
+				denom = (T)1 / denom;
 
 				float ua = numa * denom;
 				float ub = numb * denom;
 
-				if (ua >= -eps && ua <= 1.0f + eps && ub >= -eps && ub <= 1.0f + eps)
+				if (ua >= -eps && ua <= (T)1 + eps && ub >= -eps && ub <=(T)1 + eps)
 				{
 					// Get the intersection point.
 

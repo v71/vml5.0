@@ -31,7 +31,7 @@ namespace vml
 				vml::meshes::Mesh3d*    NavMesh;
 				vml::octree::OctTree*   OctTree;
 				vml::geo2d::PathFinder* PathFinder;
-				
+
 				// -------------------------------------------------------------------
 				// release memory
 
@@ -45,7 +45,18 @@ namespace vml
 				}
 				
 			public:
-				
+			
+				// ---------------------------------------------------------------------------
+
+				void CreateJoltCollisionMesh(vml::jolt::JoltPhysics* jolt)
+				{
+					if (jolt) 
+					{
+						jolt->CreateConcaveMesh(CollisionMesh->GetVertexArray(), CollisionMesh->GetSurfaceIndices());
+						jolt->OptimizeBroadPhase();
+					}
+				}
+
 				// -------------------------------------------------------------------
 				// 
 				
@@ -75,7 +86,7 @@ namespace vml
 
 					// allocate meshes
 					
-					MapMesh = new vml::meshes::Mesh3d(MapMeshFileName, { vml::meshes::DO_NOT_RELEASE_DATA },scale);
+					MapMesh = new vml::meshes::Mesh3d(MapMeshFileName, { vml::meshes::DO_NOT_RELEASE_DATA }, scale );
 					
 					// Collison mesh and navmesh are not mandatory
 					
@@ -86,7 +97,11 @@ namespace vml
 						vml::logger::Logger2::GetInstance()->Info({ "Level","Loading Collision Mesh : " + ColMeshFileName });
 						CollisionMesh = new vml::meshes::Mesh3d(ColMeshFileName, { vml::meshes::DO_NOT_RELEASE_DATA },scale);
 					}
-					
+					else
+					{
+						vml::logger::Logger2::GetInstance()->Warn({ "Level *WARNING*","No collision mesh file found : " + ColMeshFileName });
+					}
+
 					// load nav mesh, if nav mesh exists , create pathfinder
 
 					if (std::filesystem::exists(NavMeshFileName)) 
@@ -101,10 +116,13 @@ namespace vml
 						// emit wanring if number of connected compoents is greater than 1
 						// its mandatory that the reachable connected regions must be exactly 1
 
-						vml::logger::Logger2::GetInstance()->Warn({ "PathFinder *WARNING*","Connected Componets : " + std::to_string(PathFinder->GetConnectedComponentsCount()) });
-
+						vml::logger::Logger2::GetInstance()->Warn({ "Level *WARNING*","PathFinder Connected Componets : " + std::to_string(PathFinder->GetConnectedComponentsCount()) });
 					}
-					
+					else
+					{
+						vml::logger::Logger2::GetInstance()->Warn({ "Level *WARNING*","No PathFinder mesh file found : " + ColMeshFileName });
+					}
+
 					// compile level
 
 					vml::logger::Logger2::GetInstance()->Info({ "Level","Octree Compiling : " + LevelName });
@@ -139,16 +157,16 @@ namespace vml
 				// -------------------------------------------------------------------
 				// getters
 
-				vml::meshes::Mesh3d*    GetCollisionMesh()     const { return CollisionMesh; }
-				vml::meshes::Mesh3d*    GetNavMesh()           const { return NavMesh; }
-				const std::string&      GetLevelName()	       const { return LevelName; }
-				const std::string&      GetColMeshFileName()   const { return ColMeshFileName; }
-				const std::string&      GetNavMeshFileName()   const { return NavMeshFileName; }
-				const std::string&      GetMapMeshFileName()   const { return MapMeshFileName; }
-				vml::octree::OctTree*   GetOctTree()           const { return OctTree; }
-				vml::geo2d::PathFinder* GetPathFinder()        const { return PathFinder; }
+				[[nodiscard]] vml::meshes::Mesh3d*    GetCollisionMesh()     const { return CollisionMesh; }
+				[[nodiscard]] vml::meshes::Mesh3d*    GetNavMesh()           const { return NavMesh; }
+				[[nodiscard]] const std::string&      GetLevelName()	       const { return LevelName; }
+				[[nodiscard]] const std::string&      GetColMeshFileName()   const { return ColMeshFileName; }
+				[[nodiscard]] const std::string&      GetNavMeshFileName()   const { return NavMeshFileName; }
+				[[nodiscard]] const std::string&      GetMapMeshFileName()   const { return MapMeshFileName; }
+				[[nodiscard]] vml::octree::OctTree*   GetOctTree()           const { return OctTree; }
+				[[nodiscard]] vml::geo2d::PathFinder* GetPathFinder()        const { return PathFinder; }
 				
-				vml::meshes::Mesh3d* GetMapMesh() const { 
+				[[nodiscard]] vml::meshes::Mesh3d* GetMapMesh() const {
 					if (!MapMesh->IsDataRetained())
 						vml::os::Message::Error("Mesh data is not set to be retained");
 					return MapMesh; 
@@ -157,7 +175,7 @@ namespace vml
 				// -------------------------------------------------------------------
 				//
 
-				bool IsInitted() const
+				[[nodiscard]] bool IsInitted() const
 				{
 					return Initted;
 				}
@@ -173,6 +191,7 @@ namespace vml
 					NavMesh		   = nullptr;
 					OctTree        = nullptr;
 					PathFinder	   = nullptr;
+
 					vml::logger::Logger2::GetInstance()->Info({ "Level","Initting Level" });
 				}
 

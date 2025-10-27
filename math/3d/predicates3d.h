@@ -230,11 +230,11 @@ namespace vml
 				// ------------------------------------------------------------------
 				// getters
 
-				const glm::vec3& GetMin()		  const { return Min; }
-				const glm::vec3& GetMax()		  const { return Max; }
-				const glm::vec3& GetCenter()	  const { return Center; }
-				const glm::vec3& GetHalfExtents() const { return HalfExtents; }
-				const glm::vec3& GetExtents()	  const { return Extents; }
+				[[nodiscard]] const glm::vec3& GetMin()		    const { return Min; }
+				[[nodiscard]] const glm::vec3& GetMax()		    const { return Max; }
+				[[nodiscard]] const glm::vec3& GetCenter()	    const { return Center; }
+				[[nodiscard]] const glm::vec3& GetHalfExtents() const { return HalfExtents; }
+				[[nodiscard]] const glm::vec3& GetExtents()	    const { return Extents; }
 
 				// ------------------------------------------------------------------
 				// sets parameters for plane
@@ -293,21 +293,36 @@ namespace vml
 
 				glm::vec3 Min;
 				glm::vec3 Max;
-				glm::vec3 Center;
+				glm::vec3 Center;						// Center
 				glm::vec3 Extents;						// Extents
 				glm::vec3 HalfExtents;					// Half Extents
 				glm::vec3 OrientedBoundingBox[8];		// Oriented bounding box vertices
+				glm::vec3 XAxis;
+				glm::vec3 YAxis;
+				glm::vec3 ZAxis;
+				glm::vec3 AxisExtents;
+				glm::vec3 AxisHalfExtents;
 
 			public:
 
 				// ------------------------------------------------------------------
 				// getters
 
-				const glm::vec3& GetMin()		  const { return Min; }
-				const glm::vec3& GetMax()		  const { return Max; }
-				const glm::vec3& GetCenter()	  const { return Center; }
-				const glm::vec3& GetHalfExtents() const { return HalfExtents; }
-				const glm::vec3& GetExtents()	  const { return Extents; }
+				[[nodiscard]] const glm::vec3& GetAABBMin()			const { return Min; }
+				[[nodiscard]] const glm::vec3& GetAABBMax()			const { return Max; }
+				[[nodiscard]] const glm::vec3& GetCenter()			const { return Center; }
+				[[nodiscard]] const glm::vec3& GetAABBHalfExtents() const { return HalfExtents; }
+				[[nodiscard]] const glm::vec3& GetAABBExtents()	    const { return Extents; }
+				[[nodiscard]] const glm::vec3 GetP0()				const { return OrientedBoundingBox[0]; }
+				[[nodiscard]] const glm::vec3 GetP1()				const { return OrientedBoundingBox[1]; }
+				[[nodiscard]] const glm::vec3 GetP2()				const { return OrientedBoundingBox[2]; }
+				[[nodiscard]] const glm::vec3 GetP3()				const { return OrientedBoundingBox[3]; }
+				[[nodiscard]] const glm::vec3 GetP4()				const { return OrientedBoundingBox[4]; }
+				[[nodiscard]] const glm::vec3 GetP5()				const { return OrientedBoundingBox[5]; }
+				[[nodiscard]] const glm::vec3 GetP6()				const { return OrientedBoundingBox[6]; }
+				[[nodiscard]] const glm::vec3 GetP7()				const { return OrientedBoundingBox[7]; }
+				[[nodiscard]] const glm::vec3 GetAxisExtents()		const { return AxisExtents; }
+				[[nodiscard]] const glm::vec3 GetAxisHalfExtents()	const { return AxisHalfExtents; }
 
 				// ------------------------------------------------------------------
 				// sets parameters for plane
@@ -372,7 +387,7 @@ namespace vml
 
 					// sets large values for lowest vertex
 
-					Min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+					Min = glm::vec3( FLT_MAX,  FLT_MAX,  FLT_MAX);
 					Max = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
 					// check for lowest x
@@ -441,9 +456,17 @@ namespace vml
 					if (OrientedBoundingBox[6].z > Max.z) Max.z = OrientedBoundingBox[6].z;
 					if (OrientedBoundingBox[7].z > Max.z) Max.z = OrientedBoundingBox[7].z;
 
-					Extents     = Max - Min;
-					Center      = (Max + Min) * 0.5f;
+					// compute axis alinged bounding box metrics
+
+					Center		= (Max + Min) * 0.5f;
+					Extents     = (Max - Min);
 					HalfExtents = (Max - Min) * 0.5f;
+			
+					XAxis = OrientedBoundingBox[4] - OrientedBoundingBox[0];
+					YAxis = OrientedBoundingBox[3] - OrientedBoundingBox[0];
+					ZAxis = OrientedBoundingBox[1] - OrientedBoundingBox[0];
+					AxisExtents = glm::vec3(glm::length(XAxis), glm::length(YAxis),glm::length(ZAxis));
+					AxisHalfExtents = AxisExtents * 0.5f;
 
 				}
 
@@ -454,12 +477,17 @@ namespace vml
 						 const glm::vec3& p4, const glm::vec3& p5, const glm::vec3& p6, const glm::vec3& p7)
 
 				{
-
 					Min         = p0;
 					Max         = p6;
-					Extents     = Max - Min;
+					Extents     = (Max - Min);
 					Center      = (Max + Min) * 0.5f;
 					HalfExtents = (Max - Min) * 0.5f;
+
+					XAxis = glm::vec3(0, 0, 0);
+					YAxis = glm::vec3(0, 0, 0);
+					ZAxis = glm::vec3(0, 0, 0);
+					AxisExtents = glm::vec3(0, 0, 0);
+					AxisHalfExtents = glm::vec3(0, 0, 0);
 
 					OrientedBoundingBox[0] = p0;
 					OrientedBoundingBox[1] = p1;
@@ -469,7 +497,6 @@ namespace vml
 					OrientedBoundingBox[5] = p5;
 					OrientedBoundingBox[6] = p6;
 					OrientedBoundingBox[7] = p7;
-
 				}
 
 				// ------------------------------------------------------------------
@@ -484,11 +511,11 @@ namespace vml
 
 				AOBBox()
 				{
-					Min         = glm::vec3(0, 0, 0);
-					Max         = glm::vec3(0, 0, 0);
-					Extents     = glm::vec3(0, 0, 0);
-					Center      = glm::vec3(0, 0, 0);
-					HalfExtents = glm::vec3(0, 0, 0);
+					Min             = glm::vec3(0, 0, 0);
+					Max             = glm::vec3(0, 0, 0);
+					Center			= glm::vec3(0, 0, 0);
+					Extents         = glm::vec3(0, 0, 0);
+					HalfExtents     = glm::vec3(0, 0, 0);
 
 					OrientedBoundingBox[0] = glm::vec3(0, 0, 0);
 					OrientedBoundingBox[1] = glm::vec3(0, 0, 0);
@@ -498,13 +525,19 @@ namespace vml
 					OrientedBoundingBox[5] = glm::vec3(0, 0, 0);
 					OrientedBoundingBox[6] = glm::vec3(0, 0, 0);
 					OrientedBoundingBox[7] = glm::vec3(0, 0, 0);
+
+					XAxis = OrientedBoundingBox[4] - OrientedBoundingBox[0];
+					YAxis = OrientedBoundingBox[3] - OrientedBoundingBox[0];
+					ZAxis = OrientedBoundingBox[1] - OrientedBoundingBox[0];
+					AxisExtents = glm::vec3(glm::length(XAxis), glm::length(YAxis), glm::length(ZAxis));
+					AxisHalfExtents = AxisExtents * 0.5f;
 				}
 
 				AOBBox(const glm::vec3& bmin, const glm::vec3& bmax)
 				{
 					Min         = bmin;
 					Max         = bmax;
-					Extents     = Max - Min;
+					Extents     = (Max - Min);
 					Center      = (Max + Min) * 0.5f;
 					HalfExtents = (Max - Min) * 0.5f;
 
@@ -517,6 +550,11 @@ namespace vml
 					OrientedBoundingBox[6] = glm::vec3(bmax.x, bmax.y, bmax.z);
 					OrientedBoundingBox[7] = glm::vec3(bmin.x, bmax.y, bmax.z);
 
+					XAxis = OrientedBoundingBox[4] - OrientedBoundingBox[0];
+					YAxis = OrientedBoundingBox[3] - OrientedBoundingBox[0];
+					ZAxis = OrientedBoundingBox[1] - OrientedBoundingBox[0];
+					AxisExtents = glm::vec3(glm::length(XAxis), glm::length(YAxis), glm::length(ZAxis));
+					AxisHalfExtents = AxisExtents * 0.5f;
 				}
 
 				~AOBBox()

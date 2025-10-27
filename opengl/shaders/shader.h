@@ -256,13 +256,13 @@ namespace vml
 				// -----------------------------------------------------------------------
 				// get transformation locations
 
-				[[nodiscard]] GLint GetViewMatrixLocation()					 const { return ViewMatrixLocation; }
-				[[nodiscard]] GLint GetModelMatrixLocation()				 const { return ModelMatrixLocation; }
-				[[nodiscard]] GLint GetProjectionMatrixLocation()			 const { return ProjectionMatrixLocation; }
-				[[nodiscard]] GLint GetNormalMatrixLocation()				 const { return NormalMatrixLocation; }
-				[[nodiscard]] GLint GetModelViewMatrixLocation()			 const { return ModelViewMatrixLocation; }
-				[[nodiscard]] GLint GetModelViewProjectionMatrixLocation()	 const { return ModelViewProjectionMatrixLocation; }
-				[[nodiscard]] GLint GetTextureMatrixLocation()				 const { return TextureMatrixLocation; }
+				[[nodiscard]] GLint GetViewMatrixLocation()				   const { return ViewMatrixLocation; }
+				[[nodiscard]] GLint GetModelMatrixLocation()			   const { return ModelMatrixLocation; }
+				[[nodiscard]] GLint GetProjectionMatrixLocation()		   const { return ProjectionMatrixLocation; }
+				[[nodiscard]] GLint GetNormalMatrixLocation()			   const { return NormalMatrixLocation; }
+				[[nodiscard]] GLint GetModelViewMatrixLocation()		   const { return ModelViewMatrixLocation; }
+				[[nodiscard]] GLint GetModelViewProjectionMatrixLocation() const { return ModelViewProjectionMatrixLocation; }
+				[[nodiscard]] GLint GetTextureMatrixLocation()			   const { return TextureMatrixLocation; }
 
 				// -----------------------------------------------------------------------
 				// utility uniform functions
@@ -303,7 +303,7 @@ namespace vml
 					
 					// check extension
 
-					if ( !GetResourceFileName().ends_with(".shd"))
+					if (!GetResourceFileName().ends_with(".shd"))
 						vml::os::Message::Error("GlProgram :", GetResourceFileName().c_str(), "bad extension");
 					
 					// remove extension substring

@@ -842,21 +842,17 @@ namespace vml
 
 			public:
 
-				JPH::BodyInterface* BodyInterface;
-				JPH::BodyID collisionMapId;
-
-				JPH::RefConst<JPH::Shape>	  mesh_shape;
+				JPH::BodyInterface*			  BodyInterface;
+				JPH::BodyID					  CollisionMapId;
 				JPH::RefConst<JPH::Shape>	  BoxShape;
 				JPH::RefConst<JPH::Shape>	  SphereShape;
 				JPH::ThreadSafeDebugRenderer* gDebugRenderer;
 
 				// ---------------------------------------------------------------------------
 				
-				void CreateConcaveMesh(vml::meshes::Mesh3d* collisionmesh)
+				void CreateConcaveMesh(const std::vector<float>& vertices,
+									   const std::vector<unsigned int>& indices)
 				{
-					const std::vector<unsigned int>& indices = collisionmesh->GetSurfaceIndices();
-					const std::vector<float>& vertices = collisionmesh->GetVertexArray();
-					
 					JPH::VertexList vertexList;
 					JPH::IndexedTriangleList triangleList;
 
@@ -877,18 +873,19 @@ namespace vml
 					settings.Sanitize();
 					settings.mBuildQuality = JPH::MeshShapeSettings::EBuildQuality::FavorRuntimePerformance;
 
+					JPH::RefConst<JPH::Shape> MeshShape;
+
 					// Create shape
 					JPH::Shape::ShapeResult result = settings.Create();
 					if (result.IsValid())
-						mesh_shape = result.Get();
+						MeshShape = result.Get();
 					else
 						vml::os::Message::Error("couldn't get resulting shape {}", result.GetError());
 
-					JPH::BodyCreationSettings mesh_settings(mesh_shape, JPH::RVec3(0.0, 0.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, JPH::Layers::NON_MOVING);
+					JPH::BodyCreationSettings mesh_settings(MeshShape, JPH::RVec3(0.0, 0.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, JPH::Layers::NON_MOVING);
 					JPH::Body* mesh_body = BodyInterface->CreateBody(mesh_settings); // Note that if we run out of bodies this can return nullptr
-					BodyInterface->AddBody(mesh_body->GetID(), JPH::EActivation::DontActivate);
-					collisionMapId = mesh_body->GetID();
-				
+					CollisionMapId = mesh_body->GetID();
+					BodyInterface->AddBody(CollisionMapId, JPH::EActivation::DontActivate);
 				}
 				
 				// ---------------------------------------------------------------------------
@@ -996,11 +993,11 @@ namespace vml
 
 				void Close()
 				{
-					if (!collisionMapId.IsInvalid())
+					if (!CollisionMapId.IsInvalid())
 					{
 						// remove collision mesh
-						BodyInterface->RemoveBody(collisionMapId);
-						BodyInterface->DestroyBody(collisionMapId);
+						BodyInterface->RemoveBody(CollisionMapId);
+						BodyInterface->DestroyBody(CollisionMapId);
 					}
 
 					// release mem
