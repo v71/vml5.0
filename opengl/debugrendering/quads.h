@@ -104,7 +104,7 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+							vml::os::Message::Error("Quads : Null matrix cam");
 						}
 					}
 
@@ -182,7 +182,7 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+							vml::os::Message::Error("Quads : Null matrix cam");
 						}
 					}
 
@@ -399,7 +399,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 					
 				}
@@ -499,7 +499,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 					
 				}
@@ -712,7 +712,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads ; Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 
@@ -791,7 +791,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 
@@ -885,7 +885,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 
@@ -1124,14 +1124,16 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 
 				// ---------------------------------------------------------------
 				// simple single color quad
 
-				void Draw(vml::views::View* view, const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const GLuint textureid, const float alpha, const int blendmode)
+				void Draw(vml::views::View* view, 
+					      const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, 
+					      const GLuint textureid, const float alpha, const int blendmode)
 				{
 					if (view)
 					{
@@ -1219,7 +1221,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 				
@@ -1493,7 +1495,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads ; Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 
@@ -1612,7 +1614,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 				
@@ -1837,7 +1839,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 
@@ -1915,7 +1917,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Quads : Null matrix cam");
 					}
 				}
 

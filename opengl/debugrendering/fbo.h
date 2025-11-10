@@ -57,7 +57,7 @@ namespace vml
 					if (!ok) {
 						char buf[8192];
 						glGetShaderInfoLog(s, sizeof(buf), nullptr, buf);
-						vml::os::Message::Error("Shader compile error: {0}", buf);
+						vml::os::Message::Error("FBO : Shader compile error : ", buf);
 					}
 					return s;
 				}
@@ -76,7 +76,7 @@ namespace vml
 					glGetProgramiv(p, GL_LINK_STATUS, &ok);
 					if (!ok) {
 						char buf[512]; glGetProgramInfoLog(p, 512, nullptr, buf);
-						vml::os::Message::Error("Linker error: {0}", buf);
+						vml::os::Message::Error("FBO : Linker error : ", buf);
 					}
 					glDeleteShader(vsID);
 					glDeleteShader(fsID);
@@ -112,7 +112,7 @@ namespace vml
 				void Bind() const
 				{
 					if (!FBO)
-						vml::os::Message::Error("FBO is null");
+						vml::os::Message::Error("FBO : FBO is null");
 
 					// Bind the custom framebuffer
 					glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -129,7 +129,7 @@ namespace vml
 				void Unbind() const
 				{
 					if (!FBO)
-						vml::os::Message::Error("FBO is null");
+						vml::os::Message::Error("FBO : FBO is null");
 
 					// Bind the default framebuffer
 					glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -141,9 +141,9 @@ namespace vml
 				void Create(const int  width, const int height)
 				{
 					if (FBO)
-						vml::os::Message::Error("FBO Already created");
+						vml::os::Message::Error("FBO : FBO Already created");
 					if ( width<=0 || height<=0)
-						vml::os::Message::Error("FBO Dimension mismatch");
+						vml::os::Message::Error("FBO : FBO Dimension mismatch");
 
 					// Shader setup
 					ShaderProgram = createShaderProgram(vsSrc, fsSrc);
@@ -188,7 +188,7 @@ namespace vml
 
 					// Error checking framebuffer
 					if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-						vml::os::Message::Error("FBO ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+						vml::os::Message::Error("FBO : Framebuffer is not complete!");
 
 					glBindFramebuffer(GL_FRAMEBUFFER, 0);
 					glBindRenderbuffer(GL_RENDERBUFFER, 0);

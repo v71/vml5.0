@@ -124,8 +124,7 @@ namespace vml
 					Last   = 0;
 					parent = nullptr;
 
-					// populate stack and create compound bounding box
-					// for each model 
+					// populate stack  
 
 					do
 					{
@@ -149,34 +148,7 @@ namespace vml
 						Models[i]->Visited = false;
 
 				}
-
-				// ------------------------------------------------------------------
-				// recursively traverse the model tree composed by linked children model(s)
-				/*
-				void DumpModelRecursive(vml::models::Model3d_2* model, int depth = 0)
-				{
-					if (!model)
-						return;
-
-					if (model->Visited)
-						return;
-
-					// Print indentation spaces
-
-				//	for (int i = 0; i < depth; ++i)
-				//		std::cout << "    "; // 4 spaces per depth level
-
-					// print model screenname
-
-				//	std::cout << model->GetScreenName() << std::endl;
-					model->Visited = true;
-
-					// recurse
-
-					for (size_t i = 0; i < model->GetChildCount(); ++i)
-						DumpModelRecursive(model->GetChild(i), depth + 1);
-				}
-				*/
+		
 			public:
 
 				//-------------------------------------------------------------------------
@@ -190,7 +162,7 @@ namespace vml
 														  const vml::utils::Flags& preferencesflags)
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (AddModel) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : AddModel : Handler is not initialized");
 
 					if (Models.size() >= MaximumNumberOfObjects)
 						vml::os::Message::Error("ModelHandler : Exceeded maximum number of objects (", MaximumNumberOfObjects, ")");
@@ -222,7 +194,7 @@ namespace vml
 				void Transform(vml::views::View* view)
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (Transform ) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : Transform : Handler is not initialized");
 
 					// traverse stack
 
@@ -265,7 +237,7 @@ namespace vml
 				void Link(vml::models::Model3d_2* parentmodel, vml::models::Model3d_2* childmodel) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (Link) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : Link : Handler is not initialized");
 					parentmodel->Link(childmodel);
 				}
 			
@@ -275,7 +247,7 @@ namespace vml
 				void Init()
 				{
 					if (Initialized)
-						vml::os::Message::Error("ModelHandler : (Init) , Handler is already initialized");
+						vml::os::Message::Error("ModelHandler : Init : Handler is already initialized");
 					// allocate stack 
 					Stack.resize(MaximumNumberOfObjects);
 					RenderedModels.resize(MaximumNumberOfObjects);
@@ -288,9 +260,9 @@ namespace vml
 				vml::models::Model3d_2* SetCurrentModel(const int pos)
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (SetCurrentModel) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : SetCurrentModel : Handler is not initialized");
 					if ( pos<0 || pos>=Models.size())
-						vml::os::Message::Error("ModelHandler : (SetCurrentModel) , Current Model is out of range");
+						vml::os::Message::Error("ModelHandler : SetCurrentModel : Current Model is out of range");
 					CurrentModel = pos;
 					return Models[CurrentModel];
 				}
@@ -301,7 +273,7 @@ namespace vml
 				const std::vector<vml::models::Model3d_2*>* GetArray() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetModelsArray) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetModelsArray : Handler is not initialized");
 					return &Models;
 				}
 
@@ -311,7 +283,7 @@ namespace vml
 				size_t GetCount() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetObjectsCount) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetObjectsCount : Handler is not initialized");
 					return Models.size();
 				}
 
@@ -321,7 +293,7 @@ namespace vml
 				vml::models::Model3d_2* GetAt(const std::string& fullpathscreenname) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetModelAt) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetModelAt : Handler is not initialized");
 					for (auto it = Models.begin(); it != Models.end(); ++it)
 						if (fullpathscreenname == (*it)->GetScreenName())
 							return (*it);
@@ -334,7 +306,7 @@ namespace vml
 				vml::models::Model3d_2* GetAt(const size_t pos) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetModelAt) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetModelAt : Handler is not initialized");
 					return Models[pos];
 				}
 
@@ -344,7 +316,7 @@ namespace vml
 				vml::models::Model3d_2* GetNextModel()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetNextModel) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetNextModel : Handler is not initialized");
 					CurrentModel++;
 					int modelscount = (int)Models.size() - 1;
 					if (CurrentModel > modelscount) CurrentModel = modelscount;
@@ -357,7 +329,7 @@ namespace vml
 				vml::models::Model3d_2* GetPrevModel()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetPrevModel) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetPrevModel : Handler is not initialized");
 					CurrentModel--;
 					if (CurrentModel <= 0) CurrentModel = 0;
 					return Models[CurrentModel];
@@ -369,7 +341,7 @@ namespace vml
 				bool IsInitialized() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (IsInitialized) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : IsInitialized : Handler is not initialized");
 					return Initialized;
 				}
 
@@ -379,7 +351,7 @@ namespace vml
 				int GetRenderedModelsCount() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetRenderedModelsCount) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetRenderedModelsCount : Handler is not initialized");
 					return RenderedModelsCount;
 				}
 
@@ -389,7 +361,7 @@ namespace vml
 				const std::vector<vml::models::Model3d_2*> &GetRenderedModels() const	  
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetRenderedModels) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetRenderedModels : Handler is not initialized");
 					return RenderedModels;
 				}
 
@@ -399,7 +371,7 @@ namespace vml
 				const std::vector<vml::models::Model3d_2*> GetModels() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetModels) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetModels : Handler is not initialized");
 					return Models;
 				}
 
@@ -409,7 +381,7 @@ namespace vml
 				bool IsFinalized() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (IsFinalized) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : IsFinalized : Handler is not initialized");
 					return Finalized;
 				}
 
@@ -419,7 +391,7 @@ namespace vml
 				std::vector<vml::models::Model3d_2*> GetRootModels()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ModelHandler : (GetRootModels) , Handler is not initialized");
+						vml::os::Message::Error("ModelHandler : GetRootModels : Handler is not initialized");
 
 					std::vector<vml::models::Model3d_2*> modellist;
 

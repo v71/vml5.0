@@ -140,7 +140,7 @@ namespace vml
 						T det = M[0] * M[3] - M[1] * M[2];
 
 						if (det > -vml::math::EPSILON && det < vml::math::EPSILON)
-							vml::os::Message::Error("Mat2x2 Division by zero");
+							vml::os::Message::Error("Mat2x2 : Division by zero");
 
 						det = T(1) / det;
 
@@ -163,7 +163,7 @@ namespace vml
 					__forceinline const mat2x2& operator /=(const T s)
 					{
 						if (s > -vml::math::EPSILON && s < vml::math::EPSILON)
-							vml::os::Message::Error("Mat2x2 : s is zero");
+							vml::os::Message::Error("Mat2x2 : S is zero");
 
 						float invs = T(1) / s;
 
@@ -301,7 +301,7 @@ namespace vml
 				__forceinline const mat2x2<T> operator /(const mat2x2<T> &R, const T s)
 				{
 					if (s > -vml::math::EPSILON && s < vml::math::EPSILON)
-						vml::os::Message::Error("Mat2x2 : scalar is null");
+						vml::os::Message::Error("Mat2x2 : Scalar is null");
 					T invs = T(1) / T(s);
 					return mat2x2<T>(R[0] * invs, R[1] * invs, R[2] * invs, R[3] * invs);
 				}
@@ -311,7 +311,7 @@ namespace vml
 				{
 					T det = L[0] * L[3] - L[1] * L[2];
 					if (det > -vml::math::EPSILON && det < vml::math::EPSILON)
-						vml::os::Message::Error("Mat2x2 : determinant is null");
+						vml::os::Message::Error("Mat2x2 : Matrix is singular");
 					det = s / det;
 					return mat2x2<T>( L[3] * det, -L[1] * det,
 						 			 -L[2] * det,  L[0] * det);
@@ -322,7 +322,7 @@ namespace vml
 				{
 					T det = L[0] * L[3] - L[1] * L[2];
 					if (det > -vml::math::EPSILON && det < vml::math::EPSILON)
-						vml::os::Message::Error("Mat2x2 : determinant is null");
+						vml::os::Message::Error("Mat2x2 : Matrix is singular");
 					det = T(1) / det;
 					T m00 = L[0] * det , m01 = L[1] * det;
 					T m10 = L[2] * det , m11 = L[3] * det;
@@ -545,7 +545,7 @@ namespace vml
 				if (R[3] > invmax) invmax = R[3];
 
 				if (invmax > -vml::math::EPSILON && invmax < vml::math::EPSILON)
-					vml::os::Message::Error("Mat2x2 : max is null");
+					vml::os::Message::Error("Mat2x2 : Matrix is singular");
 
 				invmax = T(1) / invmax;
 
@@ -561,7 +561,7 @@ namespace vml
 			{
 				T det = R[0] * R[3] - R[1] * R[2];
 				if (det > -vml::math::EPSILON && det < vml::math::EPSILON)
-					vml::os::Message::Error("Mat2x2 : matrix is singular");
+					vml::os::Message::Error("Mat2x2 : Matrix is singular");
 				det = T(1) / det;
 				return mat2x2<T>(R[3] * det, -R[1] * det, -R[2] * det, R[0] * det);
 			}
@@ -682,7 +682,7 @@ namespace vml
 				T invdenum = max - min;
 
 				if (invdenum > -vml::math::EPSILON && invdenum < vml::math::EPSILON)
-					vml::os::Message::Error("Mat2x2 : max is null");
+					vml::os::Message::Error("Mat2x2 : Matrix is singular");
 
 				invdenum = T(1) / invdenum;
 
@@ -699,9 +699,9 @@ namespace vml
 				// size_t cannot be negative
 
 				if ( i>1 )
-					vml::os::Message::Error("Mat2x2 : index i out of range");
+					vml::os::Message::Error("Mat2x2 : Index i out of range");
 				if ( j>1)
-					vml::os::Message::Error("Mat2x2 : index i out of range");
+					vml::os::Message::Error("Mat2x2 : Index j out of range");
 
 				if (i == 0 && j == 0 &&  evalsign) return  R[3];
 				if (i == 1 && j == 0 &&  evalsign) return -R[2];
@@ -742,7 +742,7 @@ namespace vml
 				// cannot inRert a singular matrix
 
 				if (det > -vml::math::EPSILON && det < vml::math::EPSILON)
-					vml::os::Message::Error("Mat2x2 : determinant is null");
+					vml::os::Message::Error("Mat2x2 : Matrix is singular");
 
 				det = T(1) / det;
 
@@ -827,7 +827,7 @@ namespace vml
 			{
 				T det= R[0] * R[3] - R[1] * R[2];
 				if (det > -vml::math::EPSILON && det < vml::math::EPSILON)
-					vml::os::Message::Error("Mat2x2 : max is null");
+					vml::os::Message::Error("Mat2x2 : Determinant is null");
 				det = T(1) / det;
 				return mat2x2<T>(R[0]*det, R[1]*det, R[2]*det, R[3]*det);
 			}
@@ -865,7 +865,7 @@ namespace vml
 			__forceinline vec2<T> GetColumn(const vml::math::mat2x2<T> &R,const int i)
 			{
 				if (i > 1)
-					vml::os::Message::Error("Mat2x2 : index i out of range");
+					vml::os::Message::Error("Mat2x2 : Index i out of range");
 				if (i == 0) return vec2<T>(R[0], R[2]);
 				if (i == 1) return vec2<T>(R[1], R[3]);
 				return vec2<T>(T(0), T(0));
@@ -878,7 +878,7 @@ namespace vml
 			__forceinline vec2<T> GetRow(const vml::math::mat2x2<T> &R, const int i)
 			{
 				if (i > 1)
-					vml::os::Message::Error("Mat2x2 : index i out of range");
+					vml::os::Message::Error("Mat2x2 : Index i out of range");
 				if (i == 0) return vec2<T>(R[0], R[1]);
 				if (i == 1) return vec2<T>(R[2], R[3]);
 				return vec2<T>(T(0), T(0));

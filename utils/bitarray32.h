@@ -606,7 +606,7 @@ namespace vml
 				static unsigned int ConvertFromString( const std::string &bitstring )
 				{
 					if ( bitstring.size()!=32 )	
-						vml::os::Message::Error("bitarray32 : " ,"size must be 32 characthers");
+						vml::os::Message::Error("Bitarray32 : Size must be 32 characthers");
 					unsigned int flag = 0;
 					if (bitstring[ 0] == '1') flag |= BIT0;
 					if (bitstring[ 1] == '1') flag |= BIT1;

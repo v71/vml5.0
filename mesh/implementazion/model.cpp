@@ -166,13 +166,13 @@ namespace vml
 			// clamp angles
 
 			if (alpha < 0.0) alpha = fmod(alpha, vml::math::PIMUL2) + vml::math::PIMUL2;
-			else if (alpha > vml::math::PI) alpha = fmod(alpha, vml::math::PIMUL2);
+				else if (alpha > vml::math::PI) alpha = fmod(alpha, vml::math::PIMUL2);
 
 			if (phi < 0.0) phi = fmod(phi, vml::math::PIMUL2) + vml::math::PIMUL2;
-			else if (phi > vml::math::PI) phi = fmod(phi, vml::math::PIMUL2);
+				else if (phi > vml::math::PI) phi = fmod(phi, vml::math::PIMUL2);
 
 			if (theta < 0.0) theta = fmod(theta, vml::math::PIMUL2) + vml::math::PIMUL2;
-			else if (theta > vml::math::PI) theta = fmod(theta, vml::math::PIMUL2);
+				else if (theta > vml::math::PI) theta = fmod(theta, vml::math::PIMUL2);
 
 			// cache trigvalues
 
@@ -411,14 +411,14 @@ namespace vml
 				// check if same nodes are linked
 
 				if (this == childmodel)
-					vml::os::Message::Error("Model : (Link) , Cannot link same models");
+					vml::os::Message::Error("Model : Cannot link same models");
 
 				// check for cyclic connections, this is a fatal error
 
 				for (size_t i = 0; i < childmodel->GetChildCount(); ++i)
 				{
 					if (childmodel->GetChild(i) == this)
-						vml::os::Message::Error("Model : (Link) , Cyclic connections aren't allowed from '",
+						vml::os::Message::Error("Model : Cyclic connections aren't allowed from '",
 												childmodel->GetChild(i)->GetScreenName().c_str(), "' to '", this->GetScreenName().c_str(), "'");
 				}
 
@@ -429,7 +429,7 @@ namespace vml
 			}
 			else
 			{
-				vml::os::Message::Error("Model : (Link) , Child model pointer is null");
+				vml::os::Message::Error("Model : Child model pointer is null (1)");
 			}
 		}
 
@@ -473,7 +473,7 @@ namespace vml
 			}
 			else 
 			{
-				vml::os::Message::Error("Model : (Link) , Child model pointer is null");
+				vml::os::Message::Error("Model : Child model pointer is null (2)");
 			}
 		}
 
@@ -594,7 +594,7 @@ namespace vml
 		[[nodiscard]] Model3d_2* Model3d_2::GetChild(const std::string& childname) const
 		{
 			if (childname.empty())
-				vml::os::Message::Error("Model : ", "Model3d : Null name is not allowed");
+				vml::os::Message::Error("Model : Null name is not allowed");
 			for (size_t i = 0; i < Child.size(); ++i)
 				if (Child[i]->GetScreenName() == childname) return Child[i];
 			return nullptr;
@@ -739,7 +739,7 @@ namespace vml
 		void Model3d_2::SetRotationMode(const int mode)
 		{
 			if (mode != EULER && mode != SPHERICAL_QUATERNION )
-				vml::os::Message::Error("Model : unacceptable rotation mode");
+				vml::os::Message::Error("Model : Unacceptable rotation mode");
 			// set flags to false
 			PreferencesFlags.SetToFalse(EULER);
 			PreferencesFlags.SetToFalse(SPHERICAL_QUATERNION);
@@ -909,7 +909,7 @@ namespace vml
 			if (screenname.empty())
 				vml::os::Message::Error("Model : Cannot assign empty screenname");
 			if (filename.empty())
-				vml::os::Message::Error("Model : Null mesh resource filename is not allowed fro model ' ", ScreenName.c_str()," '");
+				vml::os::Message::Error("Model : Null mesh resource filename is not allowed for model ' ", ScreenName.c_str()," '");
 
 			// init member data
 

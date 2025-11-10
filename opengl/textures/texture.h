@@ -138,7 +138,7 @@ namespace vml
 						// bytes per pixel
 
 						if (BPP != 1 &&	BPP != 3 &&	BPP != 4)
-								vml::os::Message::Error("Texture : ","Invalid Bpp for texture ' ",GetResourceFileName().c_str(), " ' is out of range");
+								vml::os::Message::Error("Texture : Invalid Bpp for texture ' ",GetResourceFileName().c_str(), " ' is out of range");
 
 						// repeat u parameter
 
@@ -146,7 +146,7 @@ namespace vml
 							RepeatS != GL_MIRRORED_REPEAT &&
 							RepeatS != GL_CLAMP_TO_EDGE &&
 							RepeatS != GL_CLAMP_TO_BORDER )
-								vml::os::Message::Error("Texture : ", "Invalid RepeatS for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
+								vml::os::Message::Error("Texture : Invalid RepeatS for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
 						
 						// repeat v parameter
 
@@ -154,7 +154,7 @@ namespace vml
 							RepeatT != GL_MIRRORED_REPEAT &&
 							RepeatT != GL_CLAMP_TO_EDGE &&
 							RepeatT != GL_CLAMP_TO_BORDER)
-								vml::os::Message::Error("Texture : ", "Invalid RepeatT for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
+								vml::os::Message::Error("Texture : Invalid RepeatT for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
 
 						if (GenerateMipMaps)
 						{
@@ -162,7 +162,7 @@ namespace vml
 
 							if (Magnification != GL_NEAREST &&
 								Magnification != GL_LINEAR)
-									vml::os::Message::Error("Texture : ", "Invalid MipMap Mag for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
+									vml::os::Message::Error("Texture : Invalid MipMap Mag for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
 
 							// minificationfilter
 
@@ -171,7 +171,7 @@ namespace vml
 								Minification != GL_NEAREST_MIPMAP_NEAREST &&
 								Minification != GL_LINEAR_MIPMAP_NEAREST &&
 								Minification != GL_LINEAR_MIPMAP_LINEAR)
-									vml::os::Message::Error("Texture : ", "Invalid MipMap Min for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
+									vml::os::Message::Error("Texture : Invalid MipMap Min for texture ' ", GetResourceFileName().c_str(), " ' is out of range");
 						}
 
 						// byte per pixel
@@ -255,7 +255,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Texture :","failed to load at path : ' ", GetResourceFileName().c_str(), " '");
+						vml::os::Message::Error("Texture : failed to load at path : ' ", GetResourceFileName().c_str(), " '");
 						stbi_image_free(Data);
 					}
 					

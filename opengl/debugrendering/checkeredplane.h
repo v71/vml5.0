@@ -232,7 +232,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("CheckeredPlane :","Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("CheckeredPlane : Null matrix cam");
 					}
 				}
 					
@@ -346,18 +346,18 @@ namespace vml
 
 					// validate debug shaders locations
 						
-					if (MaterialAmbientLocation   == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'Material.ambient' uniform, check shader source code");
-					if (MaterialDiffuseLocation   == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'MaterialDiffuseLocation' uniform, check shader source code");
-					if (MaterialSpecularLocation  == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'MaterialSpecularLocation' uniform, check shader source code");
-					if (MaterialShininessLocation == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'MaterialShininessLocation' uniform, check shader source code");
-					if (LightAmbientLocation      == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'DirectionalLight.ambient' uniform, check shader source code");
-					if (LightDiffuseLocation      == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'DirectionalLight.diffuse' uniform, check shader source code");
-					if (LightSpecularLocation     == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'DirectionalLight.specular' uniform, check shader source code");
-					if (LightPowerLocation        == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'DirectionalLight.power' uniform, check shader source code");
-					if (LightCameraSpaceLocation  == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'DirectionalLight.cameraspacedirection' uniform, check shader source code");
-					if (CheckSize				  == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'CheckSize' uniform, check shader source code");
-					if (ColorLocation1			  == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'ColorLocation1' uniform, check shader source code");
-					if (ColorLocation2			  == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'ColorLocation2' uniform, check shader source code");
+					if (MaterialAmbientLocation   == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'Material.ambient' uniform, check shader source code");
+					if (MaterialDiffuseLocation   == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'MaterialDiffuseLocation' uniform, check shader source code");
+					if (MaterialSpecularLocation  == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'MaterialSpecularLocation' uniform, check shader source code");
+					if (MaterialShininessLocation == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'MaterialShininessLocation' uniform, check shader source code");
+					if (LightAmbientLocation      == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'DirectionalLight.ambient' uniform, check shader source code");
+					if (LightDiffuseLocation      == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'DirectionalLight.diffuse' uniform, check shader source code");
+					if (LightSpecularLocation     == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'DirectionalLight.specular' uniform, check shader source code");
+					if (LightPowerLocation        == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'DirectionalLight.power' uniform, check shader source code");
+					if (LightCameraSpaceLocation  == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'DirectionalLight.cameraspacedirection' uniform, check shader source code");
+					if (CheckSize				  == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'CheckSize' uniform, check shader source code");
+					if (ColorLocation1			  == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'ColorLocation1' uniform, check shader source code");
+					if (ColorLocation2			  == -1) vml::os::Message::Error("CheckeredPlane : CheckredPlane requires 'ColorLocation2' uniform, check shader source code");
 			//		if (CameraPositionLocation	  == -1) vml::os::Message::Error("GlProgram : CheckredPlane requires 'CameraPositionLocation2' uniform, check shader source code");
 
 					glUseProgram(0);

@@ -38,6 +38,7 @@ namespace fa2040
 			vml::overlays::EffectOverlay* GunMuzzleFlashOverlay;
 			vml::overlays::EffectOverlay* JetFlame1Overlay;
 			vml::overlays::EffectOverlay* JetFlame2Overlay;
+			vml::overlays::EffectOverlay* BladesRingOverlay;
 			vml::overlays::EffectOverlay* BulletOverlays[16];
 			vml::overlays::EffectOverlay* MissileOverlays[16];
 			
@@ -51,7 +52,7 @@ namespace fa2040
 			
 			// main controller
 
-			int		  State;						// animation state
+			uint32_t  State;						// animation state
 			float	  Yaw;							// yaw rotation angle
 			float	  Roll;							// roll rotation angle
 			float	  Pitch;						// pitch rotation angle
@@ -71,9 +72,9 @@ namespace fa2040
 			float	  ClimbSpeed;					// Climb Speed
 
 			glm::vec3 DirectionVector;				// Driection vector
-			int		  LastHorzDirectionState;		// horizontal animation state 
-			int		  LastVertDirectionState;		// vertical animation state
-			int		  DirectionState;
+			uint32_t  LastHorzDirectionState;		// horizontal animation state 
+			uint32_t  LastVertDirectionState;		// vertical animation state
+			uint32_t  DirectionState;
 
 			float	  ForceMagnitude;				// Resistive viscous force
 			float	  RbForceMagnitude;				// Resistive viscous force
@@ -93,15 +94,15 @@ namespace fa2040
 			
 			// blade controller
 
-			int   BladesState;						// Blades animation states
-			float BladeAngularSpeed;
-			float BladeAngularSpeedLimit;
-			float BladeAcc;
-			float BladeAngle;
+			uint32_t BladesState;					// Blades animation states
+			float    BladeAngularSpeed;
+			float    BladeAngularSpeedLimit;
+			float    BladeAcc;
+			float    BladeAngle;
 
 			// gun turrest sates / animation parms
 
-			int       GunTurretState;
+			uint32_t  GunTurretState;
 			float     GunTurretSpeed;
 			glm::vec3 GunTarget;
 
@@ -113,24 +114,31 @@ namespace fa2040
 
 			// fire controller
 			
-			float FireRotationSpeed;
-			float BulletSpacing;
-			float BulletDt;
-			float Elongazion;
-			int   BulletOverlaysCount;
+			float    FireRotationSpeed;
+			float    BulletSpacing;
+			float    BulletDt;
+			float    Elongazion;
+			uint32_t BulletOverlaysCount;
 			
 			// missile contorller
 			
-			int						MissileState;
-			int						FiredMissilesCount;
+			uint32_t                MissileState;
+			uint32_t                FiredMissilesCount;
+			uint32_t                MissileOverlaysCount;
+			float                   MissileRotationSpeed;
+			float                   MissileSpeed;
 			vml::models::Model3d_2* FiredMissileModel[16];
-			int						MissileOverlaysCount;
-			float					MissileRotationSpeed;
-			float					MissileSpeed;
+
+			// lock timer
 			
+			uint32_t LockState;
+			float    LockTimer;
+			float    LockDt;
+			uint32_t Locked;
+
 			// CleoCopter scaling factor
 
-			float					Scale;
+			float Scale;
 		
 			// pathfinder
 
@@ -165,6 +173,12 @@ namespace fa2040
 			static constexpr unsigned int BLADES_ON		    = 1;
 			static constexpr unsigned int BLADES_OFF	    = 2;
 			static constexpr unsigned int BLADES_FULL_SPEED = 3;
+
+			// -------------------------------------------------------------------------
+			// state for gun turret
+
+			static constexpr unsigned int GUN_TURRET_NEUTRAL = 0;
+			static constexpr unsigned int GUN_TURRET_ON		 = 1;
 
 			// -------------------------------------------------------------------------
 			// Bump copter on the right
@@ -425,7 +439,6 @@ namespace fa2040
 
 				if (GunTurretState == 1)
 				{
-
 					// orient gunrotor towrads tagert
 
 					float df = glm::dot(GunTarget - GunRotorModel->GetTransformedPosition(), GunRotorModel->GetRightVector());
@@ -448,7 +461,6 @@ namespace fa2040
 
 					if (GunPivotModel->GetAngles().x < 0)
 						GunPivotModel->SetAngleX(0);
-
 				}
 
 				// gun resets to default state
@@ -686,6 +698,39 @@ namespace fa2040
 		
 			}
 		
+			// -------------------------------------------------------------------
+			// locked out timer , used when the enemy locks the player
+
+			void LockController()
+			{
+			//	std::cout << LockState << " " << LockTimer << std::endl;
+
+				if (LockState == 1)
+				{
+					LockTimer += LockDt;
+					if (LockTimer > 1.0f)
+					{
+						LockTimer = 1.0f;
+						LockState = 2;
+					}
+				}
+
+				if (LockState == 2)
+				{
+					// locked
+				}
+
+				if (LockState == 3)
+				{
+					LockTimer -= LockDt;
+					if (LockTimer < 0.0f)
+					{
+						LockTimer = 0.0f;
+						LockState = 0;
+					}
+				}
+			}
+
 			// -------------------------------------------------------------------
 			// Object creation
 
@@ -959,6 +1004,15 @@ namespace fa2040
 				BladesOverlay->AttachModel(BladesModel);
 				BladesOverlay->SetInVisible();
 				
+				// ring blades
+
+				BladesRingOverlay = overlayhandler->Add(vml::overlays::EffectOverlay::QUAD,
+														ScreenName + "/Ring",
+														vml::utils::GlobalPaths::GetInstance()->GetFullProjectPath() + "/textures/bladesring.png",
+														glm::vec3(-0.006f, 0, 0.56f) * Scale, glm::vec3(90, 0, 0), glm::vec3(32, 32, 32) * Scale);
+				BladesRingOverlay->AttachModel(BladesModel);
+				BladesRingOverlay->SetInVisible();
+
 				// gun muzzle flash overlay
 
 				GunMuzzleFlashOverlay = overlayhandler->Add(vml::overlays::EffectOverlay::FAN,
@@ -1015,9 +1069,8 @@ namespace fa2040
 
 				ModelsTree = BodyModel->GetModelsTree();
 
-				for (size_t i = 0; i < ModelsTree.size(); ++i)
-					std::cout << ModelsTree[i]->GetScreenName() << std::endl;
-			
+			//	for (size_t i = 0; i < ModelsTree.size(); ++i)
+			//		std::cout << ModelsTree[i]->GetScreenName() << std::endl;
 			}
 
 		public:
@@ -1323,7 +1376,10 @@ namespace fa2040
 
 				// missile controller
 				MissileController();
-				
+			
+				// locked timer
+				LockController();
+
 				// compute forces
 				ComputeForces();
 			}
@@ -1354,14 +1410,6 @@ namespace fa2040
 				BladesState = BLADES_FULL_SPEED;
 			}
 
-			// -------------------------------------------------------------------
-			//
-
-			void FullBlades()
-			{
-				BladesState = 3;
-			}
-			
 			// -------------------------------------------------------------------
 			//
 			
@@ -1397,7 +1445,43 @@ namespace fa2040
 			{ 
 				return Bumping; 
 			}
-			
+
+			// ---------------------------------------------------
+			// 
+
+			void Lock()
+			{
+				if (LockState == 0)
+				{
+					//	std::cout << "rest" << std::endl;
+					LockState = 1;
+					return;
+				}
+
+				if (LockState == 1)
+				{
+					//	std::cout << "ramp up" << std::endl;
+					LockState = 3;
+					return;
+				}
+
+				if (LockState == 2)
+				{
+					//	std::cout << "locked" << std::endl;
+					LockState = 3;
+					return;
+				}
+
+				if (LockState == 3)
+				{
+					//	std::cout << "ramp down" << std::endl;
+					LockState = 1;
+					return;
+				}
+
+				//	LockState ^= 1;
+			}
+
 			// -------------------------------------------------------------------
 			//
 
@@ -1557,6 +1641,15 @@ namespace fa2040
 			[[nodiscard]] float					  GetScale()					   const { return Scale; }
 			[[nodiscard]] const	glm::vec3&		  GetVelocityDirection()		   const { return DirectionVector; }
 			[[nodiscard]] float					  GetDt()						   const { return Dt; }
+			[[nodiscard]] uint32_t				  AreBladesAtFullSpeed()		   const { return BladesOverlay->IsVisible() && !BladesModel->IsVisbile(); }
+			[[nodiscard]] float					  GetLockTimer()				   const { return LockTimer; }
+			[[nodiscard]] bool					  IsLocked()					   const { return LockState == 2; }
+			[[nodiscard]] bool					  IsLocking()					   const { return LockState != 0; }
+
+			// -------------------------------------------------------------------
+			// Getters
+
+			[[nodiscard]] vml::overlays::EffectOverlay* GetBladesRingOverlay() { return BladesRingOverlay; }
 
 			// * Velocity vector is returned multiplied by Dt *
 			// if you want the pure velocity vector , divide by dt
@@ -1591,7 +1684,7 @@ namespace fa2040
 						 /*  ,vml::handlers::Scene* scene*/ )
 			{
 				if (screenname.empty())
-					vml::os::Message::Error("ScreenName is empty");
+					vml::os::Message::Error("CleoCopter : ScreenName is empty");
 
 				// copy screenname
 
@@ -1634,6 +1727,7 @@ namespace fa2040
 				GunMuzzleFlashOverlay = nullptr;
 				JetFlame1Overlay	  = nullptr;
 				JetFlame2Overlay	  = nullptr;
+				BladesRingOverlay	  = nullptr;
 				BulletOverlays[ 0]	  = nullptr;
 				BulletOverlays[ 1]	  = nullptr;
 				BulletOverlays[ 2]	  = nullptr;
@@ -1695,7 +1789,7 @@ namespace fa2040
 				Bumping				   = false;
 
 				RollAngleLimit	       = 70.0f;					
-				ClimbAngleLimit        = 45.0f+20.0f;					
+				ClimbAngleLimit        = 65.0f;					
 				
 				LastHorzDirectionState = 0;
 				LastVertDirectionState = 0;
@@ -1706,16 +1800,21 @@ namespace fa2040
 				LandingGearMinY		   = 0.0f;
 				LandingGearMaxY		   = 0.0f;
 
-				BladesState			   = 0;
+				BladesState			   = BLADES_NEUTRAL;
 				BladeAngle			   = 0.0f;
 				BladeAngularSpeed	   = 0.0f;
 				BladeAcc = 0.05f;
 				BladeAngularSpeedLimit = 12.0f;
 
-				GunTurretState	       = 0;
+				GunTurretState	       = GUN_TURRET_NEUTRAL;
 				GunTurretSpeed		   = 0.02f;
 				BoostFactorA		   = 1.0f;
 				BoostFactor			   = 3.0f;
+
+				LockState			   = 0;
+				LockTimer			   = 0.0f;
+				LockDt				   = 1.0f * Dt;
+				Locked				   = 0;
 
 				// scale bullet geometry
 
@@ -1769,7 +1868,7 @@ namespace fa2040
 				}
 				else
 				{
-					vml::os::Message::Error("CleoCopter :" ,"pathfinder pointer is null");
+					vml::os::Message::Error("CleoCopter : Pathfinder pointer is null");
 				}
 				
 			}

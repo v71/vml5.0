@@ -150,7 +150,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Sphere : ","Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("BillBoard : Null matrix cam");
 					}
 				}
 
@@ -209,7 +209,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Billboard : ","Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Billboard : Null matrix cam");
 					}
 				}
 

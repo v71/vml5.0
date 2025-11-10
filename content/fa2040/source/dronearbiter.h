@@ -430,7 +430,7 @@ namespace fa2040
 			void AttachPlayer(vml::models::Model3d_2* player)
 			{
 				if (!player)
-					vml::os::Message::Error("Player pointer is null");
+					vml::os::Message::Error("DroneArbiter : Player pointer is null");
 				Player = player;
 			}
 
@@ -440,7 +440,7 @@ namespace fa2040
 			void AttachDrone(fa2040::Drone* drone)
 			{
 				if (!drone)
-					vml::os::Message::Error("Drone pointer is null");
+					vml::os::Message::Error("DroneArbiter : Drone pointer is null");
 				Drones.emplace_back(drone);
 			}
 

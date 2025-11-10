@@ -40,6 +40,7 @@ namespace fa2040
 			vml::overlays::EffectOverlay* JetFlame2Overlay;
 			vml::overlays::EffectOverlay* BulletOverlays[16];
 			vml::overlays::EffectOverlay* MissileOverlays[16];
+			vml::overlays::EffectOverlay* BladesRingOverlay;
 
 			// keys
 
@@ -1217,6 +1218,7 @@ namespace fa2040
 			[[nodiscard]] vml::models::Model3d_2* GetMissileModel(const size_t id) const { return MissileModel[id]; }
 			[[nodiscard]] float GetElongazion() const { return Elongazion; }
 			[[nodiscard]] const std::string& GetScreenName() const { return ScreenName; }
+			[[nodiscard]] vml::overlays::EffectOverlay* GetBladesRingOverlay() { return BladesRingOverlay; }
 
 	//		int GetNavMeshCellId() const { return NavMeshCellId; }
 			
@@ -1306,6 +1308,7 @@ namespace fa2040
 											 glm::vec3(0, 0, 0),
 											 glm::vec3(1,1,1)*Scale,
 											 { vml::models::EULER });
+
 
 				// first missle group
 
@@ -1426,7 +1429,6 @@ namespace fa2040
 													 glm::vec3(0, 0, 0),
 													 glm::vec3(1,1,1)*Scale,
 													 { vml::models::EULER });
-
 				FiredMissileModel[ 0] = nullptr;
 				FiredMissileModel[ 1] = nullptr;
 				FiredMissileModel[ 2] = nullptr;
@@ -1546,6 +1548,13 @@ namespace fa2040
 					MissileOverlays[i]->SetInVisible();
 				}
 				
+				BladesRingOverlay = overlayhandler->Add(vml::overlays::EffectOverlay::QUAD,
+														ScreenName + "/Ring",
+														vml::utils::GlobalPaths::GetInstance()->GetFullProjectPath() + "/textures/bladesring.png",
+														glm::vec3(0, 0, 0) * Scale, glm::vec3(90, 0, 0), glm::vec3(28, 28, 28) * Scale);
+				BladesRingOverlay->AttachModel(BladesModel);
+				BladesRingOverlay->SetInVisible();
+
 			}
 			
 			// ---------------------------------------------------
@@ -1559,7 +1568,7 @@ namespace fa2040
 						 /*  ,vml::handlers::Scene* scene*/ )
 			{
 				if (screenname.empty())
-					vml::os::Message::Error("ScreenName is empty");
+					vml::os::Message::Error("CleoCopter : ScreenName is empty");
 
 				// models
 
@@ -1600,6 +1609,7 @@ namespace fa2040
 				GunMuzzleFlashOverlay = nullptr;
 				JetFlame1Overlay	  = nullptr;
 				JetFlame2Overlay	  = nullptr;
+				BladesRingOverlay	  = nullptr;
 				BulletOverlays[ 0]	  = nullptr;
 				BulletOverlays[ 1]	  = nullptr;
 				BulletOverlays[ 2]	  = nullptr;
@@ -1736,7 +1746,7 @@ namespace fa2040
 		//		}
 		//		else
 		//		{
-		//			vml::os::Message::Error("CleoCopter :" ,"pathfinder pointer is null");
+		//			vml::os::Message::Error("CleoCopter : pathfinder pointer is null");
 		//		}
 				*/
 			}

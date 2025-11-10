@@ -13,9 +13,9 @@
 // 
 //	Circle			  X     X	  X		X	  X 	X		   		    									  
 // 
-//	AABB			  X     X	  X     X	  X
+//	AABB			  X     X	  X     X	  X     X
 // 
-//	AOBB			  X     X	  X		X
+//	AOBB			  X     X	  X		X     X
 // 
 // Polygon
 

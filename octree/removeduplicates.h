@@ -129,9 +129,9 @@ namespace vml
 					int jj = int(iy);
 					int kk = int(iz);
 
-					if (ii < 0 || ii >= CELLSIZE) { vml::os::Message::Error("removeduplicates :", "ii overflow ", ii); }
-					if (jj < 0 || jj >= CELLSIZE) { vml::os::Message::Error("removeduplicates :", "jj overflow ", jj); }
-					if (kk < 0 || kk >= CELLSIZE) { vml::os::Message::Error("removeduplicates :", "kk overflow ", kk); }
+					if (ii < 0 || ii >= CELLSIZE) { vml::os::Message::Error("Removeduplicates : ii overflow ", ii); }
+					if (jj < 0 || jj >= CELLSIZE) { vml::os::Message::Error("Removeduplicates : jj overflow ", jj); }
+					if (kk < 0 || kk >= CELLSIZE) { vml::os::Message::Error("Removeduplicates : kk overflow ", kk); }
 
 					return &Cell[ii + jj * CELLSIZE + kk * CELLSIZE * CELLSIZE];
 				}
@@ -175,7 +175,7 @@ namespace vml
 									  std::vector<vml::geo3d::IndexedTriangle>& surfacesarray)
 				{
 					if (!Initted)
-						vml::os::Message::Error("RemoveDupliacted : ","Cannot initt function");
+						vml::os::Message::Error("RemoveDuplicates : Cannot initt function");
 
 					// remove duplicates
 

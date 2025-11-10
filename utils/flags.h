@@ -66,7 +66,7 @@ namespace vml
                     if (bytepos < MAX_BYTES && relpos < 8)
                         Array[bytepos] |= BitValues[relpos];
                     else
-                        vml::os::Message::Error("SetToTrue : Array index out of range");
+                        vml::os::Message::Error("SetToTrue : SetToTrue : Array index out of range");
                 }
 
                 // -----------------------------------------------
@@ -85,7 +85,7 @@ namespace vml
                     if (bytepos < MAX_BYTES && relpos < 8)
                         Array[bytepos] &= ~BitValues[relpos];
                     else
-                        vml::os::Message::Error("SetToFalse : Array index out of range");
+                        vml::os::Message::Error("Flags : SetToFalse : Array index out of range");
                 }
 
                 // -----------------------------------------------
@@ -104,7 +104,7 @@ namespace vml
                     if (bytepos < MAX_BYTES && relpos < 8)
                         return ((Array[bytepos] & BitValues[relpos]) != 0);
                     else
-                        vml::os::Message::Error("Get : Array index out of range");
+                        vml::os::Message::Error("Flags : Get : Array index out of range");
                     return false;
                 }
 

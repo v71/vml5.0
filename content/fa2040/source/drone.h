@@ -74,7 +74,7 @@ namespace fa2040
 			glm::ivec2 GetNavMeshCell()
 			{
 				if (!PathFinder)
-					vml::os::Message::Error("Drone : ", "PathFinder is nnull");
+					vml::os::Message::Error("Drone : PathFinder is nnull");
 
 				glm::vec3 p = BodyModel->GetPosition();
 				
@@ -180,7 +180,7 @@ namespace fa2040
 			void CreateObject(const std::string &screenname,vml::models::ModelHandler* modelhandler)
 			{
 				if (screenname.empty())
-					vml::os::Message::Error("ScreenName is empty");
+					vml::os::Message::Error("Drone : ScreenName is empty");
 
 				// copy screenname
 
@@ -205,7 +205,7 @@ namespace fa2040
 			void AttachPlayer(vml::models::Model3d_2 *player)
 			{
 				if (!player)
-					vml::os::Message::Error("Player pointe is null");
+					vml::os::Message::Error("Drone : Player is null");
 				Player = player;
 			}
 
@@ -227,7 +227,7 @@ namespace fa2040
 				}
 				else
 				{
-					vml::os::Message::Error("Drone :", "Null PathFinder (2)");
+					vml::os::Message::Error("Drone : Null PathFinder (2)");
 				}
 			}
 
@@ -291,7 +291,7 @@ namespace fa2040
 				}
 				else
 				{
-					vml::os::Message::Error("Drone :", "Null PathFinder (3)");
+					vml::os::Message::Error("Drone : Null PathFinder (3)");
 				}
 
 				return false;
@@ -308,7 +308,7 @@ namespace fa2040
 			bool SetRoute(const glm::vec3 &origin,const glm::ivec2& a, const glm::ivec2& b)
 			{
 				if (!PathFinder)
-					vml::os::Message::Error("Drone : ", "PathFinder is null");
+					vml::os::Message::Error("Drone : PathFinder is null");
 
 				PathIndex       = 0;
 				PathCount       = 0;
@@ -351,13 +351,13 @@ namespace fa2040
 					//	if (PathFinder->GetCellIdFromIndices(b.x, b.y) == -1) ib = PathFinder->FindNearestCellToAnotherCell(b.x, b.y, NavMeshCellId);
 
 					if (PathFinder->GetCellIdFromIndices(a) == -1) 
-						vml::os::Message::Error("Drone PathFinder : a is in a non walkable cell");
+						vml::os::Message::Error("Drone : a is in a non walkable cell");
 
 					if (PathFinder->GetCellIdFromIndices(b) == -1) 
-						vml::os::Message::Error("Drone PathFinder : b is in a non walkable cell");
+						vml::os::Message::Error("Drone : b is in a non walkable cell");
 
 					if (!PathFinder->FindPath(ia.x, ia.y, ib.x, ib.y, origin))
-						vml::os::Message::Error("Drone PathFinder : cannot find path");
+						vml::os::Message::Error("Drone : Cannot find path");
 
 					if (PathFinder->GetPathCount() > 0)
 					{
@@ -392,9 +392,9 @@ namespace fa2040
 			void Controller()
 			{
 				if (!PathFinder)
-					vml::os::Message::Error("Drone : ", "PathFinder is null");
+					vml::os::Message::Error("Drone : PathFinder is null");
 				if (!Player)
-					vml::os::Message::Error("Drone : ", "Player pointer is null");
+					vml::os::Message::Error("Drone : Player pointer is null");
 
 				//	std::cout << "called controller for object " << BodyModel->GetScreenName() << std::endl;
 
@@ -637,7 +637,7 @@ namespace fa2040
 			void PrintPath() const
 			{
 				if (!PathFinder)
-					vml::os::Message::Error("Drone : ", "PathFinder is nnull");
+					vml::os::Message::Error("Drone : PathFinder is nnull");
 				for (int i = 0; i < PathCount; ++i)
 					std::cout << "AddPoint ( " << Path[i].x << " , " << Path[i].y << " );" << std::endl;
 				std::cout << std::endl;

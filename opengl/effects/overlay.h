@@ -435,7 +435,7 @@ namespace vml
 						break;
 
 						default :
-							vml::os::Message::Error("Overlay", "Unknown Mesh");
+							vml::os::Message::Error("Overlay : Unknown Mesh");
 						break;
 					}
 				}
@@ -538,7 +538,7 @@ namespace vml
 				void Finalize()
 				{
 					if (VertexPositionArray.size() == 0 || VertexUVArray.size() == 0 || SurfaceIndices.size() == 0)
-						vml::os::Message::Error("Overlay : ", "Cannot create vaoid");
+						vml::os::Message::Error("Overlay : Cannot create vaoid");
 
 					// compue metrics
 					ComputeMetrics();
@@ -708,6 +708,7 @@ namespace vml
 				void SetCullingFlagToIntersected()			    { CullingFlags = vml::views::frustum::INTERSECTED; }
 				void SetCullingFlagToInside()					{ CullingFlags = vml::views::frustum::INSIDE; }
 				void SetPivot(const glm::vec3& pos)				{ Pivot = pos; }		
+				void SetAlpha(const float alpha)				{ Alpha = alpha; if (Alpha >= 1.0f) Alpha = 1.0f; if (Alpha <= 0.0f)Alpha = 0.0f; }
 
 				// ---------------------------------------------------------------
 				//
@@ -715,7 +716,7 @@ namespace vml
 				void AttachModel(vml::models::Model3d_2* model)
 				{
 					if(!model)
-						vml::os::Message::Error("Overlay : ", "Cannot attach to null model pointer");
+						vml::os::Message::Error("Overlay : Cannot attach to null model pointer");
 
 					AttachedModel = model;
 				}
@@ -782,7 +783,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Overlay : Null matrix cam");
 					}
 				}
 
@@ -793,9 +794,9 @@ namespace vml
 				EffectOverlay(uint32_t meshtype,const std::string &screenname,const std::string& texturepath, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scaling)
 				{
 					if (screenname.size() == 0)
-						vml::os::Message::Error("Overlay : ", "ScreenName name cannot be null");
+						vml::os::Message::Error("Overlay : ScreenName name cannot be null");
 					if (texturepath.size() == 0)
-						vml::os::Message::Error("Overlay : ", "ResourceName cannot be null");
+						vml::os::Message::Error("Overlay : ResourceName cannot be null");
 
 					ScreenName = screenname;
 					TextureFileName = texturepath;

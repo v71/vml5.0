@@ -30,10 +30,6 @@
 
 #include <GL\glew.h>
 #include <GL\wglew.h>
-//#include <GLFW\glfw3.h>
-//#define GLFW_EXPOSE_NATIVE_WGL
-//#define GLFW_EXPOSE_NATIVE_WIN32
-//#include <GLFW\glfw3native.h>
 
 ////////////////////////////////////////////////////////////
 // shader resource manager node class
@@ -42,150 +38,6 @@ namespace vml
 {
 	namespace shaders
 	{
-		
-		////////////////////////////////////////////////////////
-		// opengl shader class 2.0
-		
-		class GlShader
-		{
-			
-			private:
-
-				GLenum		Type;				// type of shader , vertex or fragment
-				GLuint		Id;					// the shader program identifier
-				std::string ResourceFileName;	// shader filename
-
-				// -----------------------------------------------------------------------
-				// copy constructor is private
-				// no copies allowed since classes
-				// are referenced
-
-				GlShader(const GlShader& other) = delete;
-
-				// -----------------------------------------------------------------------
-				// overload operator = is private
-				// no copies allowed since classes
-				// are referenced
-
-				GlShader& operator = (const GlShader& other) = delete;
-
-				//-----------------------------------------------------------------------------------
-				// class is non mmovable
-
-				GlShader(GlShader&& other) = delete;
-				GlShader& operator=(GlShader&& other) = delete;
-
-				// -----------------------------------------------------------------------
-				// compile shader
-
-				void Compile(const std::string &source)
-				{
-					if (source.empty())
-						vml::os::Message::Error("CGlShaderProgram : ", ResourceFileName.c_str() ,"shader buffer is empty");
-					
-					// compile shader
-					const char *code = reinterpret_cast<const GLchar *>(source.c_str());
-					int compiled;
-					glShaderSource(Id, 1, &code, NULL);
-					glCompileShader(Id);
-					glGetShaderiv(Id, GL_COMPILE_STATUS, &compiled);
-					if (!compiled)
-					{
-						vml::os::Message::Error("CGlShaderProgram : ", ResourceFileName.c_str(),"cannot compile file ",GetInfoLog().c_str());
-						glDeleteShader(Id);
-					}
-				}
-
-			public:
-
-				// -----------------------------------------------------------------------
-				// get info log for this shader
-
-				[[nodiscard]] const std::string GetInfoLog() const
-				{
-					GLsizei infoLogSize = 0;
-					std::string infoLog;
-					glGetShaderiv(Id, GL_INFO_LOG_LENGTH, &infoLogSize);
-					infoLog.resize(infoLogSize);
-					glGetShaderInfoLog(Id, infoLogSize, &infoLogSize, &infoLog[0]);
-					return infoLog;
-				}
-
-				// -----------------------------------------------------------------------
-				// load shader program,no args needed
-
-				bool LoadShader(const std::string &filename)
-				{
-					if (filename.empty())
-						vml::os::Message::Error("CGlShaderProgram : ","filename is empty");
-
-					// open file stream
-					std::ifstream file(filename.c_str(), std::ios::binary);
-
-					if (!file.is_open())
-						return false;
-
-					// load source file
-					std::string source;
-					file.seekg(0, std::ios::end);
-					unsigned int fileSize = static_cast<unsigned int>(file.tellg());
-					source.resize(fileSize);
-					file.seekg(0, std::ios::beg);
-					file.read(&source[0], fileSize);
-					file.close();
-
-					// compile
-					Compile(source);
-
-					return true;
-				}
-			
-				// -----------------------------------------------------------------------
-				// getters functions
-
-				[[nodiscard]] GLuint GetID() const
-				{
-					return Id;
-				}
-
-				// -----------------------------------------------------------------------
-				// gets shader type , fragment or vertex shader
-
-				[[nodiscard]] const std::string GetTypeString() const
-				{
-					switch (Type)
-					{
-						case GL_VERTEX_SHADER   : return "Vertex Shader";
-						case GL_FRAGMENT_SHADER : return "Pixel Shader";
-						case GL_GEOMETRY_SHADER : return "Geometry Shader";
-					}
-
-					return "type not recognized";
-				}
-
-				// -----------------------------------------------------------------------
-				// gets filename
-
-				[[nodiscard]] const std::string &GetResourceFileName() const
-				{
-					return ResourceFileName;
-				}
-
-				// -----------------------------------------------------------------------
-				// ctor / dtor
-
-				GlShader(GLenum shaderType)
-				{
-					Type = shaderType;
-					Id = glCreateShader(shaderType);
-				}
-
-				~GlShader()
-				{
-					glDeleteShader(Id);
-				}
-
-		};
 		
 		////////////////////////////////////////////////////////////
 		// shader resource manager node class
@@ -197,15 +49,111 @@ namespace vml
 				
 				// -----------------------------------------------------------------------
 
-				GLuint		Id;											// shader id
-				GLint		ViewMatrixLocation;							// view matrix location
-				GLint		NormalMatrixLocation;						// normal matrix location
-				GLint		ProjectionMatrixLocation;					// projection matrix location
-				GLint		ModelMatrixLocation;						// model matrix location
-				GLint		ModelViewMatrixLocation;					// model * view matrix location
-				GLint		ModelViewProjectionMatrixLocation;			// model * view * projection matrix location
-				GLint		TextureMatrixLocation;						// texture matrix
+				GLuint Id;									// shader id
+				GLint  ViewMatrixLocation;					// view matrix location
+				GLint  NormalMatrixLocation;				// normal matrix location
+				GLint  ProjectionMatrixLocation;			// projection matrix location
+				GLint  ModelMatrixLocation;					// model matrix location
+				GLint  ModelViewMatrixLocation;				// model * view matrix location
+				GLint  ModelViewProjectionMatrixLocation;	// model * view * projection matrix location
+				GLint  TextureMatrixLocation;				// texture matrix
+
+				// -----------------------------------------------------------------------
+				// Compile shaders given the source code
 				
+				GLuint CompileShader(GLenum type, const char* src)
+				{
+					GLuint id = glCreateShader(type);
+					glShaderSource(id, 1, &src, nullptr);
+					glCompileShader(id);
+					GLint compiled;
+					glGetShaderiv(id, GL_COMPILE_STATUS, &compiled);
+					if (!compiled) {
+						char buf[1024] = { 0 };
+						glGetShaderInfoLog(id, sizeof(buf), nullptr, buf);
+						vml::os::Message::Error("GlProgram : Shader compile error : ", buf);
+						return 0;
+					}
+					return id;
+				}
+
+				// -----------------------------------------------------------------------
+				// load shader file
+
+				const std::string LoadShaderFile(const std::string& filename)
+				{
+					if (filename.empty())
+						vml::os::Message::Error("CGlShaderProgram : Filename is empty");
+					// open file stream
+					std::ifstream file(filename.c_str(), std::ios::binary);
+					if (!file.is_open())
+						vml::os::Message::Error("CGlShaderProgram : Cannot  open file : ", filename);
+					// load source file
+					file.seekg(0, std::ios::end);
+					unsigned int fileSize = static_cast<unsigned int>(file.tellg());
+					if ( fileSize==0)
+						vml::os::Message::Error("CGlShaderProgram : File Size is null : ", filename);
+					std::string source;
+					source.resize(fileSize);
+					file.seekg(0, std::ios::beg);
+					file.read(&source[0], fileSize);
+					file.close();
+					return source;
+				}
+
+				// -----------------------------------------------------------------------
+				// Create and link shader program
+
+				GLuint CreateShaderProgram(const char *vs, const char *fs)
+				{
+					GLint vertexShaderId = CompileShader(GL_VERTEX_SHADER, vs);
+					GLint fragmnetShaderId = CompileShader(GL_FRAGMENT_SHADER, fs);
+
+					// once shaders are loaded , attach them to the shader program 
+
+					GLuint id = glCreateProgram();
+
+					if (id == 0) {
+						vml::os::Message::Error("GlProgram : Error creating gl program");
+					}
+
+					// attach sahders
+
+					if (vertexShaderId) glAttachShader(id, vertexShaderId);
+					if (fragmnetShaderId) glAttachShader(id, fragmnetShaderId);
+
+					// link shaders 
+
+					GLint linked;
+					glLinkProgram(id);
+					glGetProgramiv(id, GL_LINK_STATUS, &linked);
+
+					// check if shader porgram has been linked correctly
+
+					if (!linked)
+					{
+						glDeleteProgram(id);
+						GLsizei infoLogSize = 0;
+						std::string infoLog;
+						glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogSize);
+						infoLog.resize(infoLogSize);
+						glGetProgramInfoLog(id, infoLogSize, &infoLogSize, &infoLog[0]);
+						vml::os::Message::Error("GlProgram : Program linking error : ", infoLog.c_str());
+					}
+
+					// detach shaders after linking
+
+					if (vertexShaderId)   glDetachShader(id, vertexShaderId);
+					if (fragmnetShaderId) glDetachShader(id, fragmnetShaderId);
+
+					// delete shaders
+
+					if (vertexShaderId)   glDeleteShader(vertexShaderId);
+					if (fragmnetShaderId) glDeleteShader(fragmnetShaderId);
+
+					return id;
+				}
+
 			public:
 				
 				// -----------------------------------------------------------------------
@@ -284,16 +232,14 @@ namespace vml
 				// -----------------------------------------------------------------------
 				// ctor / dtor
 				// no extrapack data for shaders
+				// uses raii paradigm to load shader resource
+				// ResourceFileName is initted in base class
 
 				GlShaderProgram(const std::string& shaderfilename, const vml::utils::Flags& flags) : vml::utils::SharedResource(shaderfilename,flags)
 				{
-					// uses raii paradigm to load shader resource
-					// ResourceFileName is initted in base class
-
-					Id = 0;
-					
 					// mandatory locations
 
+					Id								  = 0;
 					ViewMatrixLocation				  = 0;
 					NormalMatrixLocation			  = 0;
 					ProjectionMatrixLocation		  = 0;
@@ -304,7 +250,7 @@ namespace vml
 					// check extension
 
 					if (!GetResourceFileName().ends_with(".shd"))
-						vml::os::Message::Error("GlProgram :", GetResourceFileName().c_str(), "bad extension");
+						vml::os::Message::Error("GlProgram :", GetResourceFileName().c_str(), " : Bad extension");
 					
 					// remove extension substring
 
@@ -312,90 +258,32 @@ namespace vml
 					
 					// path for vertex and fragment shaders
 					
-					std::string vertexshadername   = noextfilename + ".vert";
+					std::string vertexshadername = noextfilename + ".vert";
 					std::string fragmentshadername = noextfilename + ".frag";
-					std::string geometryshadername = noextfilename + ".geom";
 
 					// initialize and create shaders
+
+					Id = CreateShaderProgram(&LoadShaderFile(vertexshadername)[0], &LoadShaderFile(fragmentshadername)[0]);
 					
-					GlShader *shVertex   = new GlShader(GL_VERTEX_SHADER);
-					GlShader *shFragment = new GlShader(GL_FRAGMENT_SHADER);
+					// use this shader
 
-					// load shaders from file path
-				
-					if (!shVertex->LoadShader(vertexshadername))
-						vml::os::Message::Error("CGlShaderProgram : ", vertexshadername.c_str()," : ", GetResourceFileName().c_str(), " cannot open file");
-					
-					if (!shFragment->LoadShader(fragmentshadername))
-						vml::os::Message::Error("CGlShaderProgram : ", fragmentshadername.c_str()," : ", GetResourceFileName().c_str(), " cannot open file");
-
-					// once shaders are loaded , attach them to the shader program 
-
-					Id = glCreateProgram();
-
-					if (Id == 0)
-						vml::os::Message::Error("GlProgram : error creating gl program");
-
-					glAttachShader(Id, shVertex->GetID());
-					glAttachShader(Id, shFragment->GetID());
-
-					// geometry shader is not mandatory, if its present load it
-
-					GlShader* shGeometry = new GlShader(GL_GEOMETRY_SHADER);
-					bool hasgeometryshader = shGeometry->LoadShader(geometryshadername);
-					if (hasgeometryshader) glAttachShader(Id, shGeometry->GetID());
-
-					// link 
-
-					int linked;
-
-					glLinkProgram(Id);
-					glGetProgramiv(Id, GL_LINK_STATUS, &linked);
-
-					if (!linked)
-					{
-						glDeleteProgram(Id);
-						GLsizei infoLogSize = 0;
-						std::string infoLog;
-						glGetProgramiv(Id, GL_INFO_LOG_LENGTH, &infoLogSize);
-						infoLog.resize(infoLogSize);
-						glGetProgramInfoLog(Id, infoLogSize, &infoLogSize, &infoLog[0]);
-						vml::os::Message::Error("GlProgram : Program linking error ", infoLog.c_str());
-					}
-
-					// detach shaders after linking
-
-					glDetachShader(Id, shVertex->GetID());
-					glDetachShader(Id, shFragment->GetID());
-					
-					// check if a geometry shader is present
-
-					if (hasgeometryshader)
-						glDetachShader(Id, shGeometry->GetID());
-		
-					// delete shaders
-
-					vml::os::SafeDelete(shVertex);
-					vml::os::SafeDelete(shFragment);
-					vml::os::SafeDelete(shGeometry);
+					glUseProgram(Id);
 
 					// get uniform locations
 
-					glUseProgram(Id);
 					NormalMatrixLocation			  = glGetUniformLocation(Id, "NormalMatrix");
 					ViewMatrixLocation				  = glGetUniformLocation(Id, "ViewMatrix");
 					ModelMatrixLocation				  = glGetUniformLocation(Id, "ModelMatrix");
 					ModelViewMatrixLocation			  = glGetUniformLocation(Id, "ModelViewMatrix");
 					ProjectionMatrixLocation		  = glGetUniformLocation(Id, "ProjectionMatrix");
-					ModelViewProjectionMatrixLocation = glGetUniformLocation(Id, "ModelViewProjectionMatrix");
 					TextureMatrixLocation			  = glGetUniformLocation(Id, "TextureMatrix");
+					ModelViewProjectionMatrixLocation = glGetUniformLocation(Id, "ModelViewProjectionMatrix");
 
 					//  unuse this shader once it is loaded
-				
+
 					glUseProgram(0);
-				
 				}
-				
+
 				~GlShaderProgram()
 				{
 					glDeleteProgram(Id);

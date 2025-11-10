@@ -79,8 +79,13 @@ namespace vml
 			bool			  Running;				// is rendeirng loop running
 			double			  MouseXDelta;
 			double			  MouseYDelta;
-			std::string		  RendererString;
+			std::string		  VendorString;
 			std::string		  VersionString;
+			std::string       RendererString;
+			std::string       ShadingLanguageString;
+			GLint			  MaxTexUnits;
+			GLint			  MaxVertexAttribs;
+			GLint			  MaxTexSize;
 			bool			  Initialized;
 			static char		  GlfwKeyPressed[GLFW_KEY_LAST + 1];
 			static char		  GlfKeyOnce[GLFW_KEY_LAST + 1];
@@ -133,31 +138,49 @@ namespace vml
 			//------------------------------------------------------------------------------
 			// getters
 
-			[[nodiscard]] bool					   IsMouseVisible()		  const;
-			[[nodiscard]] bool					   IsFullscreen()		  const;
-			[[nodiscard]] bool				       IsWindowed()			  const;
-			[[nodiscard]] bool	   				   IsMaxmized()			  const;
-			[[nodiscard]] bool	   				   IsSwapScreenLocked()	  const;
-			[[nodiscard]] bool	   				   IsExitOnEsc()		  const;
-			[[nodiscard]] bool					   IsVerbose()			  const; 
-			[[nodiscard]] bool					   IsQuiet()			  const; 
-			[[nodiscard]] bool					   IsInitialized()		  const; 
-			[[nodiscard]] GLFWwindow*			   GetWindow()			  const; 
-			[[nodiscard]] const vml::utils::Flags& GetPreferencesFlags()  const; 
-			[[nodiscard]] int					   GetScreenWidth()		  const; 
-			[[nodiscard]] int					   GetScreenHeight()	  const; 
-			[[nodiscard]] double				   GetMouseX()			  const;
-			[[nodiscard]] double				   GetMouseY()			  const;
-			[[nodiscard]] double				   GetMouseXDelta()		  const;
-			[[nodiscard]] double				   GetMouseYDelta()		  const;
-			[[nodiscard]] int					   GetLeftButtonState()	  const;
-			[[nodiscard]] int					   GetRightButtonState()  const;
-			[[nodiscard]] int					   GetMiddleButtonState() const;
-			[[nodiscard]] bool					   IsRunning()			  const;
-			[[nodiscard]] const std::string&	   GetRenderString()	  const;
-			[[nodiscard]] const std::string&	   GetVersionString()	  const;
-			[[nodiscard]] bool					   IsKeyPressed(int key)  const;
-			[[nodiscard]] bool					   IsKeyPressedOnce(int key) const;
+			[[nodiscard]] bool					   IsMouseVisible()		      const;
+			[[nodiscard]] bool					   IsFullscreen()		      const;
+			[[nodiscard]] bool				       IsWindowed()			      const;
+			[[nodiscard]] bool	   				   IsMaxmized()			      const;
+			[[nodiscard]] bool	   				   IsSwapScreenLocked()	      const;
+			[[nodiscard]] bool	   				   IsExitOnEsc()		      const;
+			[[nodiscard]] bool					   IsVerbose()			      const; 
+			[[nodiscard]] bool					   IsQuiet()			      const; 
+			[[nodiscard]] bool					   IsInitialized()		      const; 
+			[[nodiscard]] GLFWwindow*			   GetWindow()			      const; 
+			[[nodiscard]] const vml::utils::Flags& GetPreferencesFlags()      const; 
+			[[nodiscard]] int					   GetScreenWidth()		      const; 
+			[[nodiscard]] int					   GetScreenHeight()	      const; 
+			[[nodiscard]] double				   GetMouseX()			      const;
+			[[nodiscard]] double				   GetMouseY()			      const;
+			[[nodiscard]] double				   GetMouseXDelta()		      const;
+			[[nodiscard]] double				   GetMouseYDelta()		      const;
+			[[nodiscard]] int					   GetLeftButtonState()	      const;
+			[[nodiscard]] int					   GetRightButtonState()	  const;
+			[[nodiscard]] int					   GetMiddleButtonState()	  const;
+			[[nodiscard]] bool					   IsRunning()				  const;
+			[[nodiscard]] bool					   IsKeyPressed(int key)	  const;
+			[[nodiscard]] bool					   IsKeyPressedOnce(int key)  const;
+			[[nodiscard]] const std::string&	   GetRenderString()		  const;
+			[[nodiscard]] const std::string&	   GetVersionString()		  const;
+			[[nodiscard]] const std::string&	   GetVendorString()		  const;
+			[[nodiscard]] const std::string&	   GetShadingLanguageString() const;
+			[[nodiscard]] GLint					   GetMaxTexUnits()			  const;
+			[[nodiscard]] GLint					   GetMaxVertexAttribs()	  const;
+			[[nodiscard]] GLint					   GetMaxTexSize()			  const;
+
+			// ----------------------------------------------
+			// Get current extents of opengl context window
+
+			void GetWindowExtents(int& w, int& h) const;
+
+			// ----------------------------------------------
+			// Primary monitor extents gives desktop resolution
+			// this is used when we want to know the real dimesions of the
+			// primary screen monitor regardless the user required 
+			// extentsions
+
+			void GetPrimaryMonitorVideoExtents(int &w,int &h) const;
 
 			// -----------------------------------------------------------------------
 			// copy constructor is private

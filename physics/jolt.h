@@ -880,7 +880,7 @@ namespace vml
 					if (result.IsValid())
 						MeshShape = result.Get();
 					else
-						vml::os::Message::Error("couldn't get resulting shape {}", result.GetError());
+						vml::os::Message::Error("Jolt : Couldn't get resulting shape ", result.GetError());
 
 					JPH::BodyCreationSettings mesh_settings(MeshShape, JPH::RVec3(0.0, 0.0, 0.0), JPH::Quat::sIdentity(), JPH::EMotionType::Static, JPH::Layers::NON_MOVING);
 					JPH::Body* mesh_body = BodyInterface->CreateBody(mesh_settings); // Note that if we run out of bodies this can return nullptr

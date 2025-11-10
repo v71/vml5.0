@@ -233,7 +233,7 @@ namespace vml
                         // close stream
                         
                         if (fclose(stream) != 0)
-                            vml::os::Message::Error("PathFinder : ", "Cannot close ' ", FileName.c_str(), " '");
+                            vml::os::Message::Error("PathFinder : Cannot close ' ", FileName.c_str(), " '");
 
                         // compute connected components
                         // the idData bitmap array will contain
@@ -252,7 +252,7 @@ namespace vml
                         }
                         else
                         {
-                            vml::os::Message::Error("PathFinder : ", "Offset error ' ", FileName.c_str(), " : offset is ", offset , " Size is ", Size);
+                            vml::os::Message::Error("PathFinder : Offset error ' ", FileName.c_str(), " : offset is ", offset , " Size is ", Size);
                         }
 
                         // dump navmask
@@ -276,7 +276,7 @@ namespace vml
                     }
                     else
                     {
-                        vml::os::Message::Error("PathFinder : ", "Cannot load mesh ' ", FileName.c_str(), " '", " ( error code : ", err, " )");
+                        vml::os::Message::Error("PathFinder : Cannot load mesh ' ", FileName.c_str(), " '", " ( error code : ", err, " )");
                     }
 
                 }
@@ -639,7 +639,7 @@ namespace vml
                     int i = (int)((p.x - BoundingBoxMin.x) / Dw);
                     int j = (int)((p.y - BoundingBoxMin.y) / Dh);
                     if (i < 0 || j < 0 || i >= Width || j >= Height)
-                        vml::os::Message::Error("Pathfinder : ", "index out of range");
+                        vml::os::Message::Error("Pathfinder : Index out of range");
                     return i + j * Width;
                 }
 
@@ -664,7 +664,7 @@ namespace vml
                     int i = uv.x;
                     int j = uv.y;
                     if (i < 0 || j < 0 || i >= Width || j >= Height)
-                        vml::os::Message::Error("Pathfinder : ","index out of range");
+                        vml::os::Message::Error("Pathfinder : Index out of range");
                     return IdData[i + j * Width];
                 }
 
@@ -676,7 +676,7 @@ namespace vml
                     int i = uv.x;
                     int j = uv.y;
                     if (i < 0 || j < 0 || i >= Width || j >= Height)
-                        vml::os::Message::Error("Pathfinder : ", "index out of range");
+                        vml::os::Message::Error("Pathfinder : Index out of range");
                     return i + j * Width;
                 }
 
@@ -688,7 +688,7 @@ namespace vml
                     int i = uv.x;
                     int j = uv.y;
                     if (i < 0 || j < 0 || i >= Width || j >= Height)
-                        vml::os::Message::Error("Pathfinder : ", "index out of range");
+                        vml::os::Message::Error("Pathfinder : Index out of range");
                     int offset = i + j * Width;
                     return (Pa[offset] + Pd[offset]) * 0.5f;
                 }
@@ -708,10 +708,10 @@ namespace vml
                 {
                     int i = uv.x;
                     int j = uv.y;
-                    if (i < 0) vml::os::Message::Error("PathFinder : ", "x component is less than 0");
-                    if (j < 0) vml::os::Message::Error("PathFinder : ", "y component is less than 0");
-                    if (i >= Width) vml::os::Message::Error("PathFinder : ", "x component is greater than Width ( ", Width, " )");
-                    if (j >= Height) vml::os::Message::Error("PathFinder : ", "y component is greater than Width ( ", Height, " )");
+                    if (i < 0) vml::os::Message::Error("PathFinder : X component is less than 0");
+                    if (j < 0) vml::os::Message::Error("PathFinder : Y component is less than 0");
+                    if (i >= Width) vml::os::Message::Error("PathFinder : X component is greater than Width ( ", Width, " )");
+                    if (j >= Height) vml::os::Message::Error("PathFinder : Y component is greater than Width ( ", Height, " )");
 
                     int offset = i + j * Width;
 
@@ -744,15 +744,15 @@ namespace vml
                     Bi                = bi;
                     Bj                = bj;
 
-                    if (ai < 0) vml::os::Message::Error("PathFinder : ", "ai component is less than 0");
-                    if (aj < 0) vml::os::Message::Error("PathFinder : ", "aj component is less than 0");
-                    if (ai >= Width) vml::os::Message::Error("PathFinder : ", "ai component is greater than Width ( ", Width," )");
-                    if (aj >= Height) vml::os::Message::Error("PathFinder : ", "aj component is greater than Width ( ", Height," )");
+                    if (ai < 0) vml::os::Message::Error("PathFinder : ai component is less than 0");
+                    if (aj < 0) vml::os::Message::Error("PathFinder : aj component is less than 0");
+                    if (ai >= Width) vml::os::Message::Error("PathFinder : ai component is greater than Width ( ", Width," )");
+                    if (aj >= Height) vml::os::Message::Error("PathFinder : aj component is greater than Width ( ", Height," )");
 
-                    if (bi < 0) vml::os::Message::Error("PathFinder : ", "bi component is less than 0");
-                    if (bj < 0) vml::os::Message::Error("PathFinder : ", "bj component is less than 0");
-                    if (bi >= Width) vml::os::Message::Error("PathFinder : ", "bi component is greater than Width ( ", Width," )");
-                    if (bj >= Height) vml::os::Message::Error("PathFinder : ", "bj component is greater than Width ( ", Height," )");
+                    if (bi < 0) vml::os::Message::Error("PathFinder : bi component is less than 0");
+                    if (bj < 0) vml::os::Message::Error("PathFinder : bj component is less than 0");
+                    if (bi >= Width) vml::os::Message::Error("PathFinder : bi component is greater than Width ( ", Width," )");
+                    if (bj >= Height) vml::os::Message::Error("PathFinder : bj component is greater than Width ( ", Height," )");
 
                     // path starts and ends in the same cell
 
@@ -1358,10 +1358,10 @@ namespace vml
 
                 [[nodiscard]] DebugCell GetCellAt(const int x, const int y) const
                 {
-                    if (x < 0) vml::os::Message::Error("PathFinder : ", "x component is less than 0");
-                    if (y < 0) vml::os::Message::Error("PathFinder : ", "y component is less than 0");
-                    if (x >= Width) vml::os::Message::Error("PathFinder : ", "x component is greater than Width ", Width);
-                    if (y >= Height) vml::os::Message::Error("PathFinder : ", "y component is greater than Width ", Height);
+                    if (x < 0) vml::os::Message::Error("PathFinder : X component is less than 0");
+                    if (y < 0) vml::os::Message::Error("PathFinder : Y component is less than 0");
+                    if (x >= Width) vml::os::Message::Error("PathFinder : X component is greater than Width ", Width);
+                    if (y >= Height) vml::os::Message::Error("PathFinder : Y component is greater than Width ", Height);
 
                     DebugCell c;
                     int offset = x + y * Width;
@@ -1381,7 +1381,7 @@ namespace vml
                     const int i = (int)((p.x - BoundingBoxMin.x) / Dw);
                     const int j = (int)((p.y - BoundingBoxMin.y) / Dh);
                     if (i < 0 || j < 0 || i >= Width || j >= Height)
-                        vml::os::Message::Error("Pathfinder : ", "index out of range");
+                        vml::os::Message::Error("Pathfinder : Index out of range");
                     return GetCellAt(i, j);
                 }
 

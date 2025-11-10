@@ -149,7 +149,7 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("Segment : ","Null matrix cam for cube rendering");
+							vml::os::Message::Error("Segment : Null matrix cam");
 						}
 					}
 

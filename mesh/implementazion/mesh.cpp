@@ -141,7 +141,7 @@ namespace vml
 			// validate extension
 
 			if (!resourcefilename.ends_with(".3df"))
-				vml::os::Message::Error("Mesh3d : ", "Wrong extension ' ", resourcefilename.c_str(), " '");
+				vml::os::Message::Error("Mesh3d : Wrong extension ' ", resourcefilename.c_str(), " '");
 
 			//	std::cout << "loading : " << resourcefilename << std::endl;
 
@@ -261,13 +261,13 @@ namespace vml
 				// close stream
 
 				if (fclose(stream) != 0)
-					vml::os::Message::Error("Mesh3d : ", "Cannot close ' ", resourcefilename.c_str(), " '");
+					vml::os::Message::Error("Mesh3d : Cannot close ' ", resourcefilename.c_str(), " '");
 
 				return true;
 			}
 			else
 			{
-				vml::os::Message::Error("Mesh3d : ", "Cannot load mesh ' ", resourcefilename.c_str(), " '", " ( error code : ", err, " )");
+				vml::os::Message::Error("Mesh3d : Cannot load mesh ' ", resourcefilename.c_str(), " '", " ( error code : ", err, " )");
 			}
 
 			return false;
@@ -282,7 +282,7 @@ namespace vml
 		void Mesh3d::ReleaseVertexBufferData()
 		{
 			if (!VAOid)
-				vml::os::Message::Error("Mesh3d : ", "Cannot delete buffers if VAO has not been created yet");
+				vml::os::Message::Error("Mesh3d : Cannot delete buffers if VAO has not been created yet");
 
 			//* do not reset retaindata flag or mesh
 			// might become invalid if data is needed 

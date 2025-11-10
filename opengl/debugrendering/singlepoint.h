@@ -98,7 +98,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("SinglePoint : ","Null matrix cam for cube rendering");
+						vml::os::Message::Error("SinglePoint : Null matrix cam");
 					}
 				}
 

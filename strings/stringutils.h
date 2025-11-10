@@ -689,7 +689,7 @@ namespace vml
 
 			static const std::string Truncate(const std::string &text, const int l)
 			{
-				if (l<0) vml::os::Message::Error("StringUtils : ","lenght must be non negative");
+				if (l<0) vml::os::Message::Error("StringUtils : Lenght must be non negative");
 				// constant 3 is related to the number of dots
 				// replacing the truncate 'text' part
 				if (l>3 && text.size()>size_t(l)-3)

@@ -681,7 +681,7 @@ namespace vml
 							size_t n = OctTreeNodes.size();
 							
 							if (n < 1)
-								vml::os::Message::Error("Octree : ","Cannot create stack");
+								vml::os::Message::Error("Octree : Cannot create stack");
 
 							// allocate stack
 
@@ -818,7 +818,7 @@ namespace vml
 						void Transform(vml::views::View* view)
 						{
 							if (!Root)
-								vml::os::Message::Error("Octree : ", "Compile Map before trasnforming");
+								vml::os::Message::Error("Octree : Compile Map before trasnforming");
 
 							// set visible state back to default for all nodes
 
@@ -918,7 +918,7 @@ namespace vml
 							if (mesh)
 							{
 								if (!mesh->IsValid())
-									vml::os::Message::Error("Octree : ","Compiler : Mesh is not valid");
+									vml::os::Message::Error("Octree : Compiler : Mesh is not valid");
 								
 								ResourceFileName = mesh->GetResourceFileName();
 
@@ -988,7 +988,7 @@ namespace vml
 							}
 							else
 							{
-								vml::os::Message::Error("Octree : ","Mesh is null");
+								vml::os::Message::Error("Octree : Mesh is null");
 							}
 							
 						}

@@ -73,7 +73,7 @@ namespace vml
                     Data = stbi_load(&filename[0], &Width, &Height, &BytesPerPixel, STBI_rgb_alpha);
 
                     if (!Data) {
-                        vml::os::Message::Error("no data");
+                        vml::os::Message::Error("RectPack : No data");
                     }
 
                     Size  = Width * Height;

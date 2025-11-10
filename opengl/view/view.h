@@ -47,10 +47,12 @@ namespace vml
 				float			  Radius;				// frustum radius
 				float			  Fov;					// field of view
 				glm::vec3		  Right;				// right vector
-				glm::vec3		  Forward;			// direction
+				glm::vec3		  Forward;				// direction
 				glm::vec3		  Up;					// up vector
 				glm::mat4		  V;					// view matrix
+				glm::mat4		  InvV;					// Inverse of view matrix
 				glm::mat4		  P;					// projection matrix
+				glm::mat4		  InvP;					// projection matrix
 				glm::mat4		  VP;					// projection * view
 				glm::vec3		  OldAngles;			// euler angles
 				glm::vec3		  OldPosition;			// position
@@ -277,9 +279,14 @@ namespace vml
 														(FarClippingPlane + NearClippingPlane) * (FarClippingPlane + NearClippingPlane) * k2 * k2);
 					}
 
+					// compute inverse of view matrix, some shaders would need it
+					InvV = glm::inverse(V);
+
+					// compute inverse of projection matrix, some shaders would need it
+					InvP = glm::inverse(P);
+
 					// remeber to set the view port soon after calling this function
 					//	glViewport(0, 0, ViewPortWidth, ViewPortHeight);
-
 				}
 						
 				// ----------------------------------------------------------------
@@ -491,6 +498,14 @@ namespace vml
 														(FarClippingPlane + NearClippingPlane) * (FarClippingPlane + NearClippingPlane) * k2 * k2);
 					}
 
+					// compute inverse of view matrix, some shaders would need it
+					InvV = glm::inverse(V);
+
+					// compute inverse of projection matrix, some shaders would need it
+					InvP = glm::inverse(P);
+
+					// remeber to set the view port soon after calling this function
+					//	glViewport(0, 0, ViewPortWidth, ViewPortHeight);
 				}
 						
 				// ----------------------------------------------------------------
@@ -513,7 +528,7 @@ namespace vml
 				// ----------------------------------------------------------------
 				//  transforms a vector using view matrix
 
-				[[nodiscard]] glm::vec3 TransformForward(const glm::vec3 &dir)
+				[[nodiscard]] glm::vec3 TransformVector(const glm::vec3 &dir)
 				{
 					const float *ptr = glm::value_ptr(V);
 					return glm::vec3(ptr[0] * dir[0] + ptr[1] * dir[1] + ptr[ 2] * dir[2],
@@ -645,7 +660,9 @@ namespace vml
 				const [[nodiscard]] glm::vec3&   GetRightVector()    const { return Right; }
 				const [[nodiscard]] glm::mat4&   GetViewProjection() const { return VP; }
 				const [[nodiscard]] glm::mat4&   GetView()		     const { return V; }
+				const [[nodiscard]] glm::mat4&	 GetInvView()	     const { return InvV; }
 				const [[nodiscard]] glm::mat4&   GetProjection()	 const { return P; }
+				const [[nodiscard]] glm::mat4&	 GetInvProjection()	 const { return InvP; }
 				const [[nodiscard]] glm::vec3&   GetPosition()	     const { return Position; }
 				const [[nodiscard]] glm::vec3&   GetAngle()		     const { return Angles; }
 				const [[nodiscard]] std::string& GetScreenName()	 const { return ScreenName; }
@@ -734,7 +751,7 @@ namespace vml
 					OldAngles		  = angles;												// needed for resetting angles
 					NearClippingPlane = nearclippingplane;									// near z clipping plane
 					FarClippingPlane  = farclippingplane;									// far z clipping plane
-					Fov               = fov*vml::math::DEGTORAD;							// field of view
+					Fov               = fov * vml::math::DEGTORAD;							// field of view
 					RotationSpeed     = rotationspeed;										// rotation speed
 					TranslationSpeed  = translationspeed;									// translation speed
 					Right			  = glm::vec3(1, 0, 0);									// right vector	( x axis )
@@ -745,7 +762,9 @@ namespace vml
 					ViewPortHeight	  = 0;													// view port height
 					Radius			  = 0;													// radius
 					V				  = glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);			// view matrix
+					InvV			  = glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);			// inverse view matrix
 					P				  = glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);			// projection matrix
+					InvP			  = glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);			// inverse projection matrix
 					VP				  = glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);			// projection * view
 					Planes[0]		  = glm::vec4(0,0,0,0);									// frustum planes
 					Planes[1]		  = glm::vec4(0,0,0,0);									// frustum planes

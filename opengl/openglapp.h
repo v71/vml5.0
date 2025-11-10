@@ -61,7 +61,7 @@ class OpenglApp : public vml::Core
 			if (!IsInitialized())
 				vml::os::Message::Error("Core : Not initted when trying to init graphics api");
 
-			// allocate opengl context
+			// allocate opengl default context
 
 			OpenGLContextWindow = new vml::OpenGLContextWindow();
 			OpenGLContextWindow->Init(1024, 768, "CleoEngine3.5", openglflags);
@@ -91,7 +91,6 @@ class OpenglApp : public vml::Core
 			OpenglDebugRenderer->Init();
 			OpenglDebugRenderer->SetClearColor(vml::colors::Black);
 			OpenglDebugRenderer->CheckeredPlaneMesh->FinalColor = OpenglDebugRenderer->GetClearColor();
-		
 		}
 
 		// ----------------------------------------------
@@ -192,9 +191,7 @@ class OpenglApp : public vml::Core
 		//		double newTime = glfwGetTime();
 				double newTime = GetTimeAsDouble();
 				double frameTime = newTime - CurrentTime;
-
 				if (frameTime > 0.25) frameTime = 0.25; // avoid spiral of death
-
 				CurrentTime = newTime;
 				Accumulator += frameTime;
 
@@ -211,9 +208,7 @@ class OpenglApp : public vml::Core
 					Accumulator -= Dt;
 
 				}
-
 			}
-	
 		}
 
 		// -----------------------------------------------------------
@@ -255,8 +250,7 @@ class OpenglApp : public vml::Core
 				std::chrono::steady_clock::now() - startTime
 			).count();
 		}
-
-
+			
 		// -----------------------------------------------------------
 		// key bindings
 

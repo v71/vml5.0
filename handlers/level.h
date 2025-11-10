@@ -64,7 +64,7 @@ namespace vml
 				{
 					
 					if (levelname.empty())
-						vml::os::Message::Error("Level : ", "FileName is empty");
+						vml::os::Message::Error("Level : FileName is empty");
 					
 					// reset data
 
@@ -168,7 +168,7 @@ namespace vml
 				
 				[[nodiscard]] vml::meshes::Mesh3d* GetMapMesh() const {
 					if (!MapMesh->IsDataRetained())
-						vml::os::Message::Error("Mesh data is not set to be retained");
+						vml::os::Message::Error("Level : Mesh data is not set to be retained");
 					return MapMesh; 
 				}
 

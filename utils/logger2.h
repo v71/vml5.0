@@ -173,7 +173,7 @@ namespace vml
                 {
                     size_t n = src.size();
                     if (n == 0)
-                        vml::os::Message::Error("text size is null");
+                        vml::os::Message::Error("Logger : Text size is null");
                     if (n <= width)
                     {
                         std::string text = src;
@@ -220,11 +220,11 @@ namespace vml
                 bool AddColumn(const std::string& title, const uint32_t width)
                 {
                     if (!Initialized)
-                        vml::os::Message::Error("Logger is not initialized");
+                        vml::os::Message::Error("Logger : Logger is not initialized");
 
                     for (auto it = Columns.begin(); it != Columns.end(); ++it)
                         if ((*it).Title == title)
-                            vml::os::Message::Error("Column title must be unique");
+                            vml::os::Message::Error("Logger : Column title must be unique");
                     Columns.emplace_back(Column(title, width));
                     return true;
                 }
@@ -234,10 +234,10 @@ namespace vml
                 void Log(const std::vector<std::string>& line, const LogLevels& lvl)
                 {
                     if (!Initialized)
-                        vml::os::Message::Error("Logger is not initialized");
+                        vml::os::Message::Error("Logger : Logger is not initialized");
 
                     if (Columns.size() == 0)
-                        vml::os::Message::Error("Columns count is zero");
+                        vml::os::Message::Error("Logger : Columns count is zero");
 
                     if (VerboseMode == VerboseModes::QUIET)
                         return;
@@ -247,11 +247,11 @@ namespace vml
                     // validate message number contatined in a single line
 
                     if (n == 0)
-                        vml::os::Message::Error("zero line");
+                        vml::os::Message::Error("Logger : Zero line");
                     if (n > Columns.size())
-                        vml::os::Message::Error("Exceeded columns number");
+                        vml::os::Message::Error("Logger : Exceeded columns number");
                     if (n < Columns.size())
-                        vml::os::Message::Error("Not enough messages");
+                        vml::os::Message::Error("Logger : Not enough messages");
 
                     // cycle past end of log lines
 
@@ -346,7 +346,7 @@ namespace vml
                 void ClearMessages()
                 {
                     if (!Initialized)
-                        vml::os::Message::Error("Logger is not initialized");
+                        vml::os::Message::Error("Logger : Logger is not initialized");
 
                     LogLines.clear();
                     LineNumber = 0;
@@ -364,7 +364,7 @@ namespace vml
                 void Init(const LogModes& logmode, const VerboseModes& verbosemode, const std::string& filename = "")
                 {
                     if (Initialized)
-                        vml::os::Message::Error("Logger already initialized");
+                        vml::os::Message::Error("Logger : Logger already initialized");
 
                     Initialized = true;
                     LineNumber  = 0;

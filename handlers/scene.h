@@ -38,7 +38,7 @@ namespace vml
 					if (Level) 
 						return Level;
 					else 
-						vml::os::Message::Error("Scene : ", "Level is not loaded");
+						vml::os::Message::Error("Scene : Level is not loaded");
 					return nullptr;
 				}
 				

@@ -74,7 +74,7 @@ namespace vml
 				void Init()
 				{
 					if (Initialized)
-						vml::os::Message::Error("OverlayHandler : (Init) , Handler is already initialized");
+						vml::os::Message::Error("OverlayHandler : Init : Handler is already initialized");
 					Overlays.reserve(MaximumNumberOfOverlays);
 					Initialized = true;
 				}
@@ -91,16 +91,16 @@ namespace vml
 				{
 					
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (Add) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : Add : Handler is not initialized");
 
 					if (Overlays.size() >= MaximumNumberOfOverlays)
-						vml::os::Message::Error("OverlayHandler : Exceeded maximum number of views (", MaximumNumberOfOverlays, ")");
+						vml::os::Message::Error("OverlayHandler : Exceeded maximum number of overlays (", MaximumNumberOfOverlays, ")");
 
 					// duplicates names for object aren't allowed
 
 					for (auto it = Overlays.begin(); it != Overlays.end(); ++it)
 						if ((*it)->GetScreenName() == screenname)
-							vml::os::Message::Error("OverlayHandler : (Add) , Duplicated names for overlays are not allowed");
+							vml::os::Message::Error("OverlayHandler : Add : Duplicated names for overlays are not allowed");
 
 					vml::logger::Logger2::GetInstance()->Info({ "OverlayHandler","Adding :'" + screenname + "'" });
 
@@ -123,10 +123,10 @@ namespace vml
 				void Remove(const size_t pos)
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (RemoveOverlay) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : RemoveOverlay : Handler is not initialized");
 
 					if (pos >= Overlays.size())
-						vml::os::Message::Error("OverlayHandler : (RemoveOverlay) , View index is out of range");
+						vml::os::Message::Error("OverlayHandler : RemoveOverlay : View index is out of range");
 
 					// release object memenory
 					vml::os::SafeDelete(Overlays[pos]);
@@ -141,7 +141,7 @@ namespace vml
 				void RemoveAll()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (RemoveAllOverlays) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : RemoveAllOverlays : Handler is not initialized");
 
 					ReleaseAll();
 					vml::logger::Logger2::GetInstance()->Info({ "OverlayHandler","Resetting Overlay Handler" });
@@ -153,7 +153,7 @@ namespace vml
 				vml::overlays::EffectOverlay* Get(const size_t pos) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (GetViewAt) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : GetViewAt : Handler is not initialized");
 					return Overlays[pos];
 				}
 
@@ -163,7 +163,7 @@ namespace vml
 				vml::overlays::EffectOverlay* GetByName(const std::string& screenname) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (GetViewByName) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : GetViewByName : Handler is not initialized");
 					for (auto it = Overlays.begin(); it != Overlays.end(); ++it)
 						if ((*it)->GetScreenName() == screenname) return *it;
 					return nullptr;
@@ -175,7 +175,7 @@ namespace vml
 				const std::vector<vml::overlays::EffectOverlay*>* GetArray() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (GetOverlaysArray) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : GetOverlaysArray : Handler is not initialized");
 					return &Overlays;
 				}
 
@@ -194,7 +194,7 @@ namespace vml
 				size_t GetCount() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (GetOverlayCount) , Handler is not initialized");
+						vml::os::Message::Error("OverlayHandler : GetOverlayCount : Handler is not initialized");
 					return Overlays.size();
 				}
 
@@ -212,7 +212,7 @@ namespace vml
 				void Dump()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OverlayHandler : (Dump) ,  Handler is not initialized (11)");
+						vml::os::Message::Error("OverlayHandler : Dump : Handler is not initialized (11)");
 
 					for (size_t i = 0; i < Overlays.size(); ++i)
 						std::cout << i << " : " << Overlays[i]->GetScreenName() << std::endl;

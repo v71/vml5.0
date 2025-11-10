@@ -96,11 +96,10 @@ namespace vml
 							glBindBuffer(GL_ARRAY_BUFFER, 0);
 							glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 							glUseProgram(0);
-
 						}
 						else
 						{
-							vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+							vml::os::Message::Error("Triangles : Null matrix cam");
 						}
 					}
 
@@ -159,6 +158,8 @@ namespace vml
 							glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPositionArray), &VertexPositionArray[0], GL_STATIC_DRAW);
 
 							glDisable(GL_CULL_FACE);
+							glEnable(GL_CULL_FACE);
+
 							if (wire)
 								glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 							else if (!wire)
@@ -173,7 +174,7 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+							vml::os::Message::Error("Triangles : Null matrix cam");
 						}
 					}
 
@@ -384,7 +385,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : Null matrix cam");
 					}
 				}
 
@@ -472,7 +473,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : Null matrix cam");
 					}
 				}
 				
@@ -679,7 +680,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads ; ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : Null matrix cam");
 					}
 				}
 
@@ -753,7 +754,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Quads : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : Null matrix cam");
 					}
 				}
 
@@ -842,7 +843,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : Null matrix cam");
 					}
 				}
 
@@ -1048,7 +1049,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : ", "Null matrix cam");
 					}
 				}
 
@@ -1136,7 +1137,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Triangles : ", "Null matrix cam for plane debug rendering");
+						vml::os::Message::Error("Triangles : ", "Null matrix cam");
 					}
 				}
 

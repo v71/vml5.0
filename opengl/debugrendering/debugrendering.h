@@ -38,6 +38,7 @@
 #include <vml5.0/opengl/debugrendering/sphere.h>
 #include <vml5.0/opengl/debugrendering/refsystem.h>
 #include <vml5.0/opengl/debugrendering/fbo.h>
+#include <vml5.0/opengl/debugrendering/checkeredplane1.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -153,7 +154,7 @@ namespace vml
 				void Close()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("OpenGLDebugRenderer : Not initializing");
+						vml::os::Message::Error("OpenGLDebugRender : Not initializing");
 
 					// delete meshes
 
@@ -250,7 +251,7 @@ namespace vml
 							   const glm::vec4& col) const
 				{
 					if (!view) 
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view matrix for point debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for point debug rendering");
 					SinglePointMesh->Draw(view,p, col);
 				}
 				
@@ -274,7 +275,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view matrix for point debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for point debug rendering");
 					}
 				}
 				
@@ -285,7 +286,7 @@ namespace vml
 					                       const float scale, const glm::vec3& pos,
 					                       const GLuint texid,const float alpha, const int blendmode) const
 				{
-					if (!view) vml::os::Message::Error("DebugRender : ", "Null view matrix for triangle debug rendering");
+					if (!view) vml::os::Message::Error("OpenGLDebugRender : ", "Null view matrix for triangle debug rendering");
 					AlphaTexturedQuadMesh->Draw(view, scale, pos, texid,alpha,blendmode);
 				}
 				
@@ -293,7 +294,7 @@ namespace vml
 					                       const glm::vec3 &p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, 
 					                       const GLuint texid, const float alpha, const int blendmode) const
 				{
-					if (!view) vml::os::Message::Error("DebugRender : ", "Null view matrix for triangle debug rendering");
+					if (!view) vml::os::Message::Error("OpenGLDebugRender : ", "Null view matrix for triangle debug rendering");
 					AlphaTexturedQuadMesh->Draw(view, p0,p1,p2,p3, texid, alpha, blendmode);
 				}
 				/*
@@ -310,7 +311,7 @@ namespace vml
 												const glm::vec3& c0, const glm::vec3& c1, const glm::vec3& c2, const glm::vec3& c3,
 												const GLuint texid, const float alpha, const int blendmode) const
 				{
-					if (!view) vml::os::Message::Error("DebugRender : ", "Null view matrix for triangle debug rendering");
+					if (!view) vml::os::Message::Error("OpenGLDebugRender : ", "Null view matrix for triangle debug rendering");
 					AlphaTexturedColorQuadMesh->Draw(view, p0, p1, p2, p3, c0,c1,c2,c3,texid, alpha, blendmode);
 				}
 				*/
@@ -324,7 +325,7 @@ namespace vml
 					if (view)
 						BillBoardMesh->Draw(view, scale, pos, texid);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 				}
 				
 				// -----------------------------------------------------------------------------------
@@ -347,7 +348,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -368,10 +369,10 @@ namespace vml
 							DrawPoint(view, p1, vml::colors::Red);
 							DrawPoint(view, p2, vml::colors::Red);
 						}
-						else
-						{
-							vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
-						}
+					}
+					else
+					{
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -394,7 +395,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -418,7 +419,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -443,7 +444,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 				
@@ -467,7 +468,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -491,7 +492,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -515,7 +516,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -539,7 +540,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 				
@@ -553,7 +554,7 @@ namespace vml
 					if (view)
 						QuadTexturedMesh->Draw(view, scale, pos, texid);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -566,7 +567,7 @@ namespace vml
 					if (view)
 						QuadTexturedMesh->Draw(view, p0, p1, p2, p3, texid);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -591,7 +592,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view matrix for quad debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for quad debug rendering");
 					}
 				}
 
@@ -618,7 +619,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -644,7 +645,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -670,7 +671,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("OpenGLDebugRenderer : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 				
@@ -696,7 +697,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 
@@ -722,7 +723,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 					}
 				}
 				
@@ -736,7 +737,7 @@ namespace vml
 					if (view)
 						BillBoardMesh->DrawOrtho(view, scale, pos, texid);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for triangle debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for triangle debug rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -765,7 +766,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view  matrix for bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for bounding box debug rendering");
 					}
 				}
 				
@@ -798,7 +799,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view  matrix for bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for bounding box debug rendering");
 					}
 				}
 
@@ -829,7 +830,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view  matrix for bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for bounding box debug rendering");
 					}
 				}
 				
@@ -866,12 +867,12 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("DebugRender : Null Model for bounding box  box debug rendering");
+							vml::os::Message::Error("OpenGLDebugRender : Null Model for bounding box  box debug rendering");
 						}
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view  matrix for bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for bounding box debug rendering");
 					}
 				}
 	
@@ -913,12 +914,12 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("DebugRender : Null Model for bounding box  box debug rendering");
+							vml::os::Message::Error("OpenGLDebugRender : Null Model for bounding box  box debug rendering");
 						}
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view  matrix for bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for bounding box debug rendering");
 					}
 				}
 
@@ -966,12 +967,12 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("DebugRender : Null Model for bounding box  box debug rendering");
+							vml::os::Message::Error("OpenGLDebugRender : Null Model for bounding box  box debug rendering");
 						}
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null mview atrix for oriented bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null mview atrix for oriented bounding box debug rendering");
 					}
 				}
 
@@ -1038,12 +1039,12 @@ namespace vml
 						}
 						else
 						{
-							vml::os::Message::Error("DebugRender : Null Model for bounding box  box debug rendering");
+							vml::os::Message::Error("OpenGLDebugRender : Null Model for bounding box  box debug rendering");
 						}
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null mview atrix for oriented bounding box debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null mview atrix for oriented bounding box debug rendering");
 					}
 				}
 
@@ -1058,7 +1059,7 @@ namespace vml
 					if (view)
 						WireSphereMesh->Draw(view, pos, radius, col);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for sphere rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for sphere rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -1071,7 +1072,7 @@ namespace vml
 					if (view)
 						WireSphereMesh->Draw(view, m, col);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for sphere rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for sphere rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -1086,10 +1087,10 @@ namespace vml
 						if (model)
 							WireSphereMesh->Draw(view, model->GetTransformedPosition(), model->GetRadius(), col);
 						else
-							vml::os::Message::Error("DebugRender : Null model pointer for bounding sphere rendering");
+							vml::os::Message::Error("OpenGLDebugRender : Null model pointer for bounding sphere rendering");
 					}
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for sphere rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for sphere rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -1162,7 +1163,7 @@ namespace vml
 					if (view)
 						TexturedCubeMesh->Draw(view, bmin, bmax, texid);
 					else
-						vml::os::Message::Error("DebugRender : Null view matrix for textured cube debug rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for textured cube debug rendering");
 				}
 				
 				// -----------------------------------------------------------------------------------
@@ -1175,7 +1176,7 @@ namespace vml
 					if (view)
 						TexturedCubeMesh->Draw(view, m, texid);
 					else
-						vml::os::Message::Error("DebugRender : Null view  matrix for textured cube rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for textured cube rendering");
 				}
 
 				// -----------------------------------------------------------------------------------
@@ -1279,6 +1280,66 @@ namespace vml
 							glUniform4fv(PhongLightDirectionLocation, 1, &DirectionalLight.Direction[0]);
 							glUniform4fv(PhongLightCameraSpaceLocation, 1, &DirectionalLight.CameraSpaceDirection[0]);
 							glUniform1f(PhongLightPowerLocation, DirectionalLight.Power);
+
+							// draw mesh
+
+							glEnable(GL_CULL_FACE);
+							glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+							glBindVertexArray(model->GetCurrentMesh()->GetVAOId());
+
+							glDrawElements(
+								GL_TRIANGLES,								// mode
+								model->GetCurrentMesh()->GetIndicesCount(),	// count
+								GL_UNSIGNED_INT,							// type
+								(void*)0									// element array buffer offset
+							);
+
+							glBindVertexArray(0);
+							glUseProgram(0);
+						}
+						else
+						{
+							vml::os::Message::Error("OpenGLDebugRenderer : Null model pointer");
+						}
+					}
+					else
+					{
+						vml::os::Message::Error("OpenGLDebugRenderer : Null view  matrix for bounding box debug rendering");
+					}
+				}
+
+				// -----------------------------------------------------------------------------------
+				// draw model
+
+				void DrawDebugModelSolidSingleColor(vml::views::View* view,
+													vml::models::Model3d_2* model,
+													const glm::vec4 &color) const
+				{
+					if (view)
+					{
+						if (model)
+						{
+							if (!model->IsVisbile())
+								return;
+
+							//		DrawAABBox(view, model, vml::colors::Yellow, true);
+							//		DrawAOBBox(view, model, vml::colors::Blue, true);
+
+							// get shader
+
+							glUseProgram(SingleColorShader->GetID());
+
+							// set shader locations
+
+							glUniformMatrix4fv(SingleColorShader->GetViewMatrixLocation(), 1, GL_FALSE, view->GetVptr());
+							glUniformMatrix4fv(SingleColorShader->GetProjectionMatrixLocation(), 1, GL_FALSE, view->GetPptr());
+							glUniformMatrix4fv(SingleColorShader->GetModelMatrixLocation(), 1, GL_FALSE, model->GetMptr());
+							glUniformMatrix3fv(SingleColorShader->GetNormalMatrixLocation(), 1, GL_FALSE, model->GetNVptr());
+							glUniformMatrix4fv(SingleColorShader->GetModelViewMatrixLocation(), 1, GL_FALSE, model->GetMVptr());
+							glUniformMatrix4fv(SingleColorShader->GetModelViewProjectionMatrixLocation(), 1, GL_FALSE, model->GetMVPptr());
+
+							glUniform4f(ColorLocation, color[0], color[1], color[2], color[3]);
 
 							// draw mesh
 
@@ -1565,7 +1626,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : Null view  matrix for mesh rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for mesh rendering");
 					}
 				}
 				/*
@@ -1704,7 +1765,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ", "Null view  matrix for mesh rendering");
+						vml::os::Message::Error("OpenGLDebugRender : ", "Null view  matrix for mesh rendering");
 					}
 				}
 				*/
@@ -1822,7 +1883,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for mesh rendering");
+						vml::os::Message::Error("OpenGLDebugRender : Null view matrix for mesh rendering");
 					}
 				}
 			
@@ -2004,7 +2065,7 @@ namespace vml
 				void DrawDebugOctree(vml::views::View* view, vml::octree::OctTree* oct, unsigned int mode = DO_NOT_DRAW_AABBOX)
 				{
 					if (!oct->IsValid())
-						vml::os::Message::Error("Octree : ", "Octree is not valid");
+						vml::os::Message::Error("OpenGLDebugRender : Octree is not valid");
 
 					size_t renderednodescount = oct->GetRenderedNodesCount();
 
@@ -2093,7 +2154,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for triangle vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for triangle vs ray");
 					}
 					return false;
 				}
@@ -2116,7 +2177,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for quad vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for quad vs ray");
 					}
 					return false;
 				}
@@ -2142,7 +2203,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for aabbox vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for aabbox vs ray");
 					}
 				
 					return false;
@@ -2168,7 +2229,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for aabbox vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for aabbox vs ray");
 					}
 					return false;
 				}
@@ -2193,7 +2254,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for aabbox vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for aabbox vs ray");
 					}
 					return false;
 				}
@@ -2217,7 +2278,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for sphere vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for sphere vs ray");
 					}
 					return false;
 				}
@@ -2242,7 +2303,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ","Null view  matrix for aabbox vs ray");
+						vml::os::Message::Error("OpenGLDebugRender : Null view  matrix for aabbox vs ray");
 					}
 					return false;
 				}
@@ -2445,15 +2506,15 @@ namespace vml
 					PhongLightPowerLocation        = glGetUniformLocation(Id, "DirectionalLight.power");
 					PhongLightCameraSpaceLocation  = glGetUniformLocation(Id, "DirectionalLight.cameraspacedirection");
 					glUseProgram(0);
-					if (PhongMaterialAmbientLocation   == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'Material.ambient' uniform, check shader source code");
-					if (PhongMaterialDiffuseLocation   == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'MaterialDiffuseLocation' uniform, check shader source code");
-					if (PhongMaterialSpecularLocation  == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'MaterialSpecularLocation' uniform, check shader source code");
-					if (PhongMaterialShininessLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'MaterialShininessLocation' uniform, check shader source code");
-					if (PhongLightAmbientLocation      == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.ambient' uniform, check shader source code");
-					if (PhongLightDiffuseLocation      == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.diffuse' uniform, check shader source code");
-					if (PhongLightSpecularLocation     == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.specular' uniform, check shader source code");
-					if (PhongLightPowerLocation        == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.power' uniform, check shader source code");
-					if (PhongLightCameraSpaceLocation  == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.cameraspacedirection' uniform, check shader source code");
+					if (PhongMaterialAmbientLocation   == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'Material.ambient' uniform, check shader source code");
+					if (PhongMaterialDiffuseLocation   == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'MaterialDiffuseLocation' uniform, check shader source code");
+					if (PhongMaterialSpecularLocation  == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'MaterialSpecularLocation' uniform, check shader source code");
+					if (PhongMaterialShininessLocation == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'MaterialShininessLocation' uniform, check shader source code");
+					if (PhongLightAmbientLocation      == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'DirectionalLight.ambient' uniform, check shader source code");
+					if (PhongLightDiffuseLocation      == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'DirectionalLight.diffuse' uniform, check shader source code");
+					if (PhongLightSpecularLocation     == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'DirectionalLight.specular' uniform, check shader source code");
+					if (PhongLightPowerLocation        == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'DirectionalLight.power' uniform, check shader source code");
+					if (PhongLightCameraSpaceLocation  == -1) vml::os::Message::Error("OpenGLDebugRender : debug_phong_dir requires 'DirectionalLight.cameraspacedirection' uniform, check shader source code");
 					
 					// retrive shader locations for single color debug shader
 
@@ -2462,7 +2523,7 @@ namespace vml
 					glUseProgram(Id);
 					ColorLocation = glGetUniformLocation(Id, "Color");
 					glUseProgram(0);
-					if (ColorLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_single_color.shd requires 'Color' uniform, check shader source code");
+					if (ColorLocation == -1) vml::os::Message::Error("OpenGLDebugRender : debug_single_color.shd requires 'Color' uniform, check shader source code");
 					
 					// retrive shader locations for texture debug shader
 
@@ -2471,7 +2532,7 @@ namespace vml
 					glUseProgram(Id);
 					TextureSamplerLocation = glGetUniformLocation(Id, "TextureSampler");
 					glUseProgram(0);
-					if (TextureSamplerLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_texturer.shd requires 'TextureSamplerLocation' uniform, check shader source code");
+					if (TextureSamplerLocation == -1) vml::os::Message::Error("DebugRender : debug_texturer.shd requires 'TextureSamplerLocation' uniform, check shader source code");
 					
 					// retrive shader locations for texture debug shader
 
@@ -2505,8 +2566,57 @@ namespace vml
 					// logging initialisation
 					vml::logger::Logger2::GetInstance()->Info({ "OpenGLDebugRenderer","Initialized" });
 
-					// set initials states
-					Begin();
+					// set initials opengl states
+
+					// --- Buffers ---
+					glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+					glClearDepth(1.0f);
+					glClearStencil(0);
+
+					glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+					glDepthMask(GL_TRUE);
+
+					// --- Depth & Stencil ---
+					glDisable(GL_DEPTH_TEST);
+					glDepthFunc(GL_LESS);
+
+					glDisable(GL_STENCIL_TEST);
+					glStencilFunc(GL_ALWAYS, 0, 0xFFFFFFFF);
+					glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+					// --- Blending ---
+					glDisable(GL_BLEND);
+					glBlendFunc(GL_ONE, GL_ZERO);
+					glBlendEquation(GL_FUNC_ADD);
+
+					// --- Face culling ---
+					glDisable(GL_CULL_FACE);
+					glCullFace(GL_BACK);
+					glFrontFace(GL_CCW);
+
+					// --- Polygon rendering ---
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					glDisable(GL_POLYGON_OFFSET_FILL);
+					glDisable(GL_POLYGON_OFFSET_LINE);
+					glDisable(GL_POLYGON_OFFSET_POINT);
+
+					// --- Dithering & multisampling ---
+					glEnable(GL_DITHER);
+					glEnable(GL_MULTISAMPLE);
+
+					// --- Line & point ---
+					glDisable(GL_LINE_SMOOTH);
+					glDisable(GL_POINT_SMOOTH);
+
+					// --- Textures ---
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+					glBindSampler(GL_TEXTURE0, 0);
+
+					// --- Shaders ---
+					glUseProgram(0);
+				
 				}
 				
 				// -----------------------------------------------------------------------------------
@@ -2516,7 +2626,7 @@ namespace vml
 				{
 					// check if class has been initialised
 					if (!IsInitialized())
-						vml::os::Message::Error("DebugRender : Not initted");
+						vml::os::Message::Error("OpenGLDebugRender : Not initted");
 					// enable polygon mode
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					// Enable depth test
@@ -2527,6 +2637,10 @@ namespace vml
 					glEnable(GL_CULL_FACE);
 					// sets ccw face 
 					glFrontFace(GL_CCW);
+					// front face culling
+					glCullFace(GL_BACK);
+					// texture unit
+					glActiveTexture(GL_TEXTURE0);
 					// unbind any texture
 					glBindTexture(GL_TEXTURE_2D, 0);
 					// unbind any texture 2d array
@@ -2548,25 +2662,27 @@ namespace vml
 				{
 					// check if class has been initialised
 					if (!IsInitialized())
-						vml::os::Message::Error("DebugRender : Not initted");
+						vml::os::Message::Error("OpenGLDebugRender : Not initted");
 					// enable polygon mode
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					// Enable depth test
-					glDisable(GL_DEPTH_TEST);
+				//	glDisable(GL_DEPTH_TEST);
 					// Accept fragment if it closer to the camera than the former one
-					glDepthFunc(GL_LESS);
+				//	glDepthFunc(GL_LESS);
 					// Cull triangles whose normal is not towards the camera
-					glDisable(GL_CULL_FACE);
+				//	glDisable(GL_CULL_FACE);
+					// texture unit
+				//	glActiveTexture(GL_TEXTURE0);
 					// unbind any texture
-					glBindTexture(GL_TEXTURE_2D, 0);
+				//	glBindTexture(GL_TEXTURE_2D, 0);
 					// unbind any texture 2d array
-					glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+				//	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 					// disable blending
-					glDisable(GL_BLEND);
+				//	glDisable(GL_BLEND);
 					// no shaders
-					glUseProgram(0);
+				//	glUseProgram(0);
 					// flush 
-					glFlush();
+			//		glFlush();
 				}
 
 				// -----------------------------------------------------------------------------------

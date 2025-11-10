@@ -188,7 +188,7 @@ namespace vml
 				if (!Window)
 				{
 					glfwTerminate();
-					vml::os::Message::Error("GlWindow :Couldn't init glfw window context");
+					vml::os::Message::Error("GlWindow : Couldn't init glfw window context");
 				}
 			}
 
@@ -225,7 +225,12 @@ namespace vml
 
 			RendererString = std::string(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 			VersionString = std::string(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-
+			VendorString= std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+			ShadingLanguageString = std::string(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+			glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MaxTexUnits);
+			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &MaxVertexAttribs);
+			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTexSize);
+			
 			// This turns off the vertical sync to your monitor so it renders as fast as possible
 
 			if (IsSwapScreenLocked())
@@ -273,7 +278,6 @@ namespace vml
 			// cache exitonesc flag for later use
 
 			ExitOnEsc = PreferencesFlags.Get(vml::flags::Preferences::EXITONESC);
-
 		}
 
 		// ---------------------------------------------------------------------------
@@ -403,30 +407,35 @@ namespace vml
 		//------------------------------------------------------------------------------
 		// getters
 
-		[[nodiscard]] bool					   OpenGLContextWindow::IsMouseVisible()	   const { return PreferencesFlags.Get(vml::flags::Preferences::HIDECURSOR); }
-		[[nodiscard]] bool					   OpenGLContextWindow::IsFullscreen()		   const { return PreferencesFlags.Get(vml::flags::Preferences::FULLSCREEN); }
-		[[nodiscard]] bool				       OpenGLContextWindow::IsWindowed()		   const { return PreferencesFlags.Get(vml::flags::Preferences::WINDOWED); }
-		[[nodiscard]] bool	   				   OpenGLContextWindow::IsMaxmized()		   const { return PreferencesFlags.Get(vml::flags::Preferences::MAXIMIZED); }
-		[[nodiscard]] bool	   				   OpenGLContextWindow::IsSwapScreenLocked()   const { return PreferencesFlags.Get(vml::flags::Preferences::LOCKSWAP); }
-		[[nodiscard]] bool	   				   OpenGLContextWindow::IsExitOnEsc()		   const { return PreferencesFlags.Get(vml::flags::Preferences::EXITONESC); }
-		[[nodiscard]] bool					   OpenGLContextWindow::IsVerbose()			   const { return vml::logger::Logger2::GetInstance()->IsVerbose(); }
-		[[nodiscard]] bool					   OpenGLContextWindow::IsQuiet()			   const { return vml::logger::Logger2::GetInstance()->IsQuiet(); }
-		[[nodiscard]] bool					   OpenGLContextWindow::IsInitialized()		   const { return Initialized; }
-		[[nodiscard]] GLFWwindow*			   OpenGLContextWindow::GetWindow()			   const { return Window; }
-		[[nodiscard]] const vml::utils::Flags& OpenGLContextWindow::GetPreferencesFlags()  const { return PreferencesFlags; }
-		[[nodiscard]] int					   OpenGLContextWindow::GetScreenWidth()	   const { return ScreenWidth; }
-		[[nodiscard]] int					   OpenGLContextWindow::GetScreenHeight()	   const { return ScreenHeight; }
-		[[nodiscard]] double				   OpenGLContextWindow::GetMouseX()			   const { return MouseX; }
-		[[nodiscard]] double				   OpenGLContextWindow::GetMouseY()			   const { return MouseY; }
-		[[nodiscard]] double				   OpenGLContextWindow::GetMouseXDelta()	   const { return MouseXDelta; };
-		[[nodiscard]] double				   OpenGLContextWindow::GetMouseYDelta()	   const { return MouseYDelta; }
-		[[nodiscard]] int					   OpenGLContextWindow::GetLeftButtonState()   const { return LeftButtonState; }
-		[[nodiscard]] int					   OpenGLContextWindow::GetRightButtonState()  const { return RightButtonState; }
-		[[nodiscard]] int					   OpenGLContextWindow::GetMiddleButtonState() const { return MiddleButtonState; }
-		[[nodiscard]] bool				       OpenGLContextWindow::IsRunning()			   const { return Running; }
-		[[nodiscard]] const std::string&	   OpenGLContextWindow::GetRenderString()	   const { return RendererString; }
-		[[nodiscard]] const std::string&	   OpenGLContextWindow::GetVersionString()	   const { return VersionString; }
-		[[nodiscard]] bool					   OpenGLContextWindow::IsKeyPressed(int key)  const { return GlfwKeyPressed[key] != GLFW_RELEASE; }
+		[[nodiscard]] bool					   OpenGLContextWindow::IsMouseVisible()	       const { return PreferencesFlags.Get(vml::flags::Preferences::HIDECURSOR); }
+		[[nodiscard]] bool					   OpenGLContextWindow::IsFullscreen()		       const { return PreferencesFlags.Get(vml::flags::Preferences::FULLSCREEN); }
+		[[nodiscard]] bool				       OpenGLContextWindow::IsWindowed()		       const { return PreferencesFlags.Get(vml::flags::Preferences::WINDOWED); }
+		[[nodiscard]] bool	   				   OpenGLContextWindow::IsMaxmized()		       const { return PreferencesFlags.Get(vml::flags::Preferences::MAXIMIZED); }
+		[[nodiscard]] bool	   				   OpenGLContextWindow::IsSwapScreenLocked()       const { return PreferencesFlags.Get(vml::flags::Preferences::LOCKSWAP); }
+		[[nodiscard]] bool	   				   OpenGLContextWindow::IsExitOnEsc()		       const { return PreferencesFlags.Get(vml::flags::Preferences::EXITONESC); }
+		[[nodiscard]] bool					   OpenGLContextWindow::IsVerbose()			       const { return vml::logger::Logger2::GetInstance()->IsVerbose(); }
+		[[nodiscard]] bool					   OpenGLContextWindow::IsQuiet()			       const { return vml::logger::Logger2::GetInstance()->IsQuiet(); }
+		[[nodiscard]] bool					   OpenGLContextWindow::IsInitialized()		       const { return Initialized; }
+		[[nodiscard]] GLFWwindow*			   OpenGLContextWindow::GetWindow()			       const { return Window; }
+		[[nodiscard]] const vml::utils::Flags& OpenGLContextWindow::GetPreferencesFlags()      const { return PreferencesFlags; }
+		[[nodiscard]] int					   OpenGLContextWindow::GetScreenWidth()	       const { return ScreenWidth; }
+		[[nodiscard]] int					   OpenGLContextWindow::GetScreenHeight()	       const { return ScreenHeight; }
+		[[nodiscard]] double				   OpenGLContextWindow::GetMouseX()			       const { return MouseX; }
+		[[nodiscard]] double				   OpenGLContextWindow::GetMouseY()			       const { return MouseY; }
+		[[nodiscard]] double				   OpenGLContextWindow::GetMouseXDelta()	       const { return MouseXDelta; };
+		[[nodiscard]] double				   OpenGLContextWindow::GetMouseYDelta()	       const { return MouseYDelta; }
+		[[nodiscard]] int					   OpenGLContextWindow::GetLeftButtonState()       const { return LeftButtonState; }
+		[[nodiscard]] int					   OpenGLContextWindow::GetRightButtonState()      const { return RightButtonState; }
+		[[nodiscard]] int					   OpenGLContextWindow::GetMiddleButtonState()     const { return MiddleButtonState; }
+		[[nodiscard]] bool				       OpenGLContextWindow::IsRunning()			       const { return Running; }
+		[[nodiscard]] bool					   OpenGLContextWindow::IsKeyPressed(int key)      const { return GlfwKeyPressed[key] != GLFW_RELEASE; }
+		[[nodiscard]] const std::string&	   OpenGLContextWindow::GetRenderString()	       const { return RendererString; }
+		[[nodiscard]] const std::string&	   OpenGLContextWindow::GetVersionString()	       const { return VersionString; }
+		[[nodiscard]] const std::string&	   OpenGLContextWindow::GetVendorString()	       const { return VendorString; }
+		[[nodiscard]] const std::string&       OpenGLContextWindow::GetShadingLanguageString() const { return ShadingLanguageString; }
+		[[nodiscard]] GLint					   OpenGLContextWindow::GetMaxTexUnits()		   const { return MaxTexUnits; }
+		[[nodiscard]] GLint					   OpenGLContextWindow::GetMaxVertexAttribs()	   const { return MaxVertexAttribs; }
+		[[nodiscard]] GLint					   OpenGLContextWindow::GetMaxTexSize()			   const { return MaxTexSize; }
 
 		// ---------------------------------------------------------------------------
 		// detec t a key opressed only once
@@ -445,7 +454,25 @@ namespace vml
 			GlfKeyOnce[key] = false;
 			return false;
 		}
+		
+		// ----------------------------------------------
+		// Get current extents of opengl context window
 
+		void OpenGLContextWindow::GetWindowExtents(int& w, int& h) const
+		{
+			w = ScreenWidth;
+			h = ScreenHeight;
+		}
+
+		// -----------------------------------------------------------
+
+		void OpenGLContextWindow::GetPrimaryMonitorVideoExtents(int &w,int &h) const
+		{
+			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			w = mode->width;
+			h= mode->height;
+		}
+		
 		//------------------------------------------------------------------------------
 		// ctor / dtor
 
@@ -469,6 +496,10 @@ namespace vml
 			LeftButtonState   = 0;
 			RightButtonState  = 0;
 			MiddleButtonState = 0;
+		
+			MaxTexUnits		  = 0;
+			MaxVertexAttribs  = 0;
+			MaxTexSize	      = 0;
 		}
 
 		OpenGLContextWindow::~OpenGLContextWindow()

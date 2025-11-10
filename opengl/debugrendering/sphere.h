@@ -877,7 +877,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Sphere : ","Null matrix cam for cube rendering");
+						vml::os::Message::Error("Sphere : Null matrix cam");
 					}
 				}
 
@@ -917,7 +917,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("Sphere : ","Null matrix cam for cube rendering");
+						vml::os::Message::Error("Sphere : Null matrix cam");
 					}
 				}
 				

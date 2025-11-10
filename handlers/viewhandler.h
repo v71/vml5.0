@@ -77,16 +77,16 @@ namespace vml
 												    const uint8_t	   rotationmode)
 				{
 					if(!Initialized)
-						vml::os::Message::Error("ViewHandler : (Add) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : Add : Handler is not initialized");
 			
 					if (Views.size()>= MaximumNumberOfViews)
-						vml::os::Message::Error("ViewHandler : Exceeded maximum number of views (", MaximumNumberOfViews, ")");
+						vml::os::Message::Error("ViewHandler : Exceeded maximum number of views ( ", MaximumNumberOfViews, " )");
 
 					// duplicates names for object aren't allowed
 
 					for (auto it = Views.begin(); it != Views.end(); ++it)
 						if ((*it)->GetScreenName() == screenname)
-							vml::os::Message::Error("ViewHandler : (Add) , Duplicated names for views are not allowed");
+							vml::os::Message::Error("ViewHandler : Add : Duplicated names for views are not allowed");
 
 					vml::logger::Logger2::GetInstance()->Info({ "ViewHandler","Adding :'" + screenname + "'" });
 
@@ -115,7 +115,7 @@ namespace vml
 				vml::views::View* Get(const size_t pos) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (GetViewAt) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : GetViewAt : Handler is not initialized");
 					return Views[pos];
 				}
 
@@ -125,7 +125,7 @@ namespace vml
 				vml::views::View* Get(const std::string& screenname) const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (GetViewByName) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : GetViewByName : Handler is not initialized");
 					for (auto it = Views.begin(); it != Views.end(); ++it)
 						if ((*it)->GetScreenName() == screenname) return *it;
 					return nullptr;
@@ -137,7 +137,7 @@ namespace vml
 				const std::vector<vml::views::View*>* GetArray() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (GetViewsArray) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : GetViewsArray : Handler is not initialized");
 					return &Views;
 				}
 
@@ -147,7 +147,7 @@ namespace vml
 				size_t GetCount() const
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (GetViewsCount) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : GetViewsCount : Handler is not initialized");
 					return Views.size();
 				}
 
@@ -165,10 +165,10 @@ namespace vml
 				void Remove(const size_t pos)
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (RemoveView) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : RemoveView : Handler is not initialized");
 
 					if (pos >= Views.size())
-						vml::os::Message::Error("ViewHandler : (RemoveView) , View index is out of range");
+						vml::os::Message::Error("ViewHandler : RemoveView : View index is out of range");
 
 					// release object memenory 
 					vml::os::SafeDelete(Views[pos]);
@@ -183,7 +183,7 @@ namespace vml
 				void RemoveAll()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (RemoveAllViews) , Handler is not initialized");
+						vml::os::Message::Error("ViewHandler : RemoveAllViews : Handler is not initialized");
 
 					ReleaseAll();
 					vml::logger::Logger2::GetInstance()->Info({ "ViewHandler","Resetting View Handler" });
@@ -195,7 +195,7 @@ namespace vml
 				void Init()
 				{
 					if (Initialized)
-						vml::os::Message::Error("ViewHandler : (Init) , Handler is already initialized");
+						vml::os::Message::Error("ViewHandler : Init : Handler is already initialized");
 					Views.reserve(MaximumNumberOfViews);
 					Initialized = true;
 				}
@@ -206,7 +206,7 @@ namespace vml
 				void Dump()
 				{
 					if (!Initialized)
-						vml::os::Message::Error("ViewHandler : (Dump) ,  Handler is not initialized (11)");
+						vml::os::Message::Error("ViewHandler : Dump : Handler is not initialized (11)");
 
 					for (size_t i = 0; i < Views.size(); ++i)
 						std::cout << i << " : " << Views[i]->GetScreenName() << std::endl;

@@ -441,7 +441,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ", "Null matrix cam for ref system rendering");
+						vml::os::Message::Error("RefSystem : Null matrix cam");
 					}
 				}
 
@@ -761,7 +761,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ", "Null matrix cam for ref system rendering");
+						vml::os::Message::Error("RefSystem : Null matrix cam");
 					}
 
 				}
@@ -889,7 +889,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ", "Null matrix cam for ref system rendering");
+						vml::os::Message::Error("RefSystem : Null matrix cam");
 					}
 
 				}
@@ -1017,7 +1017,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ", "Null matrix cam for ref system rendering");
+						vml::os::Message::Error("RefSystem : Null matrix cam");
 					}
 
 				}
@@ -1145,7 +1145,7 @@ namespace vml
 					}
 					else
 					{
-						vml::os::Message::Error("DebugRender : ", "Null matrix cam for ref system rendering");
+						vml::os::Message::Error("RefSystem : Null matrix cam");
 					}
 
 				}
@@ -1357,15 +1357,15 @@ namespace vml
 
 					// validate debug shaders locations
 
-					if (MaterialAmbientLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'Material.ambient' uniform, check shader source code");
-					if (MaterialDiffuseLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'MaterialDiffuseLocation' uniform, check shader source code");
-					if (MaterialSpecularLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'MaterialSpecularLocation' uniform, check shader source code");
-					if (MaterialShininessLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'MaterialShininessLocation' uniform, check shader source code");
-					if (LightAmbientLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.ambient' uniform, check shader source code");
-					if (LightDiffuseLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.diffuse' uniform, check shader source code");
-					if (LightSpecularLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.specular' uniform, check shader source code");
-					if (LightPowerLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.power' uniform, check shader source code");
-					if (LightCameraSpaceLocation == -1) vml::os::Message::Error("GlProgram : ", "debug_phong_dir requires 'DirectionalLight.cameraspacedirection' uniform, check shader source code");
+					if (MaterialAmbientLocation == -1)   vml::os::Message::Error("RefSystem : debug_phong_dir requires 'Material.ambient' uniform, check shader source code");
+					if (MaterialDiffuseLocation == -1)   vml::os::Message::Error("RefSystem : debug_phong_dir requires 'MaterialDiffuseLocation' uniform, check shader source code");
+					if (MaterialSpecularLocation == -1)  vml::os::Message::Error("RefSystem : debug_phong_dir requires 'MaterialSpecularLocation' uniform, check shader source code");
+					if (MaterialShininessLocation == -1) vml::os::Message::Error("RefSystem : debug_phong_dir requires 'MaterialShininessLocation' uniform, check shader source code");
+					if (LightAmbientLocation == -1)      vml::os::Message::Error("RefSystem : debug_phong_dir requires 'DirectionalLight.ambient' uniform, check shader source code");
+					if (LightDiffuseLocation == -1)      vml::os::Message::Error("RefSystem : debug_phong_dir requires 'DirectionalLight.diffuse' uniform, check shader source code");
+					if (LightSpecularLocation == -1)     vml::os::Message::Error("RefSystem : debug_phong_dir requires 'DirectionalLight.specular' uniform, check shader source code");
+					if (LightPowerLocation == -1)        vml::os::Message::Error("RefSystem : debug_phong_dir requires 'DirectionalLight.power' uniform, check shader source code");
+					if (LightCameraSpaceLocation == -1)  vml::os::Message::Error("RefSystem : debug_phong_dir requires 'DirectionalLight.cameraspacedirection' uniform, check shader source code");
 
 				}
 
