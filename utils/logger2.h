@@ -225,7 +225,9 @@ namespace vml
                     for (auto it = Columns.begin(); it != Columns.end(); ++it)
                         if ((*it).Title == title)
                             vml::os::Message::Error("Logger : Column title must be unique");
+                 
                     Columns.emplace_back(Column(title, width));
+                    
                     return true;
                 }
                 
@@ -233,6 +235,7 @@ namespace vml
 
                 void Log(const std::vector<std::string>& line, const LogLevels& lvl)
                 {
+                 
                     if (!Initialized)
                         vml::os::Message::Error("Logger : Logger is not initialized");
 
@@ -391,22 +394,22 @@ namespace vml
 
                         case LogModes::TO_FILE:
 
-                        {
-                            if (filename.empty())
-                                vml::os::Message::Error("Logger : Logger is set to file but FileName is null");
-                            if (filename.length() > 255)
-                                vml::os::Message::Error("Logger : Logger is set to file but FileName length is greater than 255");
-                            // check for valid file format
-                            std::regex filenamePattern(R"(^[a-zA-Z0-9_\-\.]+$)");
-                            if (!std::regex_match(filename, filenamePattern))
-                                vml::os::Message::Error("Logger : Logger is set to file but FileName has invalid format");
-                            FileName = filename;
-                            // open file stream
-                            FileStream.open(filename.c_str(), std::ios::out);
-                            // check file stream validity
-                            if (!FileStream.is_open())
-                                vml::os::Message::Error("Logger : Cannot open file ", filename.c_str());
-                        }
+                            {
+                                if (filename.empty())
+                                    vml::os::Message::Error("Logger : Logger is set to file but FileName is null");
+                                if (filename.length() > 255)
+                                    vml::os::Message::Error("Logger : Logger is set to file but FileName length is greater than 255");
+                                // check for valid file format
+                                std::regex filenamePattern(R"(^[a-zA-Z0-9_\-\.]+$)");
+                                if (!std::regex_match(filename, filenamePattern))
+                                    vml::os::Message::Error("Logger : Logger is set to file but FileName has invalid format");
+                                FileName = filename;
+                                // open file stream
+                                FileStream.open(filename.c_str(), std::ios::out);
+                                // check file stream validity
+                                if (!FileStream.is_open())
+                                    vml::os::Message::Error("Logger : Cannot open file ", filename.c_str());
+                            }
 
                         break;
 

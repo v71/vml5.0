@@ -145,7 +145,6 @@ namespace vml
 			matrix[13] = Position.y;
 			matrix[14] = Position.z;
 			matrix[15] = 1;
-
 		}
 		
 		// -----------------------------------------------------------------------
@@ -460,7 +459,7 @@ namespace vml
 						// remove all children  from child to unlink
 						child_to_unlink->Child.clear();
 						
-						// get current position from 'M' matrix and set as worlkd position
+						// get current position from 'M' matrix and set as world position
 						child_to_unlink->SetPosition(child_to_unlink->GetTransformedPosition());
 						child_to_unlink->SetAngles(GetEulerAngles()*vml::math::RADTODEG);
 
